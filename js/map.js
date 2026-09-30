@@ -40,7 +40,7 @@
     autre: { label: 'Autre', color: '#e377c2' },
   };
 
-  let map, ctrl, layers = {}, osmGroups = {}, myLayer, nucLayer, measure = null, addMode = false, pmLayer = null;
+  let rings = null, map, ctrl, layers = {}, osmGroups = {}, myLayer, nucLayer, measure = null, addMode = false, pmLayer = null;
 
   /* ---------- Tuiles avec cache IndexedDB ---------- */
   function tileUrl(tpl, c) { return tpl.replace('{z}', c.z).replace('{x}', c.x).replace('{y}', c.y); }
@@ -333,7 +333,7 @@
     for (const p of myPoints()) {
       const t = MY_TYPES[p.type] || MY_TYPES.autre;
       L.marker([p.lat, p.lon], { icon: L.divIcon({ className: 'my-pin', html: `<span style="background:${t.color}"></span>`, iconSize: [18, 18], iconAnchor: [9, 9] }) })
-        .bindPopup(`<b>${esc(p.name)}</b><br>${esc(t.label)}<br>${esc(p.note || '')}<br><small>${p.lat.toFixed(5)}, ${p.lon.toFixed(5)}</small><br><button class="link danger" data-delpt="${p.id}">Supprimer</button>`).addTo(myLayer);
+        .bindPopup(`<b>${esc(p.name)}</b><br>${esc(t.label)}<br>${esc(p.note || '')}<br><small>${p.lat.toFixed(5)}, ${p.lon.toFixed(5)}</small><br><button class="link" data-rings="${p.id}">Cercles de marche 10/20/30 km</button> · <button class="link danger" data-delpt="${p.id}">Supprimer</button>`).addTo(myLayer);
     }
     const el = $('#myList');
     if (el) el.innerHTML = myPoints().length ? myPoints().map(p => `<li><button class="link" data-goto="${p.id}">${esc(p.name)}</button> <small class="muted">${esc((MY_TYPES[p.type] || MY_TYPES.autre).label)}</small></li>`).join('') : '<li class="muted">Aucun point. Cliquez sur « Ajouter un point » puis sur la carte.</li>';
@@ -428,6 +428,7 @@
       <select id="myType">${Object.entries(MY_TYPES).map(([k, t]) => `<option value="${k}">${t.label}</option>`).join('')}</select>
       <button id="btnAdd" class="btn">Ajouter un point</button>
       <ul id="myList" class="zones"></ul>
+      <p class="small muted">Astuce (méthode APS) : ouvrez un point (domicile, base) → « Cercles de marche 10/20/30 km » pour repérer itinéraires, points d'eau et de repli à une journée de marche.</p>
       <button id="btnExpGeo" class="btn ghost">Export GeoJSON</button> <button id="btnExpGpx" class="btn ghost">Export GPX</button>
       <label class="btn ghost file">Importer GeoJSON/GPX<input id="impGeo" type="file" accept=".geojson,.json,.gpx" hidden></label>
     </details>
@@ -506,6 +507,16 @@
     });
     map.on('popupopen', e => {
       const b = e.popup.getElement().querySelector('[data-delpt]');
+      const r = e.popup.getElement().querySelector('[data-rings]');
+      if (r) r.onclick = () => {
+        const p = myPoints().find(x => x.id === r.dataset.rings); if (!p) return;
+        if (rings) map.removeLayer(rings);
+        rings = L.layerGroup([10, 20, 30].flatMap(km => [
+          L.circle([p.lat, p.lon], { radius: km * 1000, color: '#ff7f0e', weight: 2, fill: false, dashArray: '8 6', interactive: false }),
+          L.circleMarker([p.lat + km / 111.32, p.lon], { radius: 0, opacity: 0, interactive: false }).bindTooltip(km + ' km', { permanent: true, direction: 'top', className: 'place-label' }),
+        ])).addTo(map);
+        map.fitBounds(L.latLng(p.lat, p.lon).toBounds(62000)); map.closePopup();
+      };
       if (b) b.onclick = () => { App.state.points = myPoints().filter(p => p.id !== b.dataset.delpt); App.save(); renderMine(); map.closePopup(); };
     });
     map.on('click', async e => {

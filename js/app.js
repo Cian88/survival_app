@@ -76,7 +76,7 @@
     const pil = PILLARS.map(p => [p, pillarScore(p)]), pilAvg = Math.round(pil.reduce((a, [, x]) => a + x.pct, 0) / pil.length);
     const exp = expiring(), nc = nextCheck();
     const alerts = [];
-    if (s.water < n.water72) alerts.push(['bad', `Eau : moins que le minimum 72 h du guide SGDSN (6 L × ${persons()} pers. = ${n.water72} L). Stock actuel : ${s.water.toFixed(1)} L.`]);
+    if (s.water < n.water72) alerts.push(['bad', `Eau : moins que le minimum 72 h du guide SGDSN (6 L × ${persons()} pers. = ${n.water72} L). Stock actuel : ${s.water.toLocaleString('fr-FR', { maximumFractionDigits: 1 })} L.`]);
     exp.forEach(it => alerts.push([new Date(it.expiry) < new Date() ? 'bad' : '', `Péremption ${new Date(it.expiry) < new Date() ? 'dépassée' : 'proche'} : ${h(it.name)} (${it.expiry})`]));
     if (!nc) alerts.push(['', 'Aucune vérification du kit enregistrée. Le guide SGDSN recommande de vérifier dates, piles et médicaments deux fois par an (onglet Plan).']);
     else if (nc < new Date()) alerts.push(['bad', `Vérification semestrielle du kit en retard (prévue le ${nc.toLocaleDateString('fr-FR')}).`]);
@@ -188,6 +188,7 @@
       <p><b>Kit 72 h — guide SGDSN (France)</b> : 6 L d'eau/personne en bouteilles, pastilles de désinfection (dernier recours), nourriture non périssable sans cuisson, médicaments habituels, lunettes de secours, gel, masques, pansements, couteau multifonction, ouvre-boîte, réchaud, radio à piles, batterie externe, piles, chargeur, savon, lampe, bougies, allumettes, briquet, vêtements chauds, couverture de survie, doubles des clés, photocopies des papiers (pochette étanche), argent liquide, jeux/livres.</p>
       <p><b>Sac d'évacuation — BBK (Allemagne)</b> : vêtements chauds, protection pluie, chaussures solides, rechange, premiers secours, médicaments, powerbank, hygiène, nourriture longue conservation, gourde, dossier documents, sac de couchage ou couverture, couverts, couteau, ouvre-boîte, lampe, radio, briquet, crème solaire, couvre-chef, bloc-notes et stylo, gants de travail, lunettes de rechange, argent liquide.</p>
       <p><b>Évacuation — MSB (Suède)</b> : ajoute carte et boussole, informations importantes sur papier.</p>
+      ${window.APS_BAG ? `<p><b>Sac d'évacuation — chaîne Apprendre Préparer (Sur)vivre</b> (source non officielle) : ${APS_BAG.map(([k, v]) => `<i>${h(k)}</i> : ${h(v)}`).join(' ; ')}. Détails dans l'onglet Notice & infos.</p>` : ''}
       <p class="src">Sources : ${srcLinks(['sgdsn', 'bbk', 'msb'])}</p></div>`;
   }
 
