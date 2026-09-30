@@ -17,11 +17,13 @@
 
 1. **Tableau de bord** : réglez le foyer (adultes, enfants, animaux), la durée d'autonomie visée et les repères d'eau et de calories. Les indicateurs (eau, nourriture, piliers, sacs, budget, prochaine vérification) et les alertes se mettent à jour automatiquement.
 2. **Écosystème maison** : besoins calculés, **inventaire** (litres, kcal, date de péremption, emplacement) et les **9 piliers** (eau, nourriture, énergie/chaleur/lumière, santé, hygiène, communication, documents/argent, sécurité/outils, plan/savoirs/entraide). Chaque pilier indique ses sources.
-3. **Sac d'évacuation** : un sac par personne. « Pré-remplir : essentiels » ajoute les objets essentiels du catalogue. Ajustez les quantités, poids et prix, et cochez ce que vous possédez. Poids et coût restant sont calculés.
-4. **Matériel & budget** : catalogue filtrable avec liens, prix indicatifs, paliers de budget (essentiel → recommandé → optionnel), plan d'achat maison et export CSV.
-5. **Carte** : voir §3.
-6. **Plan & scénarios** : contacts, vérification semestrielle, plan familial, PIMS et réflexes par scénario (alerte, nucléaire, inondation, feu, attentat, coupure, évacuation, hypothermie, arrêt cardiaque).
-7. **Notice & infos** : numéros d'urgence, signal d'alerte, radio, traitement de l'eau, synthèse de la chaîne *Apprendre Préparer (Sur)vivre*, notice, sauvegarde et sources.
+3. **Sac d'évacuation** : un sac par personne ; choisissez le **lieu** (ville, campagne, montagne, forêt, littoral) et le **climat** (chaud, froid, humide) pour afficher les risques, le matériel à ajouter et les réflexes propres à cet environnement. « Pré-remplir : essentiels » ajoute les objets essentiels du catalogue. Ajustez les quantités, poids et prix, et cochez ce que vous possédez. Poids et coût restant sont calculés.
+4. **Terrain** : ce que disent les praticiens, les forums spécialisés et les témoins de 11 crises réelles (consensus, erreurs fréquentes, désaccords, exercices).
+5. **Calculateurs** : eau, dose de Javel selon votre flacon, autonomie de batterie, solaire, eau de pluie, poids du sac, temps de marche, stock profond, gaz par temps froid.
+6. **Matériel & budget** : catalogue filtrable avec liens, prix indicatifs, paliers de budget (essentiel → recommandé → optionnel), plan d'achat maison et export CSV.
+7. **Carte** : voir §3.
+8. **Plan & scénarios** : contacts, vérification semestrielle, plan familial, PIMS et réflexes par scénario (alerte, nucléaire, inondation, feu, attentat, coupure, évacuation, hypothermie, arrêt cardiaque).
+9. **Notice & infos** : numéros d'urgence, signal d'alerte, radio, traitement de l'eau, synthèse de la chaîne *Apprendre Préparer (Sur)vivre*, notice, sauvegarde et sources.
 
 ## 3. La carte hors ligne
 

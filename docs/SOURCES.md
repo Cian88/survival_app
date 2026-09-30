@@ -2,7 +2,18 @@
 
 Recherche effectuée le **30/09/2026**. Statut : **[V]** = lu dans le document d'origine ; **[S]** = lu via un résumé ou une source secondaire ; **[NV]** = non vérifié. Les éléments non vérifiables sont signalés comme tels dans l'application.
 
-## Guides officiels de préparation
+## Praticiens, forums et retours d'expérience (priorité de l'application)
+Recherche élargie menée le 30/09/2026. Rapports complets, avec l'URL de chaque affirmation : [`TERRAIN.md`](TERRAIN.md) pour les praticiens, les forums, les crises et les sujets techniques, et [`ENVIRONNEMENTS.md`](ENVIRONNEMENTS.md) pour les variantes du sac.
+- **Praticiens francophones** : Vol West, David Manise (CEETS), Citoyen Prévoyant, Vik GN, La Vilaine Mémère, La Débrouille, Mouton-Résilient, Survivaliste JCB, Alexis Brus, Piero San Giorgio (controverse documentée, voir le rapport) et Apprendre Préparer (Sur)vivre. Sources analysées : 41 transcriptions de vidéos, plus des blogs.
+- **Praticiens anglophones** : The Prepared (guides et tests), Selco (Bosnie), FerFAL (Argentine 2001), Creek Stewart, Dave Canterbury, Jim Cobb, J. W. Rawles, City Prepping, Stop the Bleed. Cody Lundin, Practical Preppers et Skinny Medic ont été lus en partie ; les deux derniers sont des sites marchands.
+- **Forums** : wiki et fils les plus votés de r/preppers (via instantanés Wayback Machine, Reddit bloquant l'accès direct), Le Projet Olduvai, Instinct de Survie, Survivalist Boards (archives). Non accessibles : france-survivalistes.fr, forum-bushcraft.fr, ZombieSquad.
+- **Crises réelles** : black-out ibérique 2025, Texas 2021, Ahr et Wallonie 2021, Valence 2024, Helene 2024, Ukraine, Sarajevo, Argentine 2001, COVID-19, tempêtes 1999 et Ciarán, Turquie 2023. Sources : presse, rapports d'enquête et témoignages directs.
+- **Sujets techniques** : tests indépendants (Outdoor Life, OutdoorGearLab, The Prepared), études (BYU sur la conservation des aliments, PATTS sur la rétention des gestes de garrot, étude sur les garrots contrefaits, AJTMH sur les filtres), MSF, Sphere, NIST pour le CO, WREMO pour les toilettes.
+- **Environnements** : PGHM, Club Alpin Suisse, ANENA, FFRandonnée, Wilderness Medical Society, UIAA MedCom, OMS, Santé publique France, Météo-France.
+
+**Limites** : YouTube a fini par bloquer la récupération des sous-titres, ce qui a exclu Canadian Prepper et Sensible Prepper. L'identité de « Selco » n'est pas vérifiable. Les affirmations médicales tirées des forums ne sont pas reprises. Les désaccords entre sources sont affichés tels quels dans l'onglet Terrain.
+
+## Guides officiels de préparation (repères secondaires)
 
 | Source | Éditeur / date | Utilisé pour | Statut |
 |---|---|---|---|

@@ -255,6 +255,7 @@
       <tr><td><span class="chip essentiel">essentiel</span></td><td class="num">${eur(ts.essentiel)}</td><td class="num">${eur(tm.essentiel)}</td><td class="num">${eur(ts.essentiel + tm.essentiel)}</td></tr>
       <tr><td>+ <span class="chip recommandé">recommandé</span></td><td class="num">${eur(ts.essentiel + ts.recommandé)}</td><td class="num">${eur(tm.essentiel + tm.recommandé)}</td><td class="num">${eur(ts.essentiel + ts.recommandé + tm.essentiel + tm.recommandé)}</td></tr>
       <tr><td>+ <span class="chip optionnel">optionnel</span> (tout)</td><td class="num">${eur(ts.essentiel + ts.recommandé + ts.optionnel)}</td><td class="num">${eur(tm.essentiel + tm.recommandé + tm.optionnel)}</td><td class="num">${eur(Object.values(ts).reduce((a, x) => a + x, 0) + Object.values(tm).reduce((a, x) => a + x, 0))}</td></tr></table></div>
+      <div class="alert">Les communautés de praticiens insistent : <b>commencez avec ce que vous avez déjà</b>, constituez d'abord une épargne de précaution, puis achetez progressivement en testant. Les paliers ci-dessous sont une référence de matériel de qualité, pas un ticket d'entrée. <a href="https://old.reddit.com/r/preppers/wiki/doingitright" target="_blank" rel="noopener">[wiki r/preppers]</a> <a href="https://theprepared.com/prepping-basics/guides/emergency-preparedness-checklist-prepping-beginners/" target="_blank" rel="noopener">[The Prepared]</a></div>
       <p class="small">Les objets classés « les deux » sont comptés dans chaque colonne (un exemplaire pour le sac, un pour la maison). Le coût du sac est à multiplier par le nombre de personnes (${persons()}), en mutualisant ce qui peut l'être (réchaud, filtre, radio…).</p>
       <h3>Mon plan d'achat (sacs + maison)</h3>
       <div class="row"><span class="kpi">${eur(b.total)}</span><span>prévus · acquis ${eur(b.spent)} · reste ${eur(b.left)} · budget cible ${eur(S.profile.budget)}</span></div>
@@ -354,7 +355,7 @@
   }
 
   /* ---------- Rendu & événements ---------- */
-  const RENDER = { dash: renderDash, home: renderHome, bag: renderBag, gear: renderGear, calc: () => Calc.render($('#tab-calc')), plan: renderPlan, notice: renderNotice };
+  const RENDER = { dash: renderDash, home: renderHome, bag: renderBag, gear: renderGear, calc: () => Calc.render($('#tab-calc')), field: () => Field.render($('#tab-field')), plan: renderPlan, notice: renderNotice };
   let current = 'dash';
   function show(tab) {
     current = tab;

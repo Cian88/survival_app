@@ -19,17 +19,22 @@ Vous pouvez aussi ouvrir `index.html` directement. Pour un usage hors ligne comp
 ## Documentation
 - [`docs/NOTICE.md`](docs/NOTICE.md) : notice d'utilisation et informations importantes
 - [`docs/MATERIEL.md`](docs/MATERIEL.md) : liste du matériel, liens et récapitulatif budgétaire
+- [`docs/TERRAIN.md`](docs/TERRAIN.md) : praticiens, forums, crises réelles, sujets techniques
+- [`docs/ENVIRONNEMENTS.md`](docs/ENVIRONNEMENTS.md) : variantes du sac (ville, campagne, montagne, forêt, littoral × chaud, froid, humide)
 - [`docs/APS.md`](docs/APS.md) : analyse de la chaîne *Apprendre Préparer (Sur)vivre*
 - [`docs/SOURCES.md`](docs/SOURCES.md) : sources, licences et méthode
 
 ## Structure
 ```
-index.html          application (7 onglets)
+index.html          application (9 onglets)
 js/app.js           logique (tableau de bord, maison, sacs, budget, plan, notice)
 js/map.js           carte hors ligne (Leaflet + relief + OSM + PMTiles)
 js/knowledge.js     contenus sourcés (piliers, scénarios, infos clés)
 js/gear.js          catalogue du matériel
 js/aps.js           synthèse de la chaîne APS
+js/field.js         savoir de terrain (praticiens, forums, crises)
+js/env.js           variantes du sac par environnement
+js/calc.js          calculateurs
 data/               relief Europe, fond vectoriel, points nucléaire/barrages/centrales
 lib/                Leaflet 1.9.4, pmtiles, protomaps-leaflet (copies locales)
 tools/              scripts de régénération des données
