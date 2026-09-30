@@ -59,7 +59,8 @@
 
   /* Besoins selon le profil. need = null → oui/non. */
   function computeNeeds(S) {
-    const P = S.profile, n = Math.max(1, (+P.adults || 0) + (+P.children || 0)), ad = Math.max(1, +P.adults || 1), days = +P.days || 3;
+    const pro = !window.Premium || Premium.isPremium();
+    const P = pro ? S.profile : Object.assign({}, S.profile, { lieu: [], climat: [], health: {}, heating: 'electrique', cooking: 'electrique', water: 'reseau', vehicle: false, dwelling: 'maison', floor: 1 }), n = Math.max(1, (+P.adults || 0) + (+P.children || 0)), ad = Math.max(1, +P.adults || 1), days = +P.days || 3;
     const cold = (P.climat || []).includes('froid'), hot = (P.climat || []).includes('chaud');
     const H = P.health || {}, heatNeedsPower = ['electrique', 'pac', 'gaz', 'fioul', 'collectif'].includes(P.heating || 'electrique');
     const combustion = ['gaz', 'fioul', 'bois'].includes(P.heating) || P.cooking === 'gaz' || P.cooking === 'mixte';
@@ -216,15 +217,15 @@
       ${R.nuc ? `<p class="small">☢ Site nucléaire le plus proche du domicile : <b>${h(R.nuc.p.name)}</b> à ${fr(R.nuc.d, 0)} km${R.nuc.d <= 20 ? ' — <b>dans le rayon PPI de 20 km</b>' : ''}.</p>` : ''}
     </div>
     ${missV.length ? `<div class="card alertcard"><h3>Manques vitaux à combler d'abord</h3><ul>${missV.map(x => `<li><b>${h(x.label)}</b>${x.need != null ? ` — ${fr(x.have, 0)} / ${fr(x.need, 0)} ${h(x.unit)}` : ''} ${buy(x)}</li>`).join('')}</ul></div>` : '<div class="card"><p>✅ Tous vos besoins vitaux sont couverts.</p></div>'}
-    <div class="card"><div class="row"><label><input type="checkbox" id="audGaps" ${onlyGaps ? 'checked' : ''}> Afficher seulement les manques</label>
-      <button class="btn ghost" data-act="audcsv">Liste de courses des manques (CSV)</button></div></div>
-    ${FN.map(([id, ic, name]) => {
+    ${!(window.Premium && Premium.isPremium()) ? '' : `<div class="card"><div class="row"><label><input type="checkbox" id="audGaps" ${onlyGaps ? 'checked' : ''}> Afficher seulement les manques</label>
+      <button class="btn ghost" data-act="audcsv">Liste de courses des manques (CSV)</button></div></div>`}
+    ${!(window.Premium && Premium.isPremium()) ? `<div class="card">${Premium.lockNote('Le détail des ' + R.list.length + ' besoins calculés pour vous (quantités, statut, justification, sources, liens d\'achat) et la liste de courses font partie de Premium.')}</div>` : FN.map(([id, ic, name]) => {
       const rows = R.list.filter(x => x.fn === id && (!onlyGaps || x.status === 'miss' || x.status === 'part'));
       if (!rows.length) return '';
       const all = R.list.filter(x => x.fn === id && !x.na), ok = all.filter(x => x.status === 'ok').length;
       return `<div class="card"><h3>${ic} ${name} <span class="chip">${ok}/${all.length}</span></h3><div class="tablewrap"><table class="audit"><tr><th></th><th>Besoin</th><th class="num">Nécessaire</th><th class="num">J'ai</th><th></th></tr>${rows.map(row).join('')}</table></div></div>`;
     }).join('')}`;
-    el.querySelector('#audGaps').onchange = e => { onlyGaps = e.target.checked; render(el, S); };
+    const ag = el.querySelector('#audGaps'); if (ag) ag.onchange = e => { onlyGaps = e.target.checked; render(el, S); };
   }
   function gapsCsv(S) {
     const R = evaluate(S, ctxCache), G = window.GEAR_BY_ID || {};

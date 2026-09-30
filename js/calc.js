@@ -118,7 +118,7 @@
   window.Calc = {
     render(el) {
       el.innerHTML = `<div class="card"><h2>Calculateurs</h2><p class="small">Outils de dimensionnement à partir de sources de praticiens et de tests indépendants. Les hypothèses sont indiquées sous chaque calcul. Les résultats sont des ordres de grandeur, pas des garanties.</p></div>
-      <div class="grid">${CALCS.map(c => `<div class="card calc" data-calc="${c.id}"><h3>${c.title}</h3><div class="row">${c.html}</div><div class="calcout alert"></div><p class="src">${c.src()}</p></div>`).join('')}</div>`;
+      <div class="grid">${CALCS.map(c => (window.Premium && !Premium.isPremium() && !Premium.FREE_CALCS.includes(c.id)) ? `<div class="card"><h3>${c.title}</h3>${Premium.lockNote('Calculateur Premium.')}</div>` : `<div class="card calc" data-calc="${c.id}"><h3>${c.title}</h3><div class="row">${c.html}</div><div class="calcout alert"></div><p class="src">${c.src()}</p></div>`).join('')}</div>`;
       el.querySelectorAll('.calc').forEach(card => {
         const c = CALCS.find(x => x.id === card.dataset.calc), out = card.querySelector('.calcout');
         const run = () => { out.innerHTML = c.calc(read(card)); };

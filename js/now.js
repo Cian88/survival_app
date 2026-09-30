@@ -113,16 +113,16 @@
     const rdv = (S.points || []).filter(p => p.type === 'rdv' || p.type === 'base');
     return `<div class="card sitpanel"><h3>${sit.ic} ${h(sit.n)} — à faire maintenant</h3>
       <ol class="steps">${steps.map(([t, sr]) => `<li><label><input type="checkbox"> <span>${h(t)}</span></label> <a class="src" href="${h(sr.u)}" target="_blank" rel="noopener">[${h(sr.t)}]</a></li>`).join('')}</ol>
-      <div class="grid">
+      ${!Premium.isPremium() ? Premium.lockNote('Premium affiche ici votre matériel disponible pour cette situation, ce qui vous manque, les ressources et dangers les plus proches (distance et cap) et la direction de vos points de rendez-vous.') : `<div class="grid">
         <div><h4>Votre matériel pour ça</h4>${have.length ? `<ul class="small">${have.map(x => `<li>✓ ${h(x.label)}${x.need != null ? ` (${fr(x.have, 0)}/${fr(x.need, 0)} ${h(x.unit)})` : ''}</li>`).join('')}</ul>` : '<p class="small muted">Rien de déclaré.</p>'}
           ${miss.length ? `<p class="small"><b>Il vous manque :</b></p><ul class="small">${miss.map(x => `<li>✗ ${h(x.label)}</li>`).join('')}</ul>` : ''}</div>
         <div><h4>Autour de vous</h4><div id="nowNear" class="small">${W ? 'Recherche dans vos données hors ligne…' : 'Position inconnue.'}</div></div>
       </div>
-      ${sit.rdv && rdv.length ? `<h4>Vos points de rendez-vous / refuges</h4><ul class="small" id="nowRdv">${rdv.map(p => `<li data-rdv="${p.lat},${p.lon}"><b>${h(p.name)}</b> <span class="d"></span> <button class="link" data-goll="${p.lat},${p.lon}">carte</button></li>`).join('')}</ul>` : ''}
+      `}${Premium.isPremium() && sit.rdv && rdv.length ? `<h4>Vos points de rendez-vous / refuges</h4><ul class="small" id="nowRdv">${rdv.map(p => `<li data-rdv="${p.lat},${p.lon}"><b>${h(p.name)}</b> <span class="d"></span> <button class="link" data-goll="${p.lat},${p.lon}">carte</button></li>`).join('')}</ul>` : ''}
     </div>`;
   }
   async function fillNearby(W, sit) {
-    const M = window.SurvivalMap; if (!M) return;
+    const M = window.SurvivalMap; if (!M || !Premium.isPremium()) return;
     const hm = App.state.profile.home, hel = document.getElementById('nowHome');
     if (hel && hm && (hm.lat || hm.lon) && pos) { const d = M.distKm(W.lat, W.lon, hm.lat, hm.lon), b = M.bearing(W.lat, W.lon, hm.lat, hm.lon); hel.innerHTML = `🏠 Domicile : <b>${fr(d)} km</b> au <b>${M.cardinal(b)}</b> (cap ${Math.round(b)}°) — ≈ ${fr(d / 4.5)} h de marche sur le plat.`; }
     document.querySelectorAll('#nowRdv [data-rdv]').forEach(li => { const [la, lo] = li.dataset.rdv.split(',').map(Number), d = M.distKm(W.lat, W.lon, la, lo), b = M.bearing(W.lat, W.lon, la, lo); li.querySelector('.d').textContent = `${fr(d)} km au ${M.cardinal(b)} (cap ${Math.round(b)}°)`; });

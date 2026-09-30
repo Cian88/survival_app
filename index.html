@@ -13,7 +13,7 @@
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="logo">⛺</span><div><b>Kit Survie Europe</b><small id="netState">…</small></div></div>
+  <div class="brand"><span class="logo">⛺</span><div><b>Kit Survie Europe</b><small id="netState">…</small></div><button id="planBadge" class="planbadge" data-tab="premium">Gratuit</button></div>
   <nav id="tabs" role="tablist">
     <button data-tab="now" class="on now-tab">⚡ Instant T</button>
     <button data-tab="audit">État des lieux</button>
@@ -26,6 +26,7 @@
     <button data-tab="gear">Matériel & budget</button>
     <button data-tab="plan">Plan & scénarios</button>
     <button data-tab="notice">Notice</button>
+    <button data-tab="premium" class="pro-tab">★ Premium</button>
   </nav>
 </header>
 
@@ -46,6 +47,7 @@
   </section>
   <section id="tab-plan" class="tab"></section>
   <section id="tab-notice" class="tab"></section>
+  <section id="tab-premium" class="tab"></section>
 </main>
 
 <footer class="foot small muted">Données stockées uniquement sur cet appareil. Outil d'aide à la préparation : il ne remplace ni les consignes des autorités ni une formation aux premiers secours.</footer>
@@ -55,6 +57,7 @@
 <script src="lib/protomaps-leaflet.js"></script>
 <script src="data/base_europe.js"></script>
 <script src="data/poi_europe.js"></script>
+<script src="js/config.js"></script>
 <script src="js/store.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/knowledge.js"></script>
@@ -66,6 +69,7 @@
 <script src="js/needs.js"></script>
 <script src="js/profile.js"></script>
 <script src="js/now.js"></script>
+<script src="js/premium.js"></script>
 <script src="js/map.js"></script>
 <script src="js/app.js"></script>
 </body>

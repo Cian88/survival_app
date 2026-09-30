@@ -6,6 +6,8 @@ Application **locale, personnelle et hors ligne**, construite autour de la survi
 - un écran **Instant T** : position GPS sans Internet, autonomie réelle, actions par situation, ressources et dangers les plus proches, cap vers le domicile ou le point de rendez-vous ;
 - des **cartes topographiques hors ligne**, dont la carte **IGN officielle** (Plan IGN et estompage, Licence Ouverte Etalab 2.0) téléchargeable par zone, exportable et importable.
 
+**Version gratuite et Premium** : l'essentiel pour réagir (Instant T, carte intégrée, 1 pack de carte, 1 sac…) est gratuit. Premium (3,90 €/mois, 29,90 €/an ou 59,90 € à vie) débloque la personnalisation complète. Les licences sont signées et vérifiées hors ligne. Voir [`docs/MONETISATION.md`](docs/MONETISATION.md).
+
 Elle permet aussi de préparer :
 - un **écosystème de survie domestique** : stock d'eau et de nourriture, énergie, santé, hygiène, communication, documents, sécurité, plan familial ;
 - un **sac d'évacuation 72 h** par personne ;
@@ -29,6 +31,7 @@ Vous pouvez aussi ouvrir `index.html` directement. Pour un usage hors ligne comp
 - [`docs/ENVIRONNEMENTS.md`](docs/ENVIRONNEMENTS.md) : variantes du sac (ville, campagne, montagne, forêt, littoral × chaud, froid, humide)
 - [`docs/APS.md`](docs/APS.md) : analyse de la chaîne *Apprendre Préparer (Sur)vivre*
 - [`docs/SOURCES.md`](docs/SOURCES.md) : sources, licences et méthode
+- [`docs/MONETISATION.md`](docs/MONETISATION.md) : offres, gratuit / Premium, licences, mise en vente
 
 ## Structure
 ```
@@ -37,6 +40,8 @@ js/app.js           logique (navigation, maison, sacs, budget, plan, notice)
 js/profile.js       profil personnel
 js/needs.js         état des lieux matériel (besoins calculés selon le profil)
 js/now.js           écran Instant T
+js/premium.js       offres, licence vérifiée hors ligne, verrous Premium
+js/config.js        prix, liens de paiement, clé publique des licences
 js/map.js           carte hors ligne (IGN, relief, OSM, PMTiles, packs .kspack, proximité)
 js/knowledge.js     contenus sourcés (piliers, scénarios, infos clés)
 js/gear.js          catalogue du matériel
@@ -46,7 +51,7 @@ js/env.js           variantes du sac par environnement
 js/calc.js          calculateurs
 data/               relief Europe, fond vectoriel, points nucléaire/barrages/centrales
 lib/                Leaflet 1.9.4, pmtiles, protomaps-leaflet (copies locales)
-tools/              scripts de régénération des données
+tools/              données, licences (license.mjs), service de délivrance (licence-worker.js)
 sw.js               service worker (cache hors ligne)
 ```
 

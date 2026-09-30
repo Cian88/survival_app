@@ -337,7 +337,7 @@
   }
 
   /* ---------- Rendu & événements ---------- */
-  const RENDER = { now: () => Now.render($('#tab-now'), S), audit: renderAudit, profile: renderProfile, home: renderHome, bag: renderBag, gear: renderGear, calc: () => Calc.render($('#tab-calc')), field: () => Field.render($('#tab-field')), plan: renderPlan, notice: renderNotice };
+  const RENDER = { premium: () => Premium.render($('#tab-premium')), now: () => Now.render($('#tab-now'), S), audit: renderAudit, profile: renderProfile, home: renderHome, bag: renderBag, gear: renderGear, calc: () => Calc.render($('#tab-calc')), field: () => Field.render($('#tab-field')), plan: renderPlan, notice: renderNotice };
   let current = 'now';
   function renderProfile() {
     Profile.render($('#tab-profile'), S);
@@ -352,6 +352,8 @@
   }
   function commit() { App.save(); if (RENDER[current]) RENDER[current](); }
   App.go = show;
+  App.refresh = () => { badge(); if (RENDER[current]) RENDER[current](); };
+  function badge() { const b = $('#planBadge'); if (b) { b.textContent = Premium.isPremium() ? '★ Premium' : 'Gratuit'; b.className = 'planbadge ' + (Premium.isPremium() ? 'pro' : ''); } }
   function toCsv(rows) { return '﻿' + rows.map(r => r.map(v => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`).join(';')).join('\n'); }
   function applyTheme() { if (S.theme) document.documentElement.dataset.theme = S.theme; else delete document.documentElement.dataset.theme; }
 
@@ -382,8 +384,10 @@
     if (d.go) { e.preventDefault(); return show(d.go); }
     if (d.audreset) { if (S.audit[d.audreset]) delete S.audit[d.audreset].have; return commit(); }
     if (d.audna) { S.audit[d.audna] = Object.assign(S.audit[d.audna] || {}, { na: !(S.audit[d.audna] || {}).na }); return commit(); }
+    if ((d.quick) && S.inventory.length >= Premium.LIMITS.inventory && !Premium.gate(`La version gratuite limite l'inventaire à ${Premium.LIMITS.inventory} articles.`)) return;
     if (d.quick) { S.inventory.push({ id: uid(), name: d.quick === '9' ? 'Pack eau 6 × 1,5 L' : d.quick === '5' ? 'Bidon eau 5 L' : 'Jerrican eau 20 L', cat: 'eau', qty: 1, litres: +d.quick, kcal: 0, expiry: '', where: '' }); return commit(); }
     if (d.invdel) { S.inventory = S.inventory.filter(x => x.id !== d.invdel); return commit(); }
+    if ((d.env || d.envadd || d.envaddall) && !Premium.gate('Les variantes du sac selon le lieu et le climat font partie de Premium.')) return;
     if (d.env) { const [bid, eid] = d.env.split('|'), b = S.bags.find(x => x.id === bid); b.env = b.env || []; b.env = b.env.includes(eid) ? b.env.filter(x => x !== eid) : [...b.env, eid]; return commit(); }
     if (d.envadd) { const [bid, k] = d.envadd.split('|'); S.bags.find(x => x.id === bid).items.push(envLine(k)); return commit(); }
     if (d.envaddall) { const b = S.bags.find(x => x.id === d.envaddall), have = new Set(b.items.map(i => i.envKey)); (b.env || []).forEach(id => (ENV_BY_ID[id].add || []).forEach((a, i) => { const k = id + ':' + i; if (a.priority === 'essentiel' && !have.has(k)) b.items.push(envLine(k)); })); return commit(); }
@@ -396,9 +400,11 @@
     if (d.hdel) { S.homePlan = S.homePlan.filter(x => x.key !== d.hdel); return commit(); }
     if (d.ctdel) { S.contacts = S.contacts.filter(x => x.id !== d.ctdel); return commit(); }
     switch (d.act) {
-      case 'bagnew': S.bags.push({ id: uid(), name: 'Sac ' + (S.bags.length + 1), owner: '', items: [], env: [...(S.profile.lieu || []), ...(S.profile.climat || [])] }); return commit();
+      case 'bagnew': if (S.bags.length >= Premium.LIMITS.bags && !Premium.gate('La version gratuite comprend un sac. Premium permet un sac par personne.')) return;
+        S.bags.push({ id: uid(), name: 'Sac ' + (S.bags.length + 1), owner: '', items: [], env: [...(S.profile.lieu || []), ...(S.profile.climat || [])] }); return commit();
       case 'onboarded': S.onboarded = true; App.save(); return show('audit');
-      case 'audcsv': return App.download('etat-des-lieux-manques.csv', Needs.gapsCsv(S), 'text/csv');
+      case 'audcsv': if (!Premium.gate('La liste de courses personnalisée fait partie de Premium.')) return;
+        return App.download('etat-des-lieux-manques.csv', Needs.gapsCsv(S), 'text/csv');
       case 'homeessential': { const have = new Set(S.homePlan.map(i => i.gearId)); GEAR.filter(g => g.scope !== 'sac' && g.priority === 'essentiel' && !have.has(g.id)).forEach(g => S.homePlan.push(lineFromGear(g))); return commit(); }
       case 'checked': S.lastCheck = today(); return commit();
       case 'export': return App.download(`kit-survie-sauvegarde-${today()}.json`, JSON.stringify(S, null, 1), 'application/json');
@@ -411,6 +417,7 @@
   document.addEventListener('submit', e => {
     e.preventDefault();
     const f = new FormData(e.target), o = Object.fromEntries(f.entries());
+    if (e.target.id === 'invForm' && S.inventory.length >= Premium.LIMITS.inventory && !Premium.gate(`La version gratuite limite l'inventaire à ${Premium.LIMITS.inventory} articles.`)) return;
     if (e.target.id === 'invForm') S.inventory.push({ id: uid(), name: o.name, cat: o.cat, qty: +o.qty || 0, litres: +o.litres || 0, kcal: +o.kcal || 0, expiry: o.expiry, where: o.where });
     if (e.target.id === 'ctForm') S.contacts.push({ id: uid(), name: o.name, phone: o.phone, role: o.role });
     commit();
@@ -424,5 +431,6 @@
   let startTab = 'now'; try { startTab = localStorage.getItem('survie.tab') || 'now'; } catch (e) { }
   if (!S.onboarded) startTab = 'profile';
   show(RENDER[startTab] || startTab === 'map' ? startTab : 'now');
+  Premium.load().then(() => App.refresh());
   if ('serviceWorker' in navigator && /^https?:/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW', err));
 })();

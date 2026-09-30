@@ -33,6 +33,7 @@ L'application tourne autour de **votre** situation : votre foyer, votre logement
 7. **Terrain** : ce que disent les praticiens, les forums et les témoins de crises réelles.
 8. **Calculateurs** : eau, dose de Javel selon votre flacon, batterie, solaire, eau de pluie, poids du sac, temps de marche, stock profond, gaz par temps froid.
 9. **Matériel & budget**, **Plan & scénarios**, **Notice**.
+10. **★ Premium** : offres (3,90 €/mois, 29,90 €/an, 59,90 € à vie) et activation d'une clé de licence, vérifiée sur l'appareil sans Internet. Tout ce qui sert en urgence reste gratuit. Le détail est dans [`MONETISATION.md`](MONETISATION.md).
 
 ## 3. La carte hors ligne
 

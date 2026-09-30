@@ -252,6 +252,7 @@
     const cats = [...document.querySelectorAll('[name=osmcat]:checked')].map(i => i.value);
     const st = $('#osmStatus');
     if (!cats.length) return st.textContent = 'Cochez au moins une catégorie.';
+    if (!Premium.isPremium()) { let z = []; try { z = await idb.all('osm'); } catch (e) { } if (z.length >= Premium.LIMITS.osmZones) return Premium.upsell('La version gratuite comprend une zone de points hors ligne. Premium : zones illimitées.'); }
     if (map.getZoom() < 9) return st.textContent = 'Zoomez davantage (niveau ≥ 9, soit une zone d\'environ 100 km) pour limiter la charge sur les serveurs Overpass.';
     if (!navigator.onLine) return st.textContent = 'Connexion requise pour télécharger. Les zones déjà enregistrées restent disponibles hors ligne.';
     const b = map.getBounds(), bbox = [b.getSouth(), b.getWest(), b.getNorth(), b.getEast()].map(v => +v.toFixed(4));
@@ -530,6 +531,11 @@
     },
     async download() {
       const st = $('#pkStatus');
+      if (!Premium.isPremium()) {
+        const L = Premium.LIMITS;
+        if ((await listPacks()).length >= L.packs) return Premium.upsell(`La version gratuite comprend ${L.packs} pack de carte hors ligne. Premium : packs illimités (domicile, travail, famille, itinéraires).`);
+        if (+$('#pkKm').value > L.packKm || +$('#pkZ').value > L.packZoom) return Premium.upsell(`En gratuit, un pack couvre jusqu'à ${L.packKm} km et le détail ${L.packZoom}. Premium : jusqu'à 50 km et le détail 16.`);
+      }
       try {
         const bbox = await packUI.bbox(), srcs = packUI.srcs();
         if (!srcs.length) return st.textContent = 'Choisissez au moins une source.';
@@ -552,6 +558,7 @@
         const d = ev.target.dataset, p = packs.find(x => x.key === (d.pkgo || d.pkexp || d.pkdel));
         if (!p) return;
         if (d.pkgo) map.fitBounds([[p.bbox[0], p.bbox[1]], [p.bbox[2], p.bbox[3]]]);
+        if (d.pkexp && !Premium.gate('L\'export de packs (clé USB, autre appareil) fait partie de Premium.')) return;
         if (d.pkexp) { $('#pkStatus').textContent = 'Préparation du fichier…'; const b = await exportPack(p.key); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = p.name.replace(/[^\w-]+/g, '_') + '.kspack'; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); $('#pkStatus').textContent = `Fichier prêt (${Math.round(b.size / 1048576)} Mo).`; }
         if (d.pkdel && await UI.confirm(`Supprimer le pack « ${p.name} » et ses tuiles ?`, 'Supprimer')) { await deletePack(p.key); packUI.list(); storageInfo(); }
       };
@@ -560,6 +567,7 @@
     },
     async import(file) {
       const st = $('#pkStatus');
+      if (!Premium.gate('L\'import de packs fait partie de Premium.')) return;
       try { const m = await importPack(file, (i, n) => { st.textContent = `Import : ${i} / ${n} tuiles…`; }); st.textContent = `Pack « ${m.name} » importé.`; packUI.list(); storageInfo(); }
       catch (err) { st.textContent = 'Import impossible : ' + err.message; }
     },
