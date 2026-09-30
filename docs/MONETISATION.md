@@ -32,7 +32,10 @@ Principe retenu : **tout ce qui sert à réagir en urgence reste gratuit**. Prem
 
 Les limites se règlent dans `js/premium.js` (`LIMITS`, `FREE_CALCS`).
 
-## Comment fonctionne la licence (sans serveur, hors ligne)
+## iOS : achats intégrés Apple obligatoires
+Sur l'App Store, la règle 3.1.1 impose les achats intégrés d'Apple et **interdit les clés de licence**. L'application iOS utilise donc StoreKit (abonnements mensuel et annuel, achat à vie, restauration des achats). Le système de licences décrit ci-dessous ne sert que pour la **version web**. Voir [`IOS.md`](IOS.md).
+
+## Comment fonctionne la licence (version web, sans serveur, hors ligne)
 
 1. L'acheteur paie par un **lien de paiement**.
 2. Il reçoit une **clé de licence** `KS1.…` : un petit jeton JSON (formule, date d'expiration, e-mail masqué) **signé** avec votre clé privée (ECDSA P-256).

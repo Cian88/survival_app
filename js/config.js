@@ -9,6 +9,11 @@ window.KS_CONFIG = {
     lifetime: { amount: 59.90, label: '59,90 €', per: 'une seule fois', note: 'Accès à vie, mises à jour comprises' },
   },
   checkout: { monthly: '', annual: '', lifetime: '' },
+  /* iOS (App Store) : identifiants des produits d'achat intégré créés dans App Store Connect.
+     monthly et annual = abonnements auto-renouvelables (même groupe) ; lifetime = achat non consommable. */
+  iap: { monthly: 'fr.kitsurvie.premium.mensuel', annual: 'fr.kitsurvie.premium.annuel', lifetime: 'fr.kitsurvie.premium.avie' },
+  termsUrl: 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/',
+  privacyUrl: '',
   renewUrl: '',
   supportEmail: '',
   licensePublicKeyJwk: {"kty":"EC","x":"5D2m2QBFvxmtR1TBmgCl2AznViS4Nwf0ceTGe3gaVA8","y":"L_Xj9xXf566lcNvwO56oHS40gopxIB9x8yUvPZNC_z0","crv":"P-256"},

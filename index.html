@@ -8,6 +8,8 @@
 <meta name="theme-color" content="#1d3b2a">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="stylesheet" href="lib/leaflet/leaflet.css">
 <link rel="stylesheet" href="css/app.css">
 </head>
@@ -50,8 +52,17 @@
   <section id="tab-premium" class="tab"></section>
 </main>
 
+<nav id="bottombar" aria-label="Navigation principale">
+  <button data-tab="now" class="on"><span>⚡</span>Instant T</button>
+  <button data-tab="audit"><span>📋</span>État des lieux</button>
+  <button data-tab="map"><span>🗺</span>Carte</button>
+  <button data-tab="profile"><span>👤</span>Profil</button>
+  <button data-more><span>☰</span>Plus</button>
+</nav>
 <footer class="foot small muted">Données stockées uniquement sur cet appareil. Outil d'aide à la préparation : il ne remplace ni les consignes des autorités ni une formation aux premiers secours.</footer>
 
+<script src="lib/capacitor.js"></script>
+<script src="js/native.js"></script>
 <script src="lib/leaflet/leaflet.js"></script>
 <script src="lib/pmtiles.js"></script>
 <script src="lib/protomaps-leaflet.js"></script>

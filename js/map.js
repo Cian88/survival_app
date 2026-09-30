@@ -507,10 +507,7 @@
 
   let gpsFix = null;
   function getGPS() {
-    return new Promise((res, rej) => {
-      if (!navigator.geolocation) return rej(new Error('géolocalisation indisponible'));
-      navigator.geolocation.getCurrentPosition(p => { gpsFix = { lat: p.coords.latitude, lon: p.coords.longitude, acc: p.coords.accuracy, t: Date.now() }; res(gpsFix); }, rej, { enableHighAccuracy: true, timeout: 20000, maximumAge: 60000 });
-    });
+    return Native.getPosition().then(p => (gpsFix = Object.assign(p, { t: Date.now() })));
   }
   function homeLL() { const h = (App.state.profile || {}).home; return h && isFinite(h.lat) && isFinite(h.lon) && (h.lat || h.lon) ? h : null; }
   const packUI = {
@@ -559,6 +556,7 @@
         if (!p) return;
         if (d.pkgo) map.fitBounds([[p.bbox[0], p.bbox[1]], [p.bbox[2], p.bbox[3]]]);
         if (d.pkexp && !Premium.gate('L\'export de packs (clé USB, autre appareil) fait partie de Premium.')) return;
+        if (d.pkexp && Native.isNative) { $('#pkStatus').textContent = 'Préparation du fichier…'; const b = await exportPack(p.key); await Native.saveFile(p.name.replace(/[^\w-]+/g, '_') + '.kspack', b); $('#pkStatus').textContent = ''; return; }
         if (d.pkexp) { $('#pkStatus').textContent = 'Préparation du fichier…'; const b = await exportPack(p.key); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = p.name.replace(/[^\w-]+/g, '_') + '.kspack'; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); $('#pkStatus').textContent = `Fichier prêt (${Math.round(b.size / 1048576)} Mo).`; }
         if (d.pkdel && await UI.confirm(`Supprimer le pack « ${p.name} » et ses tuiles ?`, 'Supprimer')) { await deletePack(p.key); packUI.list(); storageInfo(); }
       };
@@ -674,13 +672,12 @@
     $('#pmFile').onchange = e => e.target.files[0] && loadPmtiles(e.target.files[0]);
     $('#btnMeasure').onclick = toggleMeasure;
     $('#btnLocate').onclick = () => {
-      if (!navigator.geolocation) return UI.notice('Géolocalisation indisponible sur cet appareil ou dans ce contexte.');
-      navigator.geolocation.getCurrentPosition(p => {
-        const ll = [p.coords.latitude, p.coords.longitude];
-        L.circle(ll, { radius: p.coords.accuracy, color: '#0a84ff', weight: 1 }).addTo(map);
-        L.circleMarker(ll, { radius: 7, color: '#fff', weight: 2, fillColor: '#0a84ff', fillOpacity: 1 }).addTo(map).bindPopup(`Vous êtes ici (± ${Math.round(p.coords.accuracy)} m)`).openPopup();
+      getGPS().then(p => {
+        const ll = [p.lat, p.lon];
+        L.circle(ll, { radius: p.acc || 0, color: '#0a84ff', weight: 1 }).addTo(map);
+        L.circleMarker(ll, { radius: 7, color: '#fff', weight: 2, fillColor: '#0a84ff', fillOpacity: 1 }).addTo(map).bindPopup(`Vous êtes ici (± ${Math.round(p.acc || 0)} m)`).openPopup();
         map.setView(ll, Math.max(map.getZoom(), 12));
-      }, err => UI.notice('Position indisponible : ' + err.message), { enableHighAccuracy: true, timeout: 20000 });
+      }).catch(err => UI.notice('Position indisponible : ' + err.message));
     };
     $('#btnClearOtm').onclick = async () => { if (await UI.confirm('Vider le cache OpenTopoMap ?', 'Vider')) { await idb.deletePrefix('tiles', 'otm/'); storageInfo(); } };
     $('#btnClearDem').onclick = async () => { if (await UI.confirm('Vider le cache relief ?', 'Vider')) { await idb.deletePrefix('tiles', 'dem/'); storageInfo(); } };

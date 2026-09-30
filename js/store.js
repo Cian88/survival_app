@@ -7,7 +7,7 @@
     try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; }
   }
   function save(state) {
-    try { localStorage.setItem(KEY, JSON.stringify(state)); return true; } catch (e) { console.warn('Sauvegarde impossible', e); return false; }
+    try { const j = JSON.stringify(state); localStorage.setItem(KEY, j); if (window.Native) Native.mirrorState(j); return true; } catch (e) { console.warn('Sauvegarde impossible', e); return false; }
   }
 
   let dbp = null;

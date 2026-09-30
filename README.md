@@ -16,7 +16,10 @@ Elle permet aussi de préparer :
 
 Tout fonctionne dans le navigateur (HTML/JS, sans serveur ni compte). Les données restent sur l'appareil.
 
-## Démarrer
+## Application iOS
+Le dépôt contient un projet **iOS natif** (Capacitor 8, dossier `ios/`) : GPS natif, achats intégrés StoreKit (exigés par l'App Store), export via la feuille de partage, barre d'onglets en bas de l'écran, données embarquées pour fonctionner hors ligne. Compilation sur Mac avec Xcode : `npm install && npm run ios:sync && npm run ios:open`. Guide complet : [`docs/IOS.md`](docs/IOS.md).
+
+## Démarrer (web)
 
 ```sh
 ./lancer.sh            # Linux / macOS  → http://localhost:8765
@@ -32,6 +35,7 @@ Vous pouvez aussi ouvrir `index.html` directement. Pour un usage hors ligne comp
 - [`docs/APS.md`](docs/APS.md) : analyse de la chaîne *Apprendre Préparer (Sur)vivre*
 - [`docs/SOURCES.md`](docs/SOURCES.md) : sources, licences et méthode
 - [`docs/MONETISATION.md`](docs/MONETISATION.md) : offres, gratuit / Premium, licences, mise en vente
+- [`docs/IOS.md`](docs/IOS.md) : application iOS (compilation, achats intégrés, App Store)
 
 ## Structure
 ```
@@ -52,7 +56,10 @@ js/calc.js          calculateurs
 data/               relief Europe, fond vectoriel, points nucléaire/barrages/centrales
 lib/                Leaflet 1.9.4, pmtiles, protomaps-leaflet (copies locales)
 tools/              données, licences (license.mjs), service de délivrance (licence-worker.js)
-sw.js               service worker (cache hors ligne)
+sw.js               service worker (cache hors ligne, version web)
+js/native.js        pont iOS (GPS, fichiers, préférences, achats StoreKit)
+ios/                projet Xcode généré par Capacitor
+capacitor.config.json, package.json   configuration iOS et dépendances
 ```
 
 ## Licences des données

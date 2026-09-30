@@ -1,0 +1,10 @@
+{
+  "appId": "fr.kitsurvie.europe",
+  "appName": "Kit Survie",
+  "webDir": "www",
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#1d3b2a",
+    "limitsNavigationsToAppBoundDomains": false
+  }
+}

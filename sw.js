@@ -1,11 +1,11 @@
 /* Service worker : met l'application en cache pour un usage 100 % hors ligne.
    Les tuiles de carte et points OSM sont gérés séparément dans IndexedDB (js/map.js). */
-const VERSION = 'kit-survie-v8';
+const VERSION = 'kit-survie-v9';
 const SHELL = [
   './', 'index.html', 'css/app.css', 'manifest.webmanifest', 'icons/icon.svg',
   'lib/leaflet/leaflet.js', 'lib/leaflet/leaflet.css', 'lib/leaflet/images/layers.png', 'lib/leaflet/images/layers-2x.png',
   'lib/leaflet/images/marker-icon.png', 'lib/leaflet/images/marker-icon-2x.png', 'lib/leaflet/images/marker-shadow.png',
-  'lib/pmtiles.js', 'lib/protomaps-leaflet.js',
+  'lib/capacitor.js', 'js/native.js', 'lib/pmtiles.js', 'lib/protomaps-leaflet.js',
   'data/base_europe.js', 'data/poi_europe.js', 'data/relief_europe.jpg',
   'js/config.js', 'js/store.js', 'js/ui.js', 'js/knowledge.js', 'js/aps.js', 'js/gear.js', 'js/env.js', 'js/calc.js', 'js/field.js', 'js/needs.js', 'js/profile.js', 'js/now.js', 'js/premium.js', 'js/map.js', 'js/app.js',
 ];

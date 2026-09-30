@@ -148,3 +148,27 @@ table.audit td:first-child { width: 30px; }
 .locknote { background: var(--chip); border: 1px dashed var(--line); border-radius: 8px; padding: 8px 10px; margin: 6px 0; font-size: .88rem; }
 fieldset.plain { border: 0; padding: 0; margin: 0; min-width: 0; }
 fieldset.plain[disabled] { opacity: .55; }
+/* iOS (Capacitor) : zones sûres (encoche, barre d'accueil) */
+html.native .top { top: 0; padding-top: calc(8px + env(safe-area-inset-top, 0px)); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+html.native .foot { padding-bottom: calc(30px + env(safe-area-inset-bottom, 0px)); }
+html.native body { -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
+html.native .maplayout { height: calc(100vh - 170px - env(safe-area-inset-top, 0px)); }
+@media (max-width: 800px) { html.native .maplayout { height: auto; } }
+/* Barre d'onglets inférieure (iOS natif et petits écrans) */
+#bottombar { display: none; }
+@media (max-width: 800px) {
+  #bottombar { display: grid; grid-template-columns: repeat(5, 1fr); position: fixed; left: 0; right: 0; bottom: 0; z-index: 1500; background: var(--panel); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  #bottombar button { font: inherit; font-size: .68rem; background: none; border: 0; color: var(--muted); padding: 6px 2px 5px; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; }
+  #bottombar button span { font-size: 1.25rem; line-height: 1.2; }
+  #bottombar button.on { color: var(--accent); font-weight: 700; }
+  #tabs { display: none; }
+  .top { padding-bottom: 8px; }
+  main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
+  .foot { padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px)) !important; }
+  .sheet-wrap { position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,.35); display: flex; align-items: flex-end; }
+  .sheet { width: 100%; background: var(--panel); border-radius: 16px 16px 0 0; padding: 12px 12px calc(16px + env(safe-area-inset-bottom, 0px)); display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .sheet button { font: inherit; font-size: .75rem; background: var(--chip); color: var(--ink); border: 0; border-radius: 12px; padding: 12px 4px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .sheet button span { font-size: 1.4rem; }
+  .maplayout { grid-template-rows: 58vh auto; }
+  #map { height: 58vh; }
+}

@@ -19,6 +19,7 @@
     state: Object.assign(structuredClone(DEFAULT), Store.load()),
     save() { Store.save(this.state); },
     download(name, content, mime) {
+      if (window.Native && Native.isNative) return Native.saveFile(name, content, mime).catch(e => UI.notice('Export impossible : ' + e.message));
       const a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob([content], { type: mime || 'text/plain' }));
       a.download = name; document.body.appendChild(a); a.click();
@@ -345,13 +346,22 @@
   }
   function show(tab) {
     current = tab;
-    document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+    document.querySelectorAll('#tabs button, #bottombar button[data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+    const more = document.querySelector('#bottombar [data-more]'); if (more) more.classList.toggle('on', !['now', 'audit', 'map', 'profile'].includes(tab));
+    window.scrollTo(0, 0);
     document.querySelectorAll('.tab').forEach(s => s.classList.toggle('on', s.id === 'tab-' + tab));
     if (tab === 'map') SurvivalMap.show(); else RENDER[tab]();
     try { localStorage.setItem('survie.tab', tab); } catch (e) { }
   }
   function commit() { App.save(); if (RENDER[current]) RENDER[current](); }
   App.go = show;
+  function moreSheet() {
+    const items = [['bag', '🎒', 'Sacs'], ['home', '🏠', 'Stock maison'], ['field', '📚', 'Terrain'], ['calc', '🧮', 'Calculateurs'], ['gear', '🛒', 'Matériel & budget'], ['plan', '👪', 'Plan & scénarios'], ['notice', 'ℹ️', 'Notice'], ['premium', '★', 'Premium']];
+    const w = document.createElement('div'); w.className = 'sheet-wrap';
+    w.innerHTML = `<div class="sheet" role="dialog" aria-label="Plus">${items.map(([t, i, n]) => `<button data-tab="${t}"><span>${i}</span>${n}</button>`).join('')}</div>`;
+    w.addEventListener('click', e => { if (e.target === w) w.remove(); });
+    document.body.appendChild(w);
+  }
   App.refresh = () => { badge(); if (RENDER[current]) RENDER[current](); };
   function badge() { const b = $('#planBadge'); if (b) { b.textContent = Premium.isPremium() ? '★ Premium' : 'Gratuit'; b.className = 'planbadge ' + (Premium.isPremium() ? 'pro' : ''); } }
   function toCsv(rows) { return '﻿' + rows.map(r => r.map(v => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`).join(';')).join('\n'); }
@@ -380,7 +390,8 @@
   document.addEventListener('click', e => {
     const t = e.target.closest('button, [data-tab], [data-go]'); if (!t) return;
     const d = t.dataset;
-    if (d.tab) return show(d.tab);
+    if (d.more !== undefined) return moreSheet();
+    if (d.tab) { const sh = document.querySelector('.sheet-wrap'); if (sh) sh.remove(); return show(d.tab); }
     if (d.go) { e.preventDefault(); return show(d.go); }
     if (d.audreset) { if (S.audit[d.audreset]) delete S.audit[d.audreset].have; return commit(); }
     if (d.audna) { S.audit[d.audna] = Object.assign(S.audit[d.audna] || {}, { na: !(S.audit[d.audna] || {}).na }); return commit(); }

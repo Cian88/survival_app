@@ -42,7 +42,41 @@
     const now = Date.now() / 1000, grace = (C.graceDays || 0) * 86400;
     return { payload: p, expired: p.exp != null && now > p.exp + grace, inGrace: p.exp != null && now > p.exp && now <= p.exp + grace };
   }
+  /* ---------- iOS : achats intégrés Apple (StoreKit) ---------- */
+  const IAP = C.iap || {}, NATIVE = !!(window.Native && Native.isNative && Native.Purchases), IAP_CACHE = 'survie.iap';
+  let storePrices = {};
+  const planOf = id => Object.keys(IAP).find(k => IAP[k] === id);
+  async function loadIAP() {
+    const now = Date.now() / 1000, grace = (C.graceDays || 0) * 86400;
+    try {
+      const { purchases } = await Native.Purchases.getPurchases({ onlyCurrentEntitlements: true });
+      let best = null;
+      for (const t of purchases || []) {
+        const plan = planOf(t.productIdentifier); if (!plan) continue;
+        if (plan === 'lifetime') { best = { plan, exp: null }; break; }
+        const exp = t.expirationDate ? Date.parse(t.expirationDate) / 1000 : null;
+        if (t.isActive === true || (exp && exp > now)) if (!best || (best.exp && exp > best.exp)) best = { plan, exp };
+      }
+      try { localStorage.setItem(IAP_CACHE, JSON.stringify(best ? Object.assign({ at: now }, best) : null)); } catch (e) { }
+      state = best ? { active: true, lic: best, reason: '', iap: true } : { active: false, lic: null, reason: 'aucun achat actif', iap: true };
+    } catch (e) { // hors ligne ou StoreKit indisponible : dernier état connu
+      let c = null; try { c = JSON.parse(localStorage.getItem(IAP_CACHE)); } catch (x) { }
+      const ok = c && (c.exp == null || now <= c.exp + grace);
+      state = ok ? { active: true, lic: c, reason: '', iap: true, cached: true } : { active: false, lic: null, reason: 'achats non vérifiables : ' + e.message, iap: true };
+    }
+    Native.Purchases.getProducts({ productIdentifiers: [IAP.monthly, IAP.annual].filter(Boolean), productType: 'subs' })
+      .then(r => (r.products || []).forEach(p => { storePrices[p.identifier || p.productIdentifier] = p.priceString; })).catch(() => { });
+    Native.Purchases.getProducts({ productIdentifiers: [IAP.lifetime].filter(Boolean), productType: 'inapp' })
+      .then(r => (r.products || []).forEach(p => { storePrices[p.identifier || p.productIdentifier] = p.priceString; })).catch(() => { });
+    return state;
+  }
+  async function buy(plan) {
+    await Native.Purchases.purchaseProduct({ productIdentifier: IAP[plan], productType: plan === 'lifetime' ? 'inapp' : 'subs' });
+    return loadIAP();
+  }
+
   async function load() {
+    if (NATIVE) return loadIAP();
     let tok = null; try { tok = localStorage.getItem(KEY); } catch (e) { }
     if (!tok) { state = { active: false, lic: null, reason: 'aucune licence' }; return state; }
     try {
@@ -73,7 +107,41 @@
   function gate(what) { if (isPremium()) return true; upsell(what); return false; }
   const lockNote = (txt) => `<div class="locknote">🔒 ${h(txt)} <button class="link" data-go="premium">Passer à Premium</button></div>`;
 
+  function renderIAP(el) {
+    const P = C.prices, L = state.lic, price = k => storePrices[IAP[k]] || P[k].label;
+    el.innerHTML = `
+    <div class="card"><h2>★ Kit Survie Premium</h2>
+      ${state.active ? `<div class="alert">✅ Premium actif — formule <b>${h(PLAN_NAME[L.plan] || L.plan)}</b>${L.exp ? `, renouvellement ou fin le <b>${new Date(L.exp * 1000).toLocaleDateString('fr-FR')}</b>` : ', sans date de fin'}${state.cached ? ' (vérifié lors de la dernière connexion)' : ''}.</div>`
+        : `<p>La version gratuite couvre l'essentiel pour réagir. <b>Premium</b> rend l'application vraiment <b>personnelle</b> : vos besoins réels, votre matériel, vos cartes hors ligne, votre situation à l'instant T.</p>`}
+    </div>
+    <div class="plans">
+      ${[['monthly', 'Mensuel', 'S\'abonner'], ['annual', 'Annuel', 'S\'abonner'], ['lifetime', 'À vie', 'Acheter']].map(([k, n, cta]) => `
+        <div class="card plan ${k === 'annual' ? 'best' : ''}">${k === 'annual' ? '<div class="badge">Le plus avantageux sur 1 an</div>' : ''}
+          <h3>${n}</h3><div class="price">${h(price(k))}</div><div class="small muted">${h(P[k].per)}</div><p class="small">${h(P[k].note)}</p>
+          <button class="btn" data-iap="${k}" ${state.active && L && (L.plan === 'lifetime' || L.plan === k) ? 'disabled' : ''}>${cta}</button></div>`).join('')}
+    </div>
+    <div class="card">
+      <div class="row"><button class="btn ghost" data-iapx="restore">Restaurer mes achats</button>${state.active && L && L.plan !== 'lifetime' ? '<button class="btn ghost" data-iapx="manage">Gérer mon abonnement</button>' : ''}</div>
+      <div id="licMsg" class="small"></div>
+      <p class="small muted">Paiement par votre compte Apple. Les abonnements mensuel et annuel se renouvellent automatiquement, sauf s'ils sont désactivés au moins 24 heures avant la fin de la période en cours. Gestion et résiliation dans Réglages › [votre nom] › Abonnements. L'achat « À vie » est un paiement unique.
+      ${C.termsUrl ? `<a href="${h(C.termsUrl)}" target="_blank" rel="noopener">Conditions d'utilisation</a>` : ''} ${C.privacyUrl ? `· <a href="${h(C.privacyUrl)}" target="_blank" rel="noopener">Politique de confidentialité</a>` : ''}</p>
+    </div>
+    <div class="card"><h3>Gratuit ou Premium</h3><div class="tablewrap"><table><tr><th>Fonction</th><th>Gratuit</th><th>Premium</th></tr>
+      ${FEATURES.map(([f, a, b]) => `<tr><td>${h(f)}</td><td>${a === true ? '✓' : a === false ? '—' : h(a)}</td><td>${b === true ? '✓' : h(b)}</td></tr>`).join('')}</table></div>
+      <p class="small muted">Les informations de sécurité (actions d'urgence, numéros, position) restent gratuites pour tous. Vos données restent sur votre appareil.</p></div>`;
+    el.onclick = async e => {
+      const b = e.target.closest('[data-iap],[data-iapx]'); if (!b) return;
+      const msg = el.querySelector('#licMsg'); msg.textContent = 'Connexion à l\'App Store…';
+      try {
+        if (b.dataset.iap) await buy(b.dataset.iap);
+        if (b.dataset.iapx === 'restore') { await Native.Purchases.restorePurchases(); await loadIAP(); }
+        if (b.dataset.iapx === 'manage') { await Native.Purchases.manageSubscriptions(); msg.textContent = ''; return; }
+        App.refresh(); App.go('premium');
+      } catch (err) { msg.textContent = /cancel/i.test(err.message || '') ? 'Achat annulé.' : 'Opération impossible : ' + (err.message || err) + '.'; }
+    };
+  }
   function render(el) {
+    if (NATIVE) return renderIAP(el);
     const P = C.prices, L = state.lic, yearlyOfMonthly = P.monthly.amount * 12, saving = yearlyOfMonthly - P.annual.amount;
     const fmt = n => n.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' });
     const configured = C.checkout && (C.checkout.monthly || C.checkout.annual || C.checkout.lifetime);
@@ -124,5 +192,5 @@
       }
     };
   }
-  window.Premium = { load, verify, activate, remove, isPremium, gate, upsell, lockNote, render, LIMITS, FREE_CALCS, get state() { return state; } };
+  window.Premium = { NATIVE, load, verify, activate, remove, isPremium, gate, upsell, lockNote, render, LIMITS, FREE_CALCS, get state() { return state; } };
 })();
