@@ -27,7 +27,7 @@ for r in csv.DictReader(open('gppd.csv', encoding='utf-8')):
     if r['country'] not in EU or r['primary_fuel']=='Nuclear': continue
     cap = float(r['capacity_mw'] or 0)
     if cap < 50: continue
-    pp.append({"name":r['name'],"country":r['country_long'],"lat":round(float(r['latitude']),4),"lon":round(float(r['longitude']),4),"fuel":FUEL.get(r['primary_fuel'], r['primary_fuel']),"mw":round(cap)})
+    pp.append({"name":r["name"].replace("Stra\ufffdkirchen", "Straßkirchen"),"country":r['country_long'],"lat":round(float(r['latitude']),4),"lon":round(float(r['longitude']),4),"fuel":FUEL.get(r['primary_fuel'], r['primary_fuel']),"mw":round(cap)})
 out = {"nuclear":nl,"dams":list(dams.values()),"powerplants":pp,
  "meta":{"nuclear":"Wikidata (CC0), requête SPARQL du 2026-09-30 : instances de « centrale nucléaire » (Q134447) situées en Europe","dams":"Wikidata (CC0), 2026-09-30 : barrages (Q12323) en Europe avec hauteur renseignée ≥ 50 m — couverture incomplète","powerplants":"WRI Global Power Plant Database v1.3.0 (CC BY 4.0), centrales ≥ 50 MW hors nucléaire — données figées en 2021"}}
 json.dump(out, open('poi_europe.json','w'), ensure_ascii=False, separators=(',',':'))
