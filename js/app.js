@@ -8,6 +8,7 @@
   const today = () => new Date().toISOString().slice(0, 10);
   const GEAR = window.GEAR || [];
   const GEAR_BY_ID = Object.fromEntries(GEAR.map(g => [g.id, g]));
+  const linkify = t => h(t).replace(/https?:\/\/[^\s<)]+[^\s<).,;]/g, u => `<a href="${u}" target="_blank" rel="noopener">${u.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]}</a>`);
   const srcLinks = keys => (keys || []).map(k => SOURCES[k] ? `<a href="${SOURCES[k].u}" target="_blank" rel="noopener">${h(SOURCES[k].t.split(' — ')[0])}</a>` : '').join(' · ');
 
   const DEFAULT = {
@@ -227,7 +228,7 @@
         <select id="gbag">${S.bags.map(b => `<option value="${b.id}">→ ${h(b.name)}</option>`).join('')}</select>
       </div>
       <div class="tablewrap"><table><tr><th>Objet</th><th>Priorité</th><th class="num">Prix</th><th class="num hide-sm">Poids</th><th>Lien</th><th></th></tr>
-      ${list.map(g => `<tr><td><b>${h(g.name)}</b>${g.model ? `<div class="small">${h(g.model)}</div>` : ''}<div class="small muted">${h(g.category)} · ${h(g.scope)}${g.qty > 1 ? ' · qté suggérée ' + g.qty : ''}${g.note ? ' · ' + h(g.note) : ''}</div></td>
+      ${list.map(g => `<tr><td><b>${h(g.name)}</b>${g.model ? `<div class="small">${h(g.model)}</div>` : ''}<div class="small muted">${h(g.category)} · ${h(g.scope)}${g.qty > 1 ? ' · qté suggérée ' + g.qty : ''}</div>${g.note ? `<details class="small"><summary class="muted">Détails, alternatives</summary>${linkify(g.note)}</details>` : ''}</td>
         <td><span class="chip ${h(g.priority)}">${h(g.priority)}</span></td>
         <td class="num">${g.price_eur ? eur(g.price_eur) : '—'}<div class="small muted">${g.price_status === 'relevé' ? 'relevé' : 'estimation'}</div></td>
         <td class="num hide-sm">${g.weight_g ? g.weight_g + ' g' : '—'}</td>
