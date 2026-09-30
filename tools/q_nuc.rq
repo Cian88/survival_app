@@ -1,0 +1,9 @@
+SELECT ?item ?itemLabel ?countryLabel ?coord ?stateLabel ?cap ?start ?end WHERE {
+  ?item wdt:P31/wdt:P279* wd:Q134447; wdt:P625 ?coord; wdt:P17 ?country.
+  ?country wdt:P30 wd:Q46.
+  OPTIONAL { ?item wdt:P5817 ?state. }
+  OPTIONAL { ?item wdt:P2109 ?cap. }
+  OPTIONAL { ?item wdt:P729 ?start. }
+  OPTIONAL { ?item wdt:P730 ?end. }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "fr,en". }
+}

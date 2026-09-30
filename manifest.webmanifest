@@ -1,0 +1,12 @@
+{
+  "name": "Kit Survie Europe",
+  "short_name": "Kit Survie",
+  "description": "Écosystème de survie, sac d'évacuation, matériel, budget et carte topographique Europe hors ligne.",
+  "lang": "fr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f2ec",
+  "theme_color": "#1d3b2a",
+  "icons": [{ "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

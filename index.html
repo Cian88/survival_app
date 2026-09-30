@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kit Survie Europe</title>
+<meta name="description" content="Outil local et hors ligne : écosystème de survie domestique, sac d'évacuation, matériel et budget, carte topographique Europe.">
+<meta name="theme-color" content="#1d3b2a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="lib/leaflet/leaflet.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo">⛺</span><div><b>Kit Survie Europe</b><small id="netState">…</small></div></div>
+  <nav id="tabs" role="tablist">
+    <button data-tab="dash" class="on">Tableau de bord</button>
+    <button data-tab="home">Écosystème maison</button>
+    <button data-tab="bag">Sac d'évacuation</button>
+    <button data-tab="gear">Matériel & budget</button>
+    <button data-tab="map">Carte</button>
+    <button data-tab="plan">Plan & scénarios</button>
+    <button data-tab="notice">Notice & infos</button>
+  </nav>
+</header>
+
+<main>
+  <section id="tab-dash" class="tab on"></section>
+  <section id="tab-home" class="tab"></section>
+  <section id="tab-bag" class="tab"></section>
+  <section id="tab-gear" class="tab"></section>
+  <section id="tab-map" class="tab">
+    <div class="maplayout">
+      <aside id="mapPanel" class="mappanel"></aside>
+      <div id="map"></div>
+    </div>
+  </section>
+  <section id="tab-plan" class="tab"></section>
+  <section id="tab-notice" class="tab"></section>
+</main>
+
+<footer class="foot small muted">Données stockées uniquement sur cet appareil. Outil d'aide à la préparation : il ne remplace ni les consignes des autorités ni une formation aux premiers secours.</footer>
+
+<script src="lib/leaflet/leaflet.js"></script>
+<script src="lib/pmtiles.js"></script>
+<script src="lib/protomaps-leaflet.js"></script>
+<script src="data/base_europe.js"></script>
+<script src="data/poi_europe.js"></script>
+<script src="js/store.js"></script>
+<script src="js/knowledge.js"></script>
+<script src="js/aps.js"></script>
+<script src="js/gear.js"></script>
+<script src="js/map.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
