@@ -7,12 +7,12 @@
   const uid = () => Math.random().toString(36).slice(2, 10);
   const today = () => new Date().toISOString().slice(0, 10);
   const GEAR = window.GEAR || [];
-  const GEAR_BY_ID = Object.fromEntries(GEAR.map(g => [g.id, g]));
+  const GEAR_BY_ID = window.GEAR_BY_ID = Object.fromEntries(GEAR.map(g => [g.id, g]));
   const linkify = t => h(t).replace(/https?:\/\/[^\s<)]+[^\s<).,;]/g, u => `<a href="${u}" target="_blank" rel="noopener">${u.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]}</a>`);
   const srcLinks = keys => (keys || []).map(k => SOURCES[k] ? `<a href="${SOURCES[k].u}" target="_blank" rel="noopener">${h(SOURCES[k].t.split(' — ')[0])}</a>` : '').join(' · ');
 
   const DEFAULT = {
-    profile: { adults: 2, children: 0, pets: 0, days: 10, waterL: 2, kcal: 2200, budget: 1000 },
+    profile: { adults: 2, children: 0, babies: 0, pets: 0, days: 14, waterL: 4, kcal: 2100, budget: 1000, lieu: [], climat: [], home: null, dwelling: 'maison', floor: 0, heating: 'electrique', cooking: 'electrique', water: 'reseau', vehicle: false, health: {}, skills: {} },
     checks: {}, inventory: [], bags: [], homePlan: [], contacts: [], notes: { rdv: '', pims: '', famille: '' }, lastCheck: null, points: [], map: {},
   };
   const App = window.App = {
@@ -28,7 +28,9 @@
   };
   const S = App.state;
   for (const k in DEFAULT) if (S[k] == null) S[k] = structuredClone(DEFAULT[k]);
-  if (!S.bags.length) S.bags.push({ id: uid(), name: 'Sac adulte 1', owner: '', items: [] });
+  for (const k in DEFAULT.profile) if (S.profile[k] == null) S.profile[k] = structuredClone(DEFAULT.profile[k]);
+  S.audit = S.audit || {};
+  if (!S.bags.length) S.bags.push({ id: uid(), name: 'Sac adulte 1', owner: '', items: [], env: [] });
 
   /* ---------- Calculs ---------- */
   function persons() { return (+S.profile.adults || 0) + (+S.profile.children || 0); }
@@ -69,41 +71,21 @@
   function nextCheck() { if (!S.lastCheck) return null; const d = new Date(S.lastCheck); d.setMonth(d.getMonth() + 6); return d; }
   const bar = (pct, cls = '') => `<div class="bar ${cls}"><i style="width:${Math.max(0, Math.min(100, pct))}%"></i></div>`;
 
-  /* ---------- Tableau de bord ---------- */
-  function renderDash() {
-    const n = needs(), s = stock(), P = S.profile, b = budget();
-    const wp = n.water ? s.water / n.water * 100 : 0, kp = n.kcal ? s.kcal / n.kcal * 100 : 0;
-    const daysW = persons() && P.waterL ? s.water / (persons() * P.waterL) : 0, daysK = persons() && P.kcal ? s.kcal / (persons() * P.kcal) : 0;
-    const pil = PILLARS.map(p => [p, pillarScore(p)]), pilAvg = Math.round(pil.reduce((a, [, x]) => a + x.pct, 0) / pil.length);
-    const exp = expiring(), nc = nextCheck();
-    const alerts = [];
-    if (s.water < n.water72) alerts.push(['bad', `Eau : moins que le minimum 72 h du guide SGDSN (6 L × ${persons()} pers. = ${n.water72} L). Stock actuel : ${s.water.toLocaleString('fr-FR', { maximumFractionDigits: 1 })} L.`]);
+  /* ---------- État des lieux (remplace l'ancien tableau de bord) ---------- */
+  function alertsHTML() {
+    const exp = expiring(), nc = nextCheck(), alerts = [];
     exp.forEach(it => alerts.push([new Date(it.expiry) < new Date() ? 'bad' : '', `Péremption ${new Date(it.expiry) < new Date() ? 'dépassée' : 'proche'} : ${h(it.name)} (${it.expiry})`]));
-    if (!nc) alerts.push(['', 'Aucune vérification du kit enregistrée. Le guide SGDSN recommande de vérifier dates, piles et médicaments deux fois par an (onglet Plan).']);
+    if (!nc) alerts.push(['', 'Aucune vérification du kit enregistrée : piles, dates et vêtements sont à contrôler deux fois par an (onglet Plan).']);
     else if (nc < new Date()) alerts.push(['bad', `Vérification semestrielle du kit en retard (prévue le ${nc.toLocaleDateString('fr-FR')}).`]);
-    $('#tab-dash').innerHTML = `
-    <div class="card">
-      <h2>Mon foyer</h2>
-      <div class="row" data-form="profile">
-        <label>Adultes <input type="number" min="0" data-p="adults" value="${P.adults}"></label>
-        <label>Enfants <input type="number" min="0" data-p="children" value="${P.children}"></label>
-        <label>Animaux <input type="number" min="0" data-p="pets" value="${P.pets}"></label>
-        <label>Objectif d'autonomie <select data-p="days">${[3, 7, 10, 14, 30, 60, 90].map(d => `<option value="${d}" ${+P.days === d ? 'selected' : ''}>${d} jours${d === 3 ? ' (UE/FR : 72 h min.)' : d === 7 ? ' (Suède, Suisse)' : d === 10 ? ' (Allemagne)' : ''}</option>`).join('')}</select></label>
-        <label>Eau de boisson <select data-p="waterL">${[[2, '2 L/pers/j (BBK, Finlande)'], [3, '3 L/pers/j (Suède, Suisse)'], [4, '≈ 3,8 L/pers/j (Ready.gov, boisson + hygiène)'], [7.5, '7,5 L/pers/j (OMS, bas de fourchette)'], [15, '15 L/pers/j (OMS, haut de fourchette)']].map(([v, t]) => `<option value="${v}" ${+P.waterL === v ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
-        <label>kcal/pers/jour <input type="number" min="0" step="100" data-p="kcal" value="${P.kcal}"></label>
-        <label>Budget cible (€) <input type="number" min="0" step="50" data-p="budget" value="${P.budget}"></label>
-      </div>
-      <p class="src">Repères : ${srcLinks(['ue', 'sgdsn', 'bbk', 'msb', 'bwl', 'oms'])}. 2 200 kcal/j = référence du calculateur BLE cité par le BBK ; adaptez pour les enfants.</p>
-    </div>
-    <div class="grid">
-      <div class="card"><div class="muted small">Eau stockée</div><div class="kpi">${s.water.toFixed(0)} L <small>/ ${n.water.toFixed(0)} L visés</small></div>${bar(wp, wp < 50 ? 'bad' : wp < 100 ? 'warn' : '')}<div class="small">≈ ${daysW.toLocaleString('fr-FR', { maximumFractionDigits: 1 })} jours de boisson pour ${persons()} pers.</div></div>
-      <div class="card"><div class="muted small">Nourriture stockée</div><div class="kpi">${Math.round(s.kcal).toLocaleString('fr-FR')} <small>kcal / ${n.kcal.toLocaleString('fr-FR')}</small></div>${bar(kp, kp < 50 ? 'bad' : kp < 100 ? 'warn' : '')}<div class="small">≈ ${daysK.toLocaleString('fr-FR', { maximumFractionDigits: 1 })} jours</div></div>
-      <div class="card"><div class="muted small">Écosystème (9 piliers)</div><div class="kpi">${pilAvg} %</div>${bar(pilAvg)}<div class="small">${pil.map(([p, x]) => `<span class="chip">${p.icon} ${x.c}/${x.n}</span>`).join('')}</div></div>
-      <div class="card"><div class="muted small">Sacs d'évacuation</div>${S.bags.map(bg => { const t = bagTotals(bg); return `<div><b>${h(bg.name)}</b> — ${t.have}/${t.n} objets, ${kg(t.w)}</div>${bar(t.n ? t.have / t.n * 100 : 0)}`; }).join('')}</div>
-      <div class="card"><div class="muted small">Budget du plan</div><div class="kpi">${eur(b.total)} <small>prévus</small></div>${bar(P.budget ? b.total / P.budget * 100 : 0, b.total > P.budget ? 'bad' : '')}<div class="small">Acquis : ${eur(b.spent)} · Reste à acheter : ${eur(b.left)} · Budget cible : ${eur(P.budget)}</div></div>
-      <div class="card"><div class="muted small">Prochaine vérification</div><div class="kpi">${nc ? nc.toLocaleDateString('fr-FR') : '—'}</div><div class="small">Rythme : 2 fois par an (SGDSN)</div></div>
-    </div>
-    <div class="card"><h3>Alertes</h3>${alerts.length ? alerts.map(([c, t]) => `<div class="alert ${c}">${t}</div>`).join('') : '<p>Aucune alerte. 👍</p>'}</div>`;
+    if (!S.profile.home) alerts.push(['', 'Domicile non renseigné : renseignez-le dans « Mon profil » pour calculer les risques proches et préparer votre carte hors ligne.']);
+    return alerts.length ? `<div class="card"><h3>Alertes</h3>${alerts.map(([c, t]) => `<div class="alert ${c}">${t}</div>`).join('')}</div>` : '';
+  }
+  let ctxLoaded = false;
+  function renderAudit() {
+    const el = $('#tab-audit');
+    Needs.render(el, S);
+    el.insertAdjacentHTML('beforeend', alertsHTML());
+    if (!ctxLoaded) { ctxLoaded = true; Needs.refreshCtx(S).then(() => { if (current === 'audit') renderAudit(); ctxLoaded = false; }); }
   }
 
   /* ---------- Écosystème maison ---------- */
@@ -334,12 +316,12 @@
     <div class="card"><h2>Notice d'utilisation</h2>
       <ol>
         <li><b>Installer hors ligne</b> : ouvrez l'application via un petit serveur local (<code>lancer.sh</code> ou <code>lancer.bat</code>) ou depuis son adresse web, puis « Installer l'application » / « Ajouter à l'écran d'accueil ». Toute l'application (relief et fond vectoriel Europe compris) est alors disponible sans connexion. Un double-clic sur <code>index.html</code> fonctionne aussi, mais sans installation.</li>
-        <li><b>Tableau de bord</b> : renseignez votre foyer et votre objectif d'autonomie ; les besoins en eau et en calories sont calculés à partir des repères officiels.</li>
-        <li><b>Écosystème maison</b> : saisissez votre stock (litres, kcal, péremption) et cochez les 9 piliers.</li>
-        <li><b>Sac d'évacuation</b> : un sac par personne ; pré-remplissez avec les essentiels, ajustez quantités, poids et prix, cochez ce qui est acquis.</li>
-        <li><b>Matériel & budget</b> : catalogue avec liens et prix indicatifs, paliers de budget, plan d'achat, export CSV.</li>
-        <li><b>Carte</b> : relief Europe et fond vectoriel intégrés ; <u>avant une coupure</u>, téléchargez le relief détaillé et les points OSM (eau, santé, énergie, dangers…) de vos zones (domicile, travail, famille, itinéraires). Ajoutez vos points de rendez-vous et caches, exportez-les en GPX pour un GPS.</li>
-        <li><b>Carte détaillée de toute l'Europe hors ligne</b> : téléchargez un extrait <code>.pmtiles</code> (voir <code>docs/NOTICE.md</code>, section Carte) et chargez-le depuis la carte.</li>
+        <li><b>Mon profil</b> (à remplir en premier) : foyer, santé, logement, position du domicile, lieu et climat, compétences. Tout le reste s'adapte à ces réponses.</li>
+        <li><b>État des lieux</b> : votre matériel face à vos besoins calculés (eau, nourriture, chaleur, lumière, santé, hygiène, communication, cartes, argent, sécurité, évacuation, savoirs). Les manques vitaux s'affichent en premier ; la liste de courses s'exporte en CSV.</li>
+        <li><b>Carte hors ligne</b> : téléchargez <u>avant</u> une crise le pack de votre zone. En France, c'est la carte officielle IGN (routes, chemins, courbes de niveau, lieux-dits) avec l'estompage du relief ; ailleurs en Europe, le relief. Ajoutez les points OSM (eau, santé, abris, dangers) et vos points de rendez-vous. Ensuite, tout fonctionne sans Internet, et le GPS du téléphone aussi.</li>
+        <li><b>Instant T</b> : le jour où ça arrive. Localisez-vous, choisissez la situation, puis suivez les actions. L'écran montre votre matériel disponible, les ressources et dangers les plus proches (distance et cap), le chemin vers le domicile ou le point de rendez-vous, et les numéros utiles.</li>
+        <li><b>Sacs</b>, <b>Stock maison</b>, <b>Matériel & budget</b> : le détail de ce que vous possédez et de ce que vous prévoyez d'acheter.</li>
+        <li><b>Terrain</b> et <b>Calculateurs</b> : le savoir des praticiens et des crises réelles, et les outils de dimensionnement.</li>
         <li><b>Sauvegarde</b> : exportez régulièrement vos données (bouton ci-dessous) sur une clé USB. Vider les données du navigateur efface l'application locale.</li>
         <li><b>Imprimer</b> (version locale, Ctrl+P / Cmd+P) : imprimez plan familial, contacts et listes ; le papier fonctionne sans batterie.</li>
       </ol>
@@ -355,8 +337,12 @@
   }
 
   /* ---------- Rendu & événements ---------- */
-  const RENDER = { dash: renderDash, home: renderHome, bag: renderBag, gear: renderGear, calc: () => Calc.render($('#tab-calc')), field: () => Field.render($('#tab-field')), plan: renderPlan, notice: renderNotice };
-  let current = 'dash';
+  const RENDER = { now: () => Now.render($('#tab-now'), S), audit: renderAudit, profile: renderProfile, home: renderHome, bag: renderBag, gear: renderGear, calc: () => Calc.render($('#tab-calc')), field: () => Field.render($('#tab-field')), plan: renderPlan, notice: renderNotice };
+  let current = 'now';
+  function renderProfile() {
+    Profile.render($('#tab-profile'), S);
+    if (!S.onboarded) $('#tab-profile').insertAdjacentHTML('afterbegin', `<div class="card welcome"><h2>Bienvenue</h2><p>Cette application se construit autour de <b>vous</b> : votre foyer, votre logement, votre environnement. Remplissez ce profil (2 minutes), puis consultez votre <b>état des lieux matériel</b>, préparez votre <b>carte hors ligne</b> et gardez l'onglet <b>Instant T</b> pour le moment où ça arrive.</p><button class="btn" data-act="onboarded">C'est fait : voir mon état des lieux</button></div>`);
+  }
   function show(tab) {
     current = tab;
     document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
@@ -365,12 +351,14 @@
     try { localStorage.setItem('survie.tab', tab); } catch (e) { }
   }
   function commit() { App.save(); if (RENDER[current]) RENDER[current](); }
+  App.go = show;
   function toCsv(rows) { return '﻿' + rows.map(r => r.map(v => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`).join(';')).join('\n'); }
   function applyTheme() { if (S.theme) document.documentElement.dataset.theme = S.theme; else delete document.documentElement.dataset.theme; }
 
   document.addEventListener('change', e => {
     const t = e.target, d = t.dataset;
-    if (d.p) { S.profile[d.p] = +t.value; return commit(); }
+    if (d.aud) { S.audit[d.aud] = Object.assign(S.audit[d.aud] || {}, { have: t.checked }); return commit(); }
+    if (d.audq) { S.audit[d.audq] = Object.assign(S.audit[d.audq] || {}, { have: +t.value }); return commit(); }
     if (d.check) { if (t.checked) S.checks[d.check] = true; else delete S.checks[d.check]; return commit(); }
     if (d.invqty) { const it = S.inventory.find(x => x.id === d.invqty); it.qty = +t.value; return commit(); }
     if (d.bagname) { S.bags.find(b => b.id === d.bagname).name = t.value; return commit(); }
@@ -388,9 +376,12 @@
     }
   });
   document.addEventListener('click', e => {
-    const t = e.target.closest('button, [data-tab]'); if (!t) return;
+    const t = e.target.closest('button, [data-tab], [data-go]'); if (!t) return;
     const d = t.dataset;
     if (d.tab) return show(d.tab);
+    if (d.go) { e.preventDefault(); return show(d.go); }
+    if (d.audreset) { if (S.audit[d.audreset]) delete S.audit[d.audreset].have; return commit(); }
+    if (d.audna) { S.audit[d.audna] = Object.assign(S.audit[d.audna] || {}, { na: !(S.audit[d.audna] || {}).na }); return commit(); }
     if (d.quick) { S.inventory.push({ id: uid(), name: d.quick === '9' ? 'Pack eau 6 × 1,5 L' : d.quick === '5' ? 'Bidon eau 5 L' : 'Jerrican eau 20 L', cat: 'eau', qty: 1, litres: +d.quick, kcal: 0, expiry: '', where: '' }); return commit(); }
     if (d.invdel) { S.inventory = S.inventory.filter(x => x.id !== d.invdel); return commit(); }
     if (d.env) { const [bid, eid] = d.env.split('|'), b = S.bags.find(x => x.id === bid); b.env = b.env || []; b.env = b.env.includes(eid) ? b.env.filter(x => x !== eid) : [...b.env, eid]; return commit(); }
@@ -405,7 +396,9 @@
     if (d.hdel) { S.homePlan = S.homePlan.filter(x => x.key !== d.hdel); return commit(); }
     if (d.ctdel) { S.contacts = S.contacts.filter(x => x.id !== d.ctdel); return commit(); }
     switch (d.act) {
-      case 'bagnew': S.bags.push({ id: uid(), name: 'Sac ' + (S.bags.length + 1), owner: '', items: [] }); return commit();
+      case 'bagnew': S.bags.push({ id: uid(), name: 'Sac ' + (S.bags.length + 1), owner: '', items: [], env: [...(S.profile.lieu || []), ...(S.profile.climat || [])] }); return commit();
+      case 'onboarded': S.onboarded = true; App.save(); return show('audit');
+      case 'audcsv': return App.download('etat-des-lieux-manques.csv', Needs.gapsCsv(S), 'text/csv');
       case 'homeessential': { const have = new Set(S.homePlan.map(i => i.gearId)); GEAR.filter(g => g.scope !== 'sac' && g.priority === 'essentiel' && !have.has(g.id)).forEach(g => S.homePlan.push(lineFromGear(g))); return commit(); }
       case 'checked': S.lastCheck = today(); return commit();
       case 'export': return App.download(`kit-survie-sauvegarde-${today()}.json`, JSON.stringify(S, null, 1), 'application/json');
@@ -426,7 +419,10 @@
   function net() { $('#netState').textContent = navigator.onLine ? 'En ligne — données locales' : 'Hors ligne — tout reste utilisable'; }
   window.addEventListener('online', net); window.addEventListener('offline', net); net();
   applyTheme();
-  let startTab = 'dash'; try { startTab = localStorage.getItem('survie.tab') || 'dash'; } catch (e) { }
-  show(RENDER[startTab] || startTab === 'map' ? startTab : 'dash');
+  Profile.bind($('#tab-profile'), S, commit);
+  Now.bind($('#tab-now'), S, () => RENDER.now());
+  let startTab = 'now'; try { startTab = localStorage.getItem('survie.tab') || 'now'; } catch (e) { }
+  if (!S.onboarded) startTab = 'profile';
+  show(RENDER[startTab] || startTab === 'map' ? startTab : 'now');
   if ('serviceWorker' in navigator && /^https?:/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW', err));
 })();

@@ -13,33 +13,54 @@
 
 **Conseil** : copiez aussi le dossier complet sur une clé USB et sur un deuxième appareil (téléphone + ordinateur).
 
-## 2. Onglets
+## 2. Principe : une application construite autour de vous
 
-1. **Tableau de bord** : réglez le foyer (adultes, enfants, animaux), la durée d'autonomie visée et les repères d'eau et de calories. Les indicateurs (eau, nourriture, piliers, sacs, budget, prochaine vérification) et les alertes se mettent à jour automatiquement.
-2. **Écosystème maison** : besoins calculés, **inventaire** (litres, kcal, date de péremption, emplacement) et les **9 piliers** (eau, nourriture, énergie/chaleur/lumière, santé, hygiène, communication, documents/argent, sécurité/outils, plan/savoirs/entraide). Chaque pilier indique ses sources.
-3. **Sac d'évacuation** : un sac par personne ; choisissez le **lieu** (ville, campagne, montagne, forêt, littoral) et le **climat** (chaud, froid, humide) pour afficher les risques, le matériel à ajouter et les réflexes propres à cet environnement. « Pré-remplir : essentiels » ajoute les objets essentiels du catalogue. Ajustez les quantités, poids et prix, et cochez ce que vous possédez. Poids et coût restant sont calculés.
-4. **Terrain** : ce que disent les praticiens, les forums spécialisés et les témoins de 11 crises réelles (consensus, erreurs fréquentes, désaccords, exercices).
-5. **Calculateurs** : eau, dose de Javel selon votre flacon, autonomie de batterie, solaire, eau de pluie, poids du sac, temps de marche, stock profond, gaz par temps froid.
-6. **Matériel & budget** : catalogue filtrable avec liens, prix indicatifs, paliers de budget (essentiel → recommandé → optionnel), plan d'achat maison et export CSV.
-7. **Carte** : voir §3.
-8. **Plan & scénarios** : contacts, vérification semestrielle, plan familial, PIMS et réflexes par scénario (alerte, nucléaire, inondation, feu, attentat, coupure, évacuation, hypothermie, arrêt cardiaque).
-9. **Notice & infos** : numéros d'urgence, signal d'alerte, radio, traitement de l'eau, synthèse de la chaîne *Apprendre Préparer (Sur)vivre*, notice, sauvegarde et sources.
+L'application tourne autour de **votre** situation : votre foyer, votre logement, votre environnement, **votre** matériel. L'objectif est de pouvoir réagir **à l'instant T**, même sans Internet.
+
+1. **Mon profil** (à remplir en premier) : adultes, enfants, nourrissons, animaux ; santé (traitement chronique, appareil médical électrique, lunettes, mobilité) ; logement (type, étage, chauffage, cuisson, eau du réseau ou d'un puits, véhicule) ; **position du domicile** (GPS ou coordonnées) ; lieu et climat ; objectifs ; compétences.
+2. **État des lieux** : les besoins sont calculés d'après le profil et comparés à ce que vous avez. Exemples : 4 L d'eau/pers/j × jours visés (× 1,5 par temps chaud) ; comprimés d'iode si le domicile est à moins de 20 km d'un site nucléaire ; moyen de puiser sans électricité si vous avez un puits ; plan « une pièce chaude » si votre chauffage dépend du courant. S'y ajoutent les essentiels de votre lieu et de votre climat.
+   - Statut de chaque besoin : ✓ couvert, ◐ partiel, ✗ manquant, – sans objet. Niveau : vital, important ou utile.
+   - Certains points se remplissent seuls : l'inventaire (eau, calories), les sacs cochés, les achats cochés, les contacts, le point de rendez-vous, la carte hors ligne et les points OSM de la zone du domicile.
+   - « Liste de courses des manques (CSV) » exporte ce qu'il reste à acquérir, avec les liens.
+3. **Carte hors ligne** : voir §3.
+4. **Instant T** : l'écran à ouvrir quand ça arrive.
+   - **Me localiser** : GPS du téléphone, qui fonctionne sans Internet.
+   - Autonomie réelle : jours d'eau et de nourriture, sacs prêts, espèces.
+   - Choix de la situation parmi 11 : coupure de courant ou d'eau, crue, grand froid, canicule, feu, alerte nucléaire ou chimique, évacuation, blessé, séisme, perdu.
+   - Pour chaque situation : actions immédiates à cocher (sourcées), matériel **que vous avez** et ce qui manque, ressources et dangers les plus proches d'après vos données hors ligne (distance et cap), direction du domicile et des points de rendez-vous, numéros d'urgence et vos contacts.
+5. **Sacs** : un sac par personne, avec des variantes selon le lieu et le climat.
+6. **Stock maison** : inventaire daté (litres, kcal, péremption) et 9 piliers.
+7. **Terrain** : ce que disent les praticiens, les forums et les témoins de crises réelles.
+8. **Calculateurs** : eau, dose de Javel selon votre flacon, batterie, solaire, eau de pluie, poids du sac, temps de marche, stock profond, gaz par temps froid.
+9. **Matériel & budget**, **Plan & scénarios**, **Notice**.
 
 ## 3. La carte hors ligne
 
-### Couches intégrées (aucune connexion nécessaire)
-- **Relief Europe intégré** : image ombrée et colorée par altitude, calculée à partir des tuiles d'altitude *Terrain Tiles* (zoom 7, environ 1 km par pixel). Au-delà du zoom 8, l'image devient floue : utilisez le relief détaillé.
-- **Fond vectoriel** (Natural Earth) : pays, frontières, fleuves, lacs, routes principales (visibles à partir du zoom 6) et villes.
-- **Sites nucléaires** (Wikidata), avec un cercle de rayon réglable (20 km par défaut, soit le rayon des PPI français depuis 2019-2020, source ASNR). Le statut vient de Wikidata et n'est pas toujours renseigné : les sites « désaffectés » peuvent encore contenir des matières radioactives.
-- **Grands barrages** (hauteur ≥ 50 m renseignée dans Wikidata ; la liste n'est **pas exhaustive**).
-- **Centrales électriques ≥ 50 MW hors nucléaire** (WRI Global Power Plant Database, données 2021, donc certaines centrales peuvent avoir fermé).
+### Cartes topographiques hors ligne : l'essentiel
+1. Renseignez votre domicile dans **Mon profil**.
+2. Ouvrez **Carte hors ligne → 📥 Cartes hors ligne**, puis choisissez :
+   - **Zone** : autour du domicile, autour de votre position GPS, ou la zone affichée.
+   - **Rayon** : de 5 à 50 km.
+   - **Détail max** : le zoom 14 correspond environ à l'échelle 1:25 000, le zoom 15 au détail randonnée.
+3. Choisissez les sources :
+   - **IGN Plan topographique** (France) : carte officielle de l'IGN, avec routes, chemins, courbes de niveau et lieux-dits.
+   - **IGN Estompage** (France) : ombrage du relief, superposé au plan.
+   - **Relief et altitudes** (toute l'Europe) : utile hors de France et pour l'altitude au clic.
+4. Vérifiez l'estimation de taille, puis téléchargez. Le pack reste sur l'appareil. Ajoutez d'autres packs pour le travail, la famille et vos itinéraires.
+5. Hors ligne, choisissez le fond **« IGN topographique – France (packs hors ligne) »**. Si vous zoomez au-delà du détail téléchargé, l'application agrandit la tuile disponible, ce qui donne une image plus floue mais toujours lisible.
+6. **Exporter** un pack crée un fichier `.kspack` à copier sur une clé USB ou un autre appareil ; on le réimporte avec « Importer un pack ».
+
+**Cartes IGN officielles : ce qui est accessible.**
+- Depuis le 1er janvier 2021, les données publiques de l'IGN sont gratuites, sous **Licence Ouverte Etalab 2.0**. Le Plan IGN et l'estompage sont servis sans clé par la Géoplateforme (`data.geopf.fr`), et l'application les utilise.
+- Le **SCAN 25** (la carte TOP 25 numérisée) demande une clé personnelle, créée sur cartes.gouv.fr. Même l'application officielle gratuite **Cartes IGN** ne le propose pas hors ligne : l'IGN indique que « le SCAN 25 [n'est] pas téléchargeable hors ligne car soumis à des droits de diffusion », mais qu'« il est possible de télécharger des zones du plan IGN pour les consulter hors ligne » ([ign.fr](https://www.ign.fr/telechargez-application-cartographique-cartes-ign)). C'est aussi le choix de cette application.
+- Pour avoir le SCAN 25 hors ligne, il reste la **carte papier TOP 25** (voir `docs/MATERIEL.md`) ou une application tierce sous abonnement (non testée ici).
 
 ### À télécharger AVANT une coupure (par zone)
 1. Centrez la carte sur votre zone (domicile, travail, école, famille, itinéraires d'évacuation).
-2. **Relief détaillé** : choisissez les zooms, vérifiez l'estimation (au maximum 5 000 tuiles par lot, environ 60 Ko par tuile), puis cliquez sur « Télécharger le relief ». La couche « Relief MNT détaillé » et l'altitude au clic fonctionneront ensuite hors ligne.
+2. **Cartes** : créez un pack par zone (voir ci-dessus). Le relief détaillé de toute l'Europe est l'une des sources proposées dans le pack.
 3. **Points OSM** (zoom ≥ 9) : cochez les catégories (eau, santé, secours/abris, énergie, dangers, ravitaillement), puis téléchargez et nommez la zone. Les points sont stockés sur l'appareil.
    - ⚠ Une fontaine ou une source cartographiée n'est pas forcément potable : traitez l'eau.
-4. Recommencez pour chaque zone utile. « Stockage & sources » indique l'espace utilisé. L'application demande au navigateur un stockage persistant.
+4. Recommencez pour chaque zone utile. « Stockage & sources » indique l'espace utilisé ; un pack couvre au maximum 25 000 tuiles. L'application demande au navigateur un stockage persistant.
 
 ### Mes points
 Ajoutez vos points de rendez-vous, caches, refuges, points d'eau vérifiés et dangers. Vous pouvez les exporter en **GPX** (pour un GPS ou une application de randonnée) ou en **GeoJSON**, et les importer depuis ces deux formats.

@@ -13,6 +13,14 @@
 
   const TERRARIUM = 'https://elevation-tiles-prod.s3.amazonaws.com/terrarium/{z}/{x}/{y}.png';
   const OTM = 'https://tile.opentopomap.org/{z}/{x}/{y}.png';
+  const IGN = (layer, style) => `https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=${layer}&STYLE=${style}&TILEMATRIXSET=PM&FORMAT=image/png&TILEMATRIX={z}&TILECOL={x}&TILEROW={y}`;
+  const ATTR_IGN = 'Carte : © <a href="https://cartes.gouv.fr" target="_blank" rel="noopener">IGN – Géoplateforme</a> (Licence Ouverte Etalab 2.0)';
+  /* Sources téléchargeables en « pack » hors ligne. kb = taille moyenne estimée d'une tuile. */
+  const TSRC = {
+    ign_plan: { tpl: IGN('GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2', 'normal'), kb: 60, max: 19, label: 'IGN Plan topographique (France : routes, chemins, courbes de niveau, toponymes)' },
+    ign_shad: { tpl: IGN('ELEVATION.ELEVATIONGRIDCOVERAGE.SHADOW', 'estompage_grayscale'), kb: 20, max: 15, label: 'IGN Estompage du relief (France)' },
+    dem: { tpl: TERRARIUM, kb: 60, max: 13, label: 'Relief et altitudes (toute l\'Europe)' },
+  };
   const OVERPASS = [
     'https://overpass-api.de/api/interpreter',
     'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
@@ -55,18 +63,24 @@
     return b;
   }
 
-  /* Couche en ligne avec cache des seules tuiles consultées */
+  /* Couche tuilée « cache d'abord » : tuiles des packs hors ligne, puis réseau si disponible.
+     Hors ligne, si un zoom n'a pas été téléchargé, on agrandit la tuile parente la plus proche. */
   const CachedTiles = L.TileLayer.extend({
     createTile(coords, done) {
-      const img = document.createElement('img');
-      img.alt = '';
-      getTileBlob(this.options.prefix, this._url, coords, true).then(b => {
-        const u = URL.createObjectURL(b);
-        img.onload = () => { URL.revokeObjectURL(u); done(null, img); };
-        img.onerror = () => done(new Error('image'), img);
-        img.src = u;
-      }).catch(err => done(err, img));
-      return img;
+      const cv = document.createElement('canvas'); cv.width = cv.height = 256;
+      const ctx = cv.getContext('2d'), prefix = this.options.prefix, url = this._url;
+      const draw = (b, dz) => createImageBitmap(b).then(bmp => {
+        if (!dz) ctx.drawImage(bmp, 0, 0, 256, 256);
+        else { const k = 1 << dz, sz = 256 / k; ctx.drawImage(bmp, (coords.x & (k - 1)) * sz, (coords.y & (k - 1)) * sz, sz, sz, 0, 0, 256, 256); }
+        done(null, cv);
+      }).catch(e => done(e, cv));
+      getTileBlob(prefix, url, coords, true).then(b => draw(b, 0)).catch(async err => {
+        for (let dz = 1; dz <= 6 && coords.z - dz >= 0; dz++) {
+          try { const b = await getTileBlob(prefix, url, { z: coords.z - dz, x: coords.x >> dz, y: coords.y >> dz }, false); return draw(b, dz); } catch (e) { }
+        }
+        done(err, cv);
+      });
+      return cv;
     },
   });
 
@@ -141,15 +155,20 @@
   function buildBase() {
     const B = window.BASE_EUROPE;
     const g = L.layerGroup();
-    L.geoJSON(B.lakes, { pane: 'vec', interactive: false, style: { color: '#4f8fc4', weight: 0.6, fillColor: '#a9cbe6', fillOpacity: 0.9 } }).addTo(g);
-    L.geoJSON(B.rivers, { pane: 'vec', interactive: false, style: f => ({ color: '#3b82c4', weight: f.properties.scalerank <= 3 ? 1.6 : f.properties.scalerank <= 6 ? 1 : 0.6, opacity: 0.85 }) }).addTo(g);
-    L.geoJSON(B.boundaries, { pane: 'vec', interactive: false, style: { color: '#7a3b69', weight: 1.2, dashArray: '4 3', opacity: 0.8 } }).addTo(g);
+    // Données généralisées (Natural Earth) : utiles jusqu'au zoom 10, masquées au-delà pour ne pas brouiller les cartes détaillées.
+    const coarse = [
+      L.geoJSON(B.lakes, { pane: 'vec', interactive: false, style: { color: '#4f8fc4', weight: 0.6, fillColor: '#a9cbe6', fillOpacity: 0.9 } }),
+      L.geoJSON(B.rivers, { pane: 'vec', interactive: false, style: f => ({ color: '#3b82c4', weight: f.properties.scalerank <= 3 ? 1.6 : f.properties.scalerank <= 6 ? 1 : 0.6, opacity: 0.85 }) }),
+      L.geoJSON(B.boundaries, { pane: 'vec', interactive: false, style: { color: '#7a3b69', weight: 1.2, dashArray: '4 3', opacity: 0.8 } }),
+    ];
     const roads = L.geoJSON(B.roads, { pane: 'vec', interactive: false, style: f => ({ color: '#b5462f', weight: f.properties.type === 'Major Highway' ? 1.4 : 0.8, opacity: 0.75 }) });
     const places = L.layerGroup();
     function refresh() {
       const z = map.getZoom(), minPop = z < 5 ? 2e6 : z < 6 ? 5e5 : z < 7 ? 1.5e5 : 0;
       places.clearLayers();
-      if (z >= 6) { if (!g.hasLayer(roads)) g.addLayer(roads); } else if (g.hasLayer(roads)) g.removeLayer(roads);
+      coarse.forEach(l => { if (z <= 10) { if (!g.hasLayer(l)) g.addLayer(l); } else if (g.hasLayer(l)) g.removeLayer(l); });
+      if (z >= 6 && z <= 10) { if (!g.hasLayer(roads)) g.addLayer(roads); } else if (g.hasLayer(roads)) g.removeLayer(roads);
+      if (z > 10) return;
       const b = map.getBounds().pad(0.2);
       for (const f of B.places.features) {
         const p = f.properties, [lon, lat] = f.geometry.coordinates;
@@ -276,45 +295,126 @@
     renderOsm();
   }
 
-  /* ---------- Téléchargement relief par zone ---------- */
+  /* ---------- Géométrie ---------- */
   function lon2x(lon, z) { return Math.floor((lon + 180) / 360 * Math.pow(2, z)); }
   function lat2y(lat, z) { const r = lat * Math.PI / 180; return Math.floor((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * Math.pow(2, z)); }
-  function tilesFor(bounds, zmin, zmax) {
+  function tilesForBox(bb, zmin, zmax) { // bb = [sud, ouest, nord, est]
     const list = [];
     for (let z = zmin; z <= zmax; z++) {
-      const x0 = lon2x(bounds.getWest(), z), x1 = lon2x(bounds.getEast(), z), y0 = lat2y(Math.min(bounds.getNorth(), 85), z), y1 = lat2y(Math.max(bounds.getSouth(), -85), z);
+      const x0 = lon2x(bb[1], z), x1 = lon2x(bb[3], z), y0 = lat2y(Math.min(bb[2], 85), z), y1 = lat2y(Math.max(bb[0], -85), z);
       for (let x = x0; x <= x1; x++) for (let y = y0; y <= y1; y++) list.push({ z, x, y });
     }
     return list;
   }
-  const MAX_TILES = 5000, AVG_KB = 60;
-  function estimate() {
-    const zmin = +$('#demZmin').value, zmax = +$('#demZmax').value;
-    const n = zmax < zmin ? 0 : tilesFor(map.getBounds(), zmin, zmax).length;
-    $('#demEstimate').textContent = `${n} tuiles ≈ ${Math.round(n * AVG_KB / 1024)} Mo (estimation)${n > MAX_TILES ? ` — au-delà de la limite de ${MAX_TILES} par lot : réduisez la zone ou le zoom max.` : ''}`;
-    return n;
+  function boxAround(lat, lon, km) {
+    const dl = km / 111.32, dg = km / (111.32 * Math.cos(lat * Math.PI / 180));
+    return [lat - dl, lon - dg, lat + dl, lon + dg].map(v => +v.toFixed(5));
   }
-  let dlAbort = false;
-  async function downloadDem() {
-    const st = $('#demStatus');
-    const zmin = +$('#demZmin').value, zmax = +$('#demZmax').value;
-    const list = tilesFor(map.getBounds(), zmin, zmax);
-    if (!list.length) return;
-    if (list.length > MAX_TILES) return st.textContent = 'Trop de tuiles : réduisez la zone ou le zoom max.';
-    if (!navigator.onLine) return st.textContent = 'Connexion requise.';
-    if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
-    dlAbort = false; let done = 0, fail = 0, i = 0;
+  function distKm(a, b, c, d) {
+    const R = 6371, t = Math.PI / 180, x = Math.sin((c - a) * t / 2) ** 2 + Math.cos(a * t) * Math.cos(c * t) * Math.sin((d - b) * t / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(x));
+  }
+  function bearing(a, b, c, d) {
+    const t = Math.PI / 180, y = Math.sin((d - b) * t) * Math.cos(c * t), x = Math.cos(a * t) * Math.sin(c * t) - Math.sin(a * t) * Math.cos(c * t) * Math.cos((d - b) * t);
+    return (Math.atan2(y, x) / t + 360) % 360;
+  }
+  const inBox = (bb, lat, lon) => lat >= bb[0] && lat <= bb[2] && lon >= bb[1] && lon <= bb[3];
+
+  /* ---------- Packs de cartes hors ligne ---------- */
+  const MAX_PACK = 25000;
+  function packTasks(bb, zmin, zmax, srcs) {
+    const tasks = [];
+    for (const k of srcs) for (const c of tilesForBox(bb, zmin, Math.min(zmax, TSRC[k].max))) tasks.push([k, c]);
+    return tasks;
+  }
+  function packEstimate(bb, zmin, zmax, srcs) {
+    const t = packTasks(bb, zmin, zmax, srcs);
+    return { n: t.length, mb: Math.round(t.reduce((a, [k]) => a + TSRC[k].kb, 0) / 1024) };
+  }
+  let packAbort = false;
+  async function downloadPack(meta, onProg) {
+    const tasks = packTasks(meta.bbox, meta.zmin, meta.zmax, meta.srcs);
+    if (tasks.length > MAX_PACK) throw new Error(`trop de tuiles (${tasks.length} > ${MAX_PACK}) : réduisez la zone ou le zoom`);
+    if (!navigator.onLine) throw new Error('connexion requise pour télécharger');
+    if (navigator.storage && navigator.storage.persist) { try { await navigator.storage.persist(); } catch (e) { } }
+    packAbort = false; let done = 0, fail = 0, i = 0;
     const worker = async () => {
-      while (i < list.length && !dlAbort) {
-        const c = list[i++];
-        try { await getTileBlob('dem', TERRARIUM, c, true); } catch (e) { fail++; }
-        done++; if (done % 10 === 0 || done === list.length) st.textContent = `${done}/${list.length} tuiles (${fail} échecs)…`;
+      while (i < tasks.length && !packAbort) {
+        const [k, c] = tasks[i++];
+        try { await getTileBlob(k, TSRC[k].tpl, c, true); } catch (e) { fail++; }
+        done++; if (onProg && (done % 20 === 0 || done === tasks.length)) onProg(done, tasks.length, fail);
       }
     };
-    await Promise.all([worker(), worker(), worker(), worker()]);
-    st.textContent = dlAbort ? `Interrompu : ${done} tuiles traitées.` : `Terminé : ${done - fail} tuiles de relief disponibles hors ligne (${fail} échecs).`;
-    storageInfo();
+    await Promise.all(Array.from({ length: 6 }, worker));
+    const rec = Object.assign({}, meta, { key: meta.key || 'p' + Date.now(), date: Date.now(), count: done - fail, fail, complete: !packAbort && fail === 0 });
+    await idb.put('packs', rec.key, rec);
+    return rec;
   }
+  async function listPacks() { try { return await idb.all('packs'); } catch (e) { return []; } }
+  async function deletePack(key) {
+    const p = await idb.get('packs', key); if (!p) return;
+    const others = (await listPacks()).filter(x => x.key !== key);
+    const keep = new Set();
+    for (const o of others) for (const [k, c] of packTasks(o.bbox, o.zmin, o.zmax, o.srcs)) keep.add(`${k}/${c.z}/${c.x}/${c.y}`);
+    const del = packTasks(p.bbox, p.zmin, p.zmax, p.srcs).map(([k, c]) => `${k}/${c.z}/${c.x}/${c.y}`).filter(k => !keep.has(k));
+    for (const k of del) { try { await idb.del('tiles', k); } catch (e) { } }
+    await idb.del('packs', key);
+  }
+  /* Export d'un pack dans un fichier unique (copie sur clé USB, autre appareil) :
+     "KSPACK1\n" + longueur de l'en-tête (uint32) + en-tête JSON + tuiles concaténées. */
+  async function exportPack(key) {
+    const p = await idb.get('packs', key), parts = [], index = [];
+    let off = 0;
+    for (const [k, c] of packTasks(p.bbox, p.zmin, p.zmax, p.srcs)) {
+      const tk = `${k}/${c.z}/${c.x}/${c.y}`, b = await idb.get('tiles', tk).catch(() => null);
+      if (!b) continue;
+      index.push([tk, off, b.size, b.type]); parts.push(b); off += b.size;
+    }
+    const head = new TextEncoder().encode(JSON.stringify({ meta: p, index })), len = new Uint8Array(4);
+    new DataView(len.buffer).setUint32(0, head.length);
+    return new Blob([new TextEncoder().encode('KSPACK1\n'), len, head, ...parts], { type: 'application/octet-stream' });
+  }
+  async function importPack(file, onProg) {
+    const magic = new TextDecoder().decode(await file.slice(0, 8).arrayBuffer());
+    if (magic !== 'KSPACK1\n') throw new Error('fichier non reconnu');
+    const hl = new DataView(await file.slice(8, 12).arrayBuffer()).getUint32(0);
+    const { meta, index } = JSON.parse(new TextDecoder().decode(await file.slice(12, 12 + hl).arrayBuffer()));
+    const base = 12 + hl; let batch = [];
+    for (let i = 0; i < index.length; i++) {
+      const [tk, o, l, t] = index[i];
+      batch.push([tk, file.slice(base + o, base + o + l, t)]);
+      if (batch.length === 200 || i === index.length - 1) {
+        const resolved = await Promise.all(batch.map(async ([k, b]) => [k, new Blob([await b.arrayBuffer()], { type: b.type })]));
+        await idb.putMany('tiles', resolved); batch = []; if (onProg) onProg(i + 1, index.length);
+      }
+    }
+    await idb.put('packs', meta.key, meta);
+    return meta;
+  }
+
+  /* ---------- Proximité (utilisable sans afficher la carte) ---------- */
+  async function coverage(lat, lon) {
+    const packs = (await listPacks()).filter(p => inBox(p.bbox, lat, lon));
+    let zones = []; try { zones = (await idb.all('osm')).filter(z => inBox(z.bbox, lat, lon)); } catch (e) { }
+    return { packs, zones };
+  }
+  async function nearest(lat, lon, cats, n = 3) {
+    const out = {}, add = (cat, item) => (out[cat] = out[cat] || []).push(item);
+    let zones = []; try { zones = await idb.all('osm'); } catch (e) { }
+    const seen = new Set();
+    for (const z of zones) for (const e of z.elements) {
+      if (!cats.includes(e.cat) || seen.has(e.type + e.id)) continue; seen.add(e.type + e.id);
+      const t = e.tags || {};
+      add(e.cat, { name: t.name || t.amenity || t.natural || t.man_made || t.emergency || t.shop || t.power || t.tourism || e.cat, kind: t.amenity || t.natural || t.man_made || t.emergency || t.shop || t.power || t.tourism || t.industrial || t.landuse || '', lat: e.lat, lon: e.lon, d: distKm(lat, lon, e.lat, e.lon), b: bearing(lat, lon, e.lat, e.lon) });
+    }
+    if (cats.includes('nucleaire')) for (const p of POI_EUROPE.nuclear) { if (p.state && /annulé|abandonné|projet/i.test(p.state)) continue; add('nucleaire', { name: p.name, kind: p.state || 'statut non renseigné', lat: p.lat, lon: p.lon, d: distKm(lat, lon, p.lat, p.lon), b: bearing(lat, lon, p.lat, p.lon) }); }
+    if (cats.includes('barrage')) for (const p of POI_EUROPE.dams) add('barrage', { name: p.name, kind: p.height_m + ' m', lat: p.lat, lon: p.lon, d: distKm(lat, lon, p.lat, p.lon), b: bearing(lat, lon, p.lat, p.lon) });
+    for (const k in out) out[k] = out[k].sort((a, b) => a.d - b.d).slice(0, n);
+    return out;
+  }
+  const CARD = ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'];
+  const cardinal = b => CARD[Math.round(b / 45) % 8];
+
   async function storageInfo() {
     const el = $('#storageInfo'); if (!el) return;
     let txt = '';
@@ -404,6 +504,67 @@
   }
   function dms(v, pos, neg) { const a = Math.abs(v), d = Math.floor(a), m = Math.floor((a - d) * 60), s = ((a - d) * 3600 - m * 60).toFixed(1); return `${d}°${m}'${s}"${v >= 0 ? pos : neg}`; }
 
+  let gpsFix = null;
+  function getGPS() {
+    return new Promise((res, rej) => {
+      if (!navigator.geolocation) return rej(new Error('géolocalisation indisponible'));
+      navigator.geolocation.getCurrentPosition(p => { gpsFix = { lat: p.coords.latitude, lon: p.coords.longitude, acc: p.coords.accuracy, t: Date.now() }; res(gpsFix); }, rej, { enableHighAccuracy: true, timeout: 20000, maximumAge: 60000 });
+    });
+  }
+  function homeLL() { const h = (App.state.profile || {}).home; return h && isFinite(h.lat) && isFinite(h.lon) && (h.lat || h.lon) ? h : null; }
+  const packUI = {
+    async bbox() {
+      const z = $('#pkZone').value, km = +$('#pkKm').value;
+      if (z === 'view') { const b = map.getBounds(); return [b.getSouth(), b.getWest(), b.getNorth(), b.getEast()]; }
+      if (z === 'home') { const h = homeLL(); if (!h) throw new Error('domicile non renseigné (onglet Mon profil)'); return boxAround(h.lat, h.lon, km); }
+      const g = gpsFix || await getGPS(); return boxAround(g.lat, g.lon, km);
+    },
+    srcs: () => [...document.querySelectorAll('[name=pksrc]:checked')].map(i => i.value),
+    async estimate() {
+      const el = $('#pkEst'); if (!el) return;
+      try {
+        if ($('#pkZone').value === 'gps' && !gpsFix) { el.textContent = 'Position GPS demandée au téléchargement.'; return; }
+        const e = packEstimate(await packUI.bbox(), 6, +$('#pkZ').value, packUI.srcs());
+        el.innerHTML = `${e.n.toLocaleString('fr-FR')} tuiles ≈ <b>${e.mb.toLocaleString('fr-FR')} Mo</b> (estimation)${e.n > MAX_PACK ? ` — au-delà de ${MAX_PACK.toLocaleString('fr-FR')} tuiles : réduisez le rayon ou le détail.` : ''}`;
+      } catch (err) { el.textContent = err.message; }
+    },
+    async download() {
+      const st = $('#pkStatus');
+      try {
+        const bbox = await packUI.bbox(), srcs = packUI.srcs();
+        if (!srcs.length) return st.textContent = 'Choisissez au moins une source.';
+        const z = $('#pkZone').value, km = +$('#pkKm').value;
+        const def = z === 'home' ? `Domicile (${km} km)` : z === 'gps' ? `Position du ${new Date().toLocaleDateString('fr-FR')} (${km} km)` : 'Zone ' + new Date().toLocaleDateString('fr-FR');
+        const o = await UI.ask('Nom du pack', [{ name: 'n', label: 'Nom (ex. « Domicile », « Chez mes parents »)', value: def }], 'Télécharger');
+        if (!o) return;
+        st.textContent = 'Téléchargement…';
+        const rec = await downloadPack({ name: o.n || def, bbox, zmin: 6, zmax: +$('#pkZ').value, srcs }, (d, n, f) => { st.textContent = `${d.toLocaleString('fr-FR')} / ${n.toLocaleString('fr-FR')} tuiles (${f} échecs)…`; });
+        st.textContent = `Pack « ${rec.name} » : ${rec.count.toLocaleString('fr-FR')} tuiles disponibles hors ligne${rec.fail ? ` (${rec.fail} échecs : relancez pour compléter)` : ''}.`;
+        if (!map.hasLayer(layers.bases['IGN topographique – France (packs hors ligne)']) && srcs.some(k => k.startsWith('ign'))) { Object.values(layers.bases).forEach(l => map.hasLayer(l) && map.removeLayer(l)); layers.bases['IGN topographique – France (packs hors ligne)'].addTo(map); }
+        packUI.list(); storageInfo();
+      } catch (err) { st.textContent = 'Impossible : ' + err.message; }
+    },
+    async list() {
+      const el = $('#packList'); if (!el) return;
+      const packs = await listPacks();
+      el.innerHTML = packs.length ? packs.map(p => `<li><b>${esc(p.name)}</b> — ${p.count.toLocaleString('fr-FR')} tuiles, détail ${p.zmax}, ${new Date(p.date).toLocaleDateString('fr-FR')}${p.complete ? '' : ' <span class="danger">incomplet</span>'}<br><button class="link" data-pkgo="${p.key}">voir</button> · <button class="link" data-pkexp="${p.key}">exporter</button> · <button class="link danger" data-pkdel="${p.key}">supprimer</button></li>`).join('') : '<li class="muted">Aucun pack. Commencez par votre domicile.</li>';
+      el.onclick = async ev => {
+        const d = ev.target.dataset, p = packs.find(x => x.key === (d.pkgo || d.pkexp || d.pkdel));
+        if (!p) return;
+        if (d.pkgo) map.fitBounds([[p.bbox[0], p.bbox[1]], [p.bbox[2], p.bbox[3]]]);
+        if (d.pkexp) { $('#pkStatus').textContent = 'Préparation du fichier…'; const b = await exportPack(p.key); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = p.name.replace(/[^\w-]+/g, '_') + '.kspack'; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); $('#pkStatus').textContent = `Fichier prêt (${Math.round(b.size / 1048576)} Mo).`; }
+        if (d.pkdel && await UI.confirm(`Supprimer le pack « ${p.name} » et ses tuiles ?`, 'Supprimer')) { await deletePack(p.key); packUI.list(); storageInfo(); }
+      };
+      const h = homeLL(), cov = $('#packCover');
+      if (cov) cov.innerHTML = h ? (packs.some(p => inBox(p.bbox, h.lat, h.lon)) ? '✅ Votre domicile est couvert par un pack hors ligne.' : '⚠ Votre domicile n\'est couvert par aucun pack hors ligne.') : 'Renseignez votre domicile dans « Mon profil » pour préparer sa carte en un clic.';
+    },
+    async import(file) {
+      const st = $('#pkStatus');
+      try { const m = await importPack(file, (i, n) => { st.textContent = `Import : ${i} / ${n} tuiles…`; }); st.textContent = `Pack « ${m.name} » importé.`; packUI.list(); storageInfo(); }
+      catch (err) { st.textContent = 'Import impossible : ' + err.message; }
+    },
+  };
+
   function panelHTML() {
     return `
     <details open><summary>Fonds & couches</summary>
@@ -411,13 +572,19 @@
       <label>Rayon autour des sites nucléaires : <input id="nucKm" type="number" min="1" max="300" value="${nucRadiusKm()}" style="width:5em"> km</label>
       <p class="small muted">En France, le rayon des Plans particuliers d'intervention (PPI) des centrales est de 20 km (voir la Notice).</p>
     </details>
-    <details><summary>Relief détaillé hors ligne (zone affichée)</summary>
-      <p class="small">Télécharge les tuiles d'altitude de la zone visible (données ouvertes AWS Terrain Tiles). Elles restent ensuite disponibles hors ligne pour la couche « Relief MNT détaillé » et l'altitude au clic.</p>
-      <label>Zoom min <select id="demZmin">${[5, 6, 7, 8, 9, 10].map(z => `<option ${z === 7 ? 'selected' : ''}>${z}</option>`).join('')}</select></label>
-      <label>Zoom max <select id="demZmax">${[8, 9, 10, 11, 12, 13].map(z => `<option ${z === 11 ? 'selected' : ''}>${z}</option>`).join('')}</select></label>
-      <div id="demEstimate" class="small"></div>
-      <button id="btnDem" class="btn">Télécharger le relief</button> <button id="btnDemStop" class="btn ghost">Stop</button>
-      <div id="demStatus" class="small"></div>
+    <details open class="packbox"><summary>📥 Cartes hors ligne (sans Internet)</summary>
+      <p class="small">Téléchargez <b>avant</b> une crise les cartes de vos zones (domicile, travail, famille, itinéraires). Elles restent sur l'appareil et s'affichent ensuite <b>sans connexion</b>. En France, la carte IGN officielle (routes, chemins, courbes de niveau, lieux-dits) ; ailleurs en Europe, le relief.</p>
+      <div class="small" id="packCover"></div>
+      <label>Zone <select id="pkZone"><option value="home">Autour de mon domicile (profil)</option><option value="gps">Autour de ma position GPS</option><option value="view">Zone affichée à l'écran</option></select></label>
+      <label>Rayon <select id="pkKm">${[5, 10, 20, 30, 50].map(k => `<option ${k === 20 ? 'selected' : ''}>${k}</option>`).join('')}</select> km</label>
+      <label>Détail max <select id="pkZ">${[[12, '12 – vue d\'ensemble'], [13, '13 – routes, villages'], [14, '14 – chemins (≈ 1:25 000)'], [15, '15 – rando détaillée'], [16, '16 – très détaillé']].map(([z, t]) => `<option value="${z}" ${z === 15 ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
+      ${Object.entries(TSRC).map(([k, t]) => `<label class="chk"><input type="checkbox" name="pksrc" value="${k}" ${k !== 'dem' ? 'checked' : ''}>${t.label}</label>`).join('')}
+      <div id="pkEst" class="small"></div>
+      <button id="btnPack" class="btn">Télécharger ce pack</button> <button id="btnPackStop" class="btn ghost">Stop</button>
+      <div id="pkStatus" class="small"></div>
+      <ul id="packList" class="zones"></ul>
+      <label class="btn ghost file">Importer un pack (.kspack)<input id="pkImport" type="file" accept=".kspack" hidden></label>
+      <p class="small muted">Sources : IGN – Géoplateforme (Licence Ouverte Etalab 2.0) ; Terrain Tiles (AWS Open Data). Le SCAN 25 IGN (carte « TOP 25 » numérique) n'est pas téléchargeable hors ligne (droits de diffusion, selon l'IGN) ; le Plan IGN l'est librement. Exportez un pack pour le copier sur une clé USB ou un autre appareil.</p>
     </details>
     <details><summary>Points OSM hors ligne (zone affichée)</summary>
       <p class="small">Récupère depuis OpenStreetMap (API Overpass) les points utiles de la zone visible et les enregistre sur l'appareil.</p>
@@ -463,7 +630,10 @@
     const vectorBase = L.layerGroup([buildCountries()]);
     const relief = new ReliefLayer({ maxNativeZoom: 13, maxZoom: 17, attribution: ATTR_DEM });
     const otm = new CachedTiles(OTM, { prefix: 'otm', maxZoom: 17, attribution: 'Carte : © <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA), données © contributeurs OpenStreetMap' });
-    layers.bases = { 'Relief Europe intégré (hors ligne)': reliefBase, 'Europe vectorielle simple (hors ligne)': vectorBase, 'Relief MNT détaillé (zones téléchargées)': relief, 'OpenTopoMap (en ligne)': otm };
+    const ignPlan = new CachedTiles(TSRC.ign_plan.tpl, { prefix: 'ign_plan', maxZoom: 18, maxNativeZoom: 18, attribution: ATTR_IGN });
+    const ignShad = new CachedTiles(TSRC.ign_shad.tpl, { prefix: 'ign_shad', maxZoom: 18, maxNativeZoom: 15, opacity: 0.45, className: 'blend-multiply' });
+    const ignTopo = L.layerGroup([ignPlan, ignShad]);
+    layers.bases = { 'IGN topographique – France (packs hors ligne)': ignTopo, 'Relief Europe intégré (hors ligne)': reliefBase, 'Europe vectorielle simple (hors ligne)': vectorBase, 'Relief MNT détaillé (zones téléchargées)': relief, 'OpenTopoMap (en ligne)': otm };
 
     const net = buildBase().addTo(map);
     nucLayer = buildNuclear();
@@ -484,9 +654,11 @@
 
     $('#mapPanel').innerHTML = panelHTML();
     $('#nucKm').onchange = e => { App.state.map = Object.assign(App.state.map || {}, { nucKm: +e.target.value }); App.save(); const on = map.hasLayer(nucLayer); map.removeLayer(nucLayer); ctrl.removeLayer(nucLayer); nucLayer = buildNuclear(); ctrl.addOverlay(nucLayer, '☢ Sites nucléaires + rayon'); if (on) nucLayer.addTo(map); };
-    ['demZmin', 'demZmax'].forEach(id => $('#' + id).onchange = estimate);
-    map.on('moveend', estimate); estimate();
-    $('#btnDem').onclick = downloadDem; $('#btnDemStop').onclick = () => dlAbort = true;
+    ['pkZone', 'pkKm', 'pkZ'].forEach(id => $('#' + id).onchange = packUI.estimate);
+    document.querySelectorAll('[name=pksrc]').forEach(i => i.onchange = packUI.estimate);
+    map.on('moveend', () => $('#pkZone').value === 'view' && packUI.estimate()); packUI.estimate(); packUI.list();
+    $('#btnPack').onclick = packUI.download; $('#btnPackStop').onclick = () => { packAbort = true; };
+    $('#pkImport').onchange = e => e.target.files[0] && packUI.import(e.target.files[0]);
     $('#btnOsm').onclick = downloadOsm;
     $('#btnAdd').onclick = () => { addMode = !addMode; $('#btnAdd').classList.toggle('on', addMode); $('#btnAdd').textContent = addMode ? 'Cliquez sur la carte…' : 'Ajouter un point'; };
     $('#btnExpGeo').onclick = exportGeoJSON; $('#btnExpGpx').onclick = exportGPX;
@@ -533,6 +705,8 @@
   }
 
   window.SurvivalMap = {
+    nearest, coverage, listPacks, getGPS, distKm, bearing, cardinal, elevationAt,
+    focus(lat, lon, z, label) { init(); App.go('map'); setTimeout(() => { map.invalidateSize(); map.setView([lat, lon], z || 14); if (label) L.popup().setLatLng([lat, lon]).setContent(esc(label)).openOn(map); }, 80); },
     init, show() { init(); setTimeout(() => map.invalidateSize(), 50); },
     MY_TYPES,
   };

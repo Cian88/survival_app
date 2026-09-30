@@ -1,6 +1,12 @@
 # Kit Survie Europe
 
-Application **locale et hors ligne** pour préparer :
+Application **locale, personnelle et hors ligne**, construite autour de la survie **à l'instant T** de son utilisateur :
+- un **profil** (foyer, santé, logement, domicile, environnement) qui personnalise tout le reste ;
+- un **état des lieux matériel** : besoins calculés pour vous, comparés à ce que vous possédez, manques vitaux en premier ;
+- un écran **Instant T** : position GPS sans Internet, autonomie réelle, actions par situation, ressources et dangers les plus proches, cap vers le domicile ou le point de rendez-vous ;
+- des **cartes topographiques hors ligne**, dont la carte **IGN officielle** (Plan IGN et estompage, Licence Ouverte Etalab 2.0) téléchargeable par zone, exportable et importable.
+
+Elle permet aussi de préparer :
 - un **écosystème de survie domestique** : stock d'eau et de nourriture, énergie, santé, hygiène, communication, documents, sécurité, plan familial ;
 - un **sac d'évacuation 72 h** par personne ;
 - une **liste de matériel** avec liens, prix indicatifs et **récapitulatif budgétaire** ;
@@ -26,9 +32,12 @@ Vous pouvez aussi ouvrir `index.html` directement. Pour un usage hors ligne comp
 
 ## Structure
 ```
-index.html          application (9 onglets)
-js/app.js           logique (tableau de bord, maison, sacs, budget, plan, notice)
-js/map.js           carte hors ligne (Leaflet + relief + OSM + PMTiles)
+index.html          application (11 onglets)
+js/app.js           logique (navigation, maison, sacs, budget, plan, notice)
+js/profile.js       profil personnel
+js/needs.js         état des lieux matériel (besoins calculés selon le profil)
+js/now.js           écran Instant T
+js/map.js           carte hors ligne (IGN, relief, OSM, PMTiles, packs .kspack, proximité)
 js/knowledge.js     contenus sourcés (piliers, scénarios, infos clés)
 js/gear.js          catalogue du matériel
 js/aps.js           synthèse de la chaîne APS
@@ -42,4 +51,4 @@ sw.js               service worker (cache hors ligne)
 ```
 
 ## Licences des données
-Natural Earth (domaine public), Terrain Tiles AWS/Mapzen (attribution : EU-DEM Copernicus, SRTM/GMTED USGS, ETOPO1 NOAA…), Wikidata (CC0), WRI Global Power Plant Database (CC BY 4.0), OpenStreetMap (ODbL), OpenTopoMap (CC-BY-SA). Détails dans `docs/SOURCES.md`.
+Natural Earth (domaine public), Terrain Tiles AWS/Mapzen (attribution : EU-DEM Copernicus, SRTM/GMTED USGS, ETOPO1 NOAA…), Wikidata (CC0), WRI Global Power Plant Database (CC BY 4.0), OpenStreetMap (ODbL), OpenTopoMap (CC-BY-SA), IGN – Géoplateforme (Licence Ouverte Etalab 2.0). Détails dans `docs/SOURCES.md`.

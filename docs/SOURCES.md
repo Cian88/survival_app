@@ -54,6 +54,7 @@ Voir [`MATERIEL.md`](MATERIEL.md). Les 83 références ont été relevées le 30
 | Sites nucléaires, grands barrages | [Wikidata](https://www.wikidata.org) (requêtes SPARQL dans `tools/`) | CC0 | Statuts parfois absents ; barrages : seulement ceux dont la hauteur ≥ 50 m est renseignée |
 | Centrales électriques ≥ 50 MW | [WRI Global Power Plant Database v1.3.0](https://github.com/wri/global-power-plant-database) | CC BY 4.0 | Données de 2021, sans les centrales nucléaires |
 | Points eau / santé / secours / énergie / dangers / ravitaillement | OpenStreetMap via l'API Overpass (téléchargés par l'utilisateur) | ODbL, © contributeurs OpenStreetMap | Qualité variable ; vérifier sur place |
+| Carte topographique officielle (France) : Plan IGN v2 et estompage | [IGN – Géoplateforme](https://cartes.gouv.fr), service WMTS `data.geopf.fr` (vérifié le 30/09/2026 : CORS ouvert, sans clé) | Licence Ouverte Etalab 2.0 | Packs hors ligne téléchargeables par zone. Le SCAN 25 exige une clé personnelle (cartes.gouv.fr) et n'est pas intégré |
 | Carte topographique en ligne | [OpenTopoMap](https://opentopomap.org) | CC-BY-SA | Pas de téléchargement en masse : seules les tuiles consultées sont mises en cache |
 | Carte détaillée hors ligne (optionnelle) | [Protomaps](https://maps.protomaps.com/builds/) au format PMTiles | ODbL (données OSM) | Fichier fourni par l'utilisateur |
 
