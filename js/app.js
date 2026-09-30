@@ -165,6 +165,46 @@
     return Object.entries(cats).map(([c, list]) => `<optgroup label="${h(c)}">${list.map(g => `<option value="${g.id}">${h(g.name)}${g.price_eur ? ' — ' + eur(g.price_eur) : ''}</option>`).join('')}</optgroup>`).join('');
   }
   function lineFromGear(g) { return { key: uid(), gearId: g.id, name: g.name + (g.model ? ' — ' + g.model : ''), category: g.category, qty: g.qty || 1, weight_g: g.weight_g || 0, price: g.price_eur || 0, have: false }; }
+  /* ---------- Variantes du sac selon l'environnement ---------- */
+  const ENVS = window.ENV_VARIANTS || [];
+  const ENV_BY_ID = Object.fromEntries(ENVS.map(e => [e.id, e]));
+  const srcA = u => u && /^https?:/.test(u) ? ` <a class="src" href="${h(u)}" target="_blank" rel="noopener">[source]</a>` : '';
+  function envSelector(b) {
+    if (!ENVS.length) return '';
+    b.env = b.env || [];
+    const group = axis => ENVS.filter(e => e.axis === axis).map(e => `<button class="envchip ${b.env.includes(e.id) ? 'on' : ''}" data-env="${b.id}|${e.id}" aria-pressed="${b.env.includes(e.id)}">${h(e.name)}</button>`).join('');
+    return `<div class="envsel"><span class="small muted">Lieu :</span> ${group('lieu')} <span class="small muted">Climat :</span> ${group('climat')}</div>`;
+  }
+  function envPanel(b) {
+    const list = (b.env || []).map(id => ENV_BY_ID[id]).filter(Boolean);
+    if (!list.length) return ENVS.length ? '<p class="small muted">Choisissez le lieu et le climat où ce sac servira : l\'app affiche les risques propres à cet environnement et le matériel à ajouter.</p>' : '';
+    const have = new Set(b.items.map(i => i.envKey).filter(Boolean));
+    return `<details class="envpanel" open><summary>Adaptations : ${list.map(e => h(e.name)).join(' + ')}</summary>
+      ${list.map(e => `<div class="envblock">
+        <h4>${h(e.name)}</h4>${e.summary ? `<p class="small">${h(e.summary)}</p>` : ''}
+        ${e.risks && e.risks.length ? `<p class="small"><b>Risques :</b></p><ul class="small">${e.risks.map(r => `<li>${h(r.t)}${srcA(r.src)}</li>`).join('')}</ul>` : ''}
+        ${e.add && e.add.length ? `<p class="small"><b>À ajouter ou renforcer :</b></p><ul class="small addlist">${e.add.map((a, i) => { const k = e.id + ':' + i; return `<li><span class="chip ${h(a.priority || '')}">${h(a.priority || '')}</span> <b>${h(a.item)}</b> — ${h(a.why)}${srcA(a.src)} ${have.has(k) ? '<span class="muted">✓ dans le sac</span>' : `<button class="link" data-envadd="${b.id}|${k}">+ ajouter</button>`}</li>`; }).join('')}</ul>` : ''}
+        ${e.lighten && e.lighten.length ? `<p class="small"><b>Moins utile / à alléger :</b></p><ul class="small">${e.lighten.map(r => `<li>${h(r.item)} — ${h(r.why)}${srcA(r.src)}</li>`).join('')}</ul>` : ''}
+        ${e.quantities && e.quantities.length ? `<p class="small"><b>Quantités :</b></p><ul class="small">${e.quantities.map(r => `<li>${h(r.t)}${srcA(r.src)}</li>`).join('')}</ul>` : ''}
+        ${e.reflexes && e.reflexes.length ? `<p class="small"><b>Réflexes :</b></p><ul class="small">${e.reflexes.map(r => `<li>${h(r.t)}${srcA(r.src)}</li>`).join('')}</ul>` : ''}
+        ${e.mistakes && e.mistakes.length ? `<p class="small"><b>Erreurs fréquentes :</b></p><ul class="small">${e.mistakes.map(r => `<li>${h(r.t)}${srcA(r.src)}</li>`).join('')}</ul>` : ''}
+      </div>`).join('')}
+      <button class="btn ghost" data-envaddall="${b.id}">Ajouter tous les « essentiels » de ces environnements</button>
+    </details>`;
+  }
+  function envLine(k) {
+    const [id, i] = k.split(':'), a = ENV_BY_ID[id].add[+i];
+    return { key: uid(), envKey: k, name: a.item + ' (' + ENV_BY_ID[id].name + ')', category: a.category || 'Environnement', qty: 1, weight_g: 0, price: 0, have: false };
+  }
+  function renderEnvCompare() {
+    if (!ENVS.length) return '';
+    return `<div class="card"><h2>Variantes du sac selon l'environnement</h2>
+      <p class="small">Vue d'ensemble des ${ENVS.length} environnements. Sélectionnez-les directement sur un sac (boutons « Lieu » et « Climat ») pour obtenir la liste adaptée. Sources : praticiens, secours en montagne, médecine du chaud et du froid (liens [source]).</p>
+      <div class="grid">${ENVS.map(e => `<details class="envcard"><summary><b>${h(e.name)}</b> <span class="chip">${e.axis === 'lieu' ? 'lieu' : 'climat'}</span><div class="small muted">${h(e.summary || '')}</div></summary>
+        <p class="small"><b>Risques :</b> ${(e.risks || []).map(r => h(r.t)).join(' · ')}</p>
+        <p class="small"><b>Ajouter :</b> ${(e.add || []).map(a => h(a.item)).join(' · ')}</p>
+        <p class="small"><b>Réflexes :</b> ${(e.reflexes || []).map(r => h(r.t)).join(' · ')}</p></details>`).join('')}</div></div>`;
+  }
   function renderBag() {
     $('#tab-bag').innerHTML = `
     <div class="card">
@@ -175,6 +215,8 @@
     ${S.bags.map(b => { const t = bagTotals(b); return `<div class="card" data-bag="${b.id}">
       <div class="row"><input value="${h(b.name)}" data-bagname="${b.id}" style="font-weight:600;flex:1 1 200px"> <button class="link danger" data-bagdel="${b.id}">supprimer le sac</button></div>
       <div class="row small"><span class="chip">${t.have}/${t.n} objets prêts</span><span class="chip">Poids : ${kg(t.w)}</span><span class="chip">Coût total : ${eur(t.cost)}</span><span class="chip">Reste à acheter : ${eur(t.left)}</span></div>
+      ${envSelector(b)}
+      ${envPanel(b)}
       <div class="row"><select data-bagadd="${b.id}" style="flex:1 1 260px"><option value="">+ Ajouter depuis le catalogue…</option>${gearOptions(true)}</select>
         <button class="btn ghost" data-bagessential="${b.id}">Pré-remplir : essentiels</button>
         <button class="btn ghost" data-bagcustom="${b.id}">+ Objet personnalisé</button></div>
@@ -185,6 +227,7 @@
         <td class="num"><input type="number" min="0" step="0.01" value="${it.price || 0}" data-bf="${b.id}|${it.key}|price" style="width:6em"></td>
         <td><button class="link danger" data-bdel="${b.id}|${it.key}">✕</button></td></tr>`).join('') || '<tr><td colspan="6" class="muted">Sac vide : utilisez « Pré-remplir : essentiels » ou le catalogue.</td></tr>'}
       </table></div></div>`; }).join('')}
+    ${renderEnvCompare()}
     <div class="card"><h3>Listes de référence officielles</h3>
       <p><b>Kit 72 h — guide SGDSN (France)</b> : 6 L d'eau/personne en bouteilles, pastilles de désinfection (dernier recours), nourriture non périssable sans cuisson, médicaments habituels, lunettes de secours, gel, masques, pansements, couteau multifonction, ouvre-boîte, réchaud, radio à piles, batterie externe, piles, chargeur, savon, lampe, bougies, allumettes, briquet, vêtements chauds, couverture de survie, doubles des clés, photocopies des papiers (pochette étanche), argent liquide, jeux/livres.</p>
       <p><b>Sac d'évacuation — BBK (Allemagne)</b> : vêtements chauds, protection pluie, chaussures solides, rechange, premiers secours, médicaments, powerbank, hygiène, nourriture longue conservation, gourde, dossier documents, sac de couchage ou couverture, couverts, couteau, ouvre-boîte, lampe, radio, briquet, crème solaire, couvre-chef, bloc-notes et stylo, gants de travail, lunettes de rechange, argent liquide.</p>
@@ -349,6 +392,9 @@
     if (d.tab) return show(d.tab);
     if (d.quick) { S.inventory.push({ id: uid(), name: d.quick === '9' ? 'Pack eau 6 × 1,5 L' : d.quick === '5' ? 'Bidon eau 5 L' : 'Jerrican eau 20 L', cat: 'eau', qty: 1, litres: +d.quick, kcal: 0, expiry: '', where: '' }); return commit(); }
     if (d.invdel) { S.inventory = S.inventory.filter(x => x.id !== d.invdel); return commit(); }
+    if (d.env) { const [bid, eid] = d.env.split('|'), b = S.bags.find(x => x.id === bid); b.env = b.env || []; b.env = b.env.includes(eid) ? b.env.filter(x => x !== eid) : [...b.env, eid]; return commit(); }
+    if (d.envadd) { const [bid, k] = d.envadd.split('|'); S.bags.find(x => x.id === bid).items.push(envLine(k)); return commit(); }
+    if (d.envaddall) { const b = S.bags.find(x => x.id === d.envaddall), have = new Set(b.items.map(i => i.envKey)); (b.env || []).forEach(id => (ENV_BY_ID[id].add || []).forEach((a, i) => { const k = id + ':' + i; if (a.priority === 'essentiel' && !have.has(k)) b.items.push(envLine(k)); })); return commit(); }
     if (d.bagdel) { UI.confirm('Supprimer ce sac et sa liste ?', 'Supprimer').then(ok => { if (ok) { S.bags = S.bags.filter(b => b.id !== d.bagdel); commit(); } }); return; }
     if (d.bagessential) { const b = S.bags.find(x => x.id === d.bagessential), have = new Set(b.items.map(i => i.gearId)); GEAR.filter(g => g.scope !== 'maison' && g.priority === 'essentiel' && !have.has(g.id)).forEach(g => b.items.push(lineFromGear(g))); return commit(); }
     if (d.bagcustom) { UI.ask('Objet personnalisé', [{ name: 'n', label: 'Nom de l\'objet', required: true }], 'Ajouter').then(o => { const n = o && o.n; if (n) { S.bags.find(x => x.id === d.bagcustom).items.push({ key: uid(), name: n, category: 'Personnel', qty: 1, weight_g: 0, price: 0, have: false }); commit(); } }); return; }
