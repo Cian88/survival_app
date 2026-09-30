@@ -7,7 +7,9 @@
     "build:web": "node tools/build-www.mjs",
     "ios:sync": "npm run build:web && npx cap sync ios",
     "ios:open": "npx cap open ios",
-    "license": "node tools/license.mjs"
+    "license": "node tools/license.mjs",
+    "build:webapp": "node tools/build-www.mjs",
+    "serve": "npm run build:webapp && python3 -m http.server 8765 --bind 127.0.0.1 --directory www"
   },
   "dependencies": {
     "@capacitor/core": "8.5.2",

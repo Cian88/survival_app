@@ -61,6 +61,16 @@ Créez l'app, puis les achats intégrés. Leurs identifiants doivent correspondr
 - **Captures d'écran** : Instant T, État des lieux, Carte hors ligne, Profil, Premium.
 - **Version de test** : distribuez-la par TestFlight avant la soumission.
 
+## Paiement : ce qu'Apple prend en charge
+Sur iOS, le paiement passe entièrement par Apple :
+- Apple encaisse, gère le moyen de paiement, les renouvellements automatiques, les résiliations (Réglages › Abonnements) et les remboursements.
+- Apple vous reverse le produit des ventes, **commission et taxes collectées déduites**, au plus tard 45 jours après la fin de chaque mois ([Schedule 2 du contrat Apple](https://developer.apple.com/support/downloads/terms/schedules/Schedule-2-and-3-English.pdf)).
+- Selon ce même document, dans certains cas (développeurs « locaux »), Apple ne collecte **pas** les taxes et c'est au développeur de s'en charger : faites vérifier votre situation fiscale.
+- Vous n'avez aucune donnée bancaire à gérer.
+
+## Accès administrateur sur iOS
+Pour les tests internes, `devAdmin: true` dans `js/config.js` fait apparaître un champ « clé administrateur » dans l'onglet Premium. **Remettez `false` avant toute soumission à l'App Store**, car la règle 3.1.1 interdit les clés de licence. Pour tester les achats sans payer, utilisez un fichier StoreKit Configuration ou un compte Sandbox.
+
 ## Limites connues
 - **Non compilée ici** : l'app a été générée et testée dans un navigateur qui **simulait** les modules iOS (GPS, achats, fichiers, préférences), mais pas sur un vrai iPhone. Un test sur appareil reste nécessaire.
 - **Stockage des tuiles** : les tuiles de carte sont stockées dans l'IndexedDB du moteur web de l'app. Exportez vos packs (`.kspack`) pour en garder une copie.

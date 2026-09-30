@@ -8,7 +8,7 @@
   const KEY = 'survie.licence';
   const LIMITS = { packs: 1, packKm: 10, packZoom: 14, osmZones: 1, bags: 1, inventory: 15 };
   const FREE_CALCS = ['eau', 'poids', 'marche'];
-  const PLAN_NAME = { monthly: 'Mensuel', annual: 'Annuel', lifetime: 'À vie' };
+  const PLAN_NAME = { monthly: 'Mensuel', annual: 'Annuel', lifetime: 'À vie', admin: 'Administrateur (toutes les fonctions)' };
   const FEATURES = [
     ['Instant T : actions par situation, numéros d\'urgence, position GPS', true, true],
     ['Carte Europe intégrée (relief, fond, nucléaire, barrages, centrales)', true, true],
@@ -75,8 +75,16 @@
     return loadIAP();
   }
 
+  async function loadLicence() {
+    let tok = null; try { tok = localStorage.getItem(KEY); } catch (e) { }
+    if (!tok) return null;
+    try { const r = await verify(tok); return r.expired ? null : { active: true, lic: r.payload, token: tok, inGrace: r.inGrace, reason: '' }; } catch (e) { return null; }
+  }
   async function load() {
-    if (NATIVE) return loadIAP();
+    if (NATIVE) { // iOS : achats intégrés ; clé administrateur seulement si devAdmin (builds de développement)
+      if (C.devAdmin) { const l = await loadLicence(); if (l) { state = l; return state; } }
+      return loadIAP();
+    }
     let tok = null; try { tok = localStorage.getItem(KEY); } catch (e) { }
     if (!tok) { state = { active: false, lic: null, reason: 'aucune licence' }; return state; }
     try {
@@ -109,6 +117,7 @@
 
   function renderIAP(el) {
     const P = C.prices, L = state.lic, price = k => storePrices[IAP[k]] || P[k].label;
+    const adminBox = C.devAdmin ? `<div class="card alertcard"><h3>Accès administrateur (build de développement)</h3><p class="small">Visible seulement si <code>devAdmin: true</code> dans js/config.js. À désactiver avant toute soumission à l'App Store.</p><textarea id="licIn" placeholder="KS1.…" style="min-height:70px"></textarea><div class="row"><button class="btn" data-lic="activate">Activer</button>${state.lic && state.token ? '<button class="btn ghost danger" data-lic="remove">Retirer</button>' : ''}</div><div id="admMsg" class="small"></div></div>` : '';
     el.innerHTML = `
     <div class="card"><h2>★ Kit Survie Premium</h2>
       ${state.active ? `<div class="alert">✅ Premium actif — formule <b>${h(PLAN_NAME[L.plan] || L.plan)}</b>${L.exp ? `, renouvellement ou fin le <b>${new Date(L.exp * 1000).toLocaleDateString('fr-FR')}</b>` : ', sans date de fin'}${state.cached ? ' (vérifié lors de la dernière connexion)' : ''}.</div>`
@@ -126,10 +135,13 @@
       <p class="small muted">Paiement par votre compte Apple. Les abonnements mensuel et annuel se renouvellent automatiquement, sauf s'ils sont désactivés au moins 24 heures avant la fin de la période en cours. Gestion et résiliation dans Réglages › [votre nom] › Abonnements. L'achat « À vie » est un paiement unique.
       ${C.termsUrl ? `<a href="${h(C.termsUrl)}" target="_blank" rel="noopener">Conditions d'utilisation</a>` : ''} ${C.privacyUrl ? `· <a href="${h(C.privacyUrl)}" target="_blank" rel="noopener">Politique de confidentialité</a>` : ''}</p>
     </div>
+    ${adminBox}
     <div class="card"><h3>Gratuit ou Premium</h3><div class="tablewrap"><table><tr><th>Fonction</th><th>Gratuit</th><th>Premium</th></tr>
       ${FEATURES.map(([f, a, b]) => `<tr><td>${h(f)}</td><td>${a === true ? '✓' : a === false ? '—' : h(a)}</td><td>${b === true ? '✓' : h(b)}</td></tr>`).join('')}</table></div>
       <p class="small muted">Les informations de sécurité (actions d'urgence, numéros, position) restent gratuites pour tous. Vos données restent sur votre appareil.</p></div>`;
     el.onclick = async e => {
+      const lb = e.target.closest('[data-lic]');
+      if (lb) { const m = el.querySelector('#admMsg'); try { if (lb.dataset.lic === 'activate') await activate(el.querySelector('#licIn').value); else remove(); await load(); App.refresh(); App.go('premium'); } catch (err) { m.textContent = 'Activation impossible : ' + err.message + '.'; } return; }
       const b = e.target.closest('[data-iap],[data-iapx]'); if (!b) return;
       const msg = el.querySelector('#licMsg'); msg.textContent = 'Connexion à l\'App Store…';
       try {

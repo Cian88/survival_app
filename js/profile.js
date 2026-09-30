@@ -58,7 +58,7 @@
   function bind(root, S, commit) {
     root.addEventListener('change', e => {
       const t = e.target, d = t.dataset, P = S.profile;
-      if (d.pp) { P[d.pp] = t.type === 'checkbox' ? t.checked : t.type === 'number' || ['days', 'waterL'].includes(d.pp) ? +t.value : t.value; commit(); }
+      if (d.pp) { P[d.pp] = t.type === 'checkbox' ? t.checked : t.type === 'number' || ['days', 'waterL'].includes(d.pp) ? +t.value : t.value; if (['days', 'adults', 'children', 'waterL'].includes(d.pp) && App.rescaleHome) App.rescaleHome(); commit(); }
       if (d.ph) { P.health[d.ph] = t.checked; commit(); }
       if (d.pk) { P.skills[d.pk] = t.checked; commit(); }
     });

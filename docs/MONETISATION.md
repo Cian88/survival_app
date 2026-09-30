@@ -47,6 +47,9 @@ Sur l'App Store, la règle 3.1.1 impose les achats intégrés d'Apple et **inter
 - L'expiration dépend de l'horloge de l'appareil.
 - Une licence n'est pas liée à un appareil : l'acheteur peut l'utiliser sur ses propres appareils.
 
+## Clé administrateur
+`node tools/license.mjs issue --plan admin --email vous@exemple.fr` crée une licence « admin », sans expiration, qui débloque tout. Elle est signée avec votre clé privée ; en mode test, ajoutez `--key tools/test-keys/private.jwk`. Ne la diffusez pas.
+
 ## Mise en vente : étapes
 
 ### 1. Votre clé de signature (obligatoire)

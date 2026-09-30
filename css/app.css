@@ -172,3 +172,7 @@ html.native .maplayout { height: calc(100vh - 170px - env(safe-area-inset-top, 0
   .maplayout { grid-template-rows: 58vh auto; }
   #map { height: 58vh; }
 }
+.bagicon { font-size: 1.6rem; }
+.bagcard.bag-survie { border-left: 4px solid #8c564b; }
+.bagcard.bag-evac { border-left: 4px solid var(--accent); }
+.chip.auto { background: var(--accent); color: var(--accent-ink); }

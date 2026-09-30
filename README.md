@@ -19,6 +19,12 @@ Tout fonctionne dans le navigateur (HTML/JS, sans serveur ni compte). Les donné
 ## Application iOS
 Le dépôt contient un projet **iOS natif** (Capacitor 8, dossier `ios/`) : GPS natif, achats intégrés StoreKit (exigés par l'App Store), export via la feuille de partage, barre d'onglets en bas de l'écran, données embarquées pour fonctionner hors ligne. Compilation sur Mac avec Xcode : `npm install && npm run ios:sync && npm run ios:open`. Guide complet : [`docs/IOS.md`](docs/IOS.md).
 
+## Webapp
+Version web installable (PWA) et utilisable hors ligne.
+- **Assembler** : `npm run build:webapp` produit `www/`, à héberger sur n'importe quel hébergement statique en HTTPS.
+- **Publier** : le workflow `.github/workflows/webapp.yml` publie sur GitHub Pages à chaque push sur `main`. Il faut choisir Settings › Pages › Source : GitHub Actions ; un dépôt privé demande GitHub Pro, Team ou Enterprise. Alternative : `netlify.toml`.
+- **Tester en local** : `npm run serve`.
+
 ## Démarrer (web)
 
 ```sh
@@ -53,6 +59,7 @@ js/aps.js           synthèse de la chaîne APS
 js/field.js         savoir de terrain (praticiens, forums, crises)
 js/env.js           variantes du sac par environnement
 js/calc.js          calculateurs
+js/bags.js          types de sac (évacuation / survie) et consommables selon la durée
 data/               relief Europe, fond vectoriel, points nucléaire/barrages/centrales
 lib/                Leaflet 1.9.4, pmtiles, protomaps-leaflet (copies locales)
 tools/              données, licences (license.mjs), service de délivrance (licence-worker.js)

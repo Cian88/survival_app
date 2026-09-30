@@ -19,4 +19,6 @@ window.KS_CONFIG = {
   licensePublicKeyJwk: {"kty":"EC","x":"5D2m2QBFvxmtR1TBmgCl2AznViS4Nwf0ceTGe3gaVA8","y":"L_Xj9xXf566lcNvwO56oHS40gopxIB9x8yUvPZNC_z0","crv":"P-256"},
   testMode: true,
   graceDays: 7,
+  /* iOS : autorise la clé administrateur dans l'app native (tests internes). Laisser à false pour l'App Store. */
+  devAdmin: false,
 };

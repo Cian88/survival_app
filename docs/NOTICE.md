@@ -28,8 +28,12 @@ L'application tourne autour de **votre** situation : votre foyer, votre logement
    - Autonomie réelle : jours d'eau et de nourriture, sacs prêts, espèces.
    - Choix de la situation parmi 11 : coupure de courant ou d'eau, crue, grand froid, canicule, feu, alerte nucléaire ou chimique, évacuation, blessé, séisme, perdu.
    - Pour chaque situation : actions immédiates à cocher (sourcées), matériel **que vous avez** et ce qui manque, ressources et dangers les plus proches d'après vos données hors ligne (distance et cap), direction du domicile et des points de rendez-vous, numéros d'urgence et vos contacts.
-5. **Sacs** : un sac par personne, avec des variantes selon le lieu et le climat.
-6. **Stock maison** : inventaire daté (litres, kcal, péremption) et 9 piliers.
+5. **Sacs** : deux types, pour deux usages.
+   - **Sac d'évacuation** : rejoindre vite un lieu sûr (proches, hébergement), de 24 h à 7 jours, le plus souvent en ville ou en voiture. Priorités : papiers, espèces, médicaments, eau, chargeur, vêtements. Sac discret, sans arme.
+   - **Sac de survie** : tenir en autonomie en pleine nature, de 24 h à 14 jours. Contenu : abri, feu, eau à traiter, gamelle qui va au feu, orientation, outils (les « 10 C » de Dave Canterbury).
+   - **Sélecteur d'autonomie** (24 h, 48 h, 72 h, 5, 7, 10 ou 14 jours) : les consommables marqués « auto » se recalculent. C'est le cas de l'eau portée (1 L/jour, 3 L au plus), des pastilles, des rations (kcal du profil), des repas lyophilisés, des cartouches de gaz, des lingettes, des chaussettes et des médicaments. Le panneau solaire s'ajoute à partir de 5 jours. Chaque règle affiche sa base ; « hypothèse » signale un choix sans source chiffrée. Si vous modifiez une quantité à la main, elle n'est plus recalculée.
+   - Variantes selon le lieu et le climat.
+6. **Stock maison** : durée d'autonomie visée (3 à 90 jours), inventaire daté (litres, kcal, péremption) et 9 piliers. La durée recalcule aussi les achats « maison » marqués « auto » : jerricans (personnes × jours × L/jour ÷ 20 L), pastilles, papier toilette, sacs, cartouches de gaz.
 7. **Terrain** : ce que disent les praticiens, les forums et les témoins de crises réelles.
 8. **Calculateurs** : eau, dose de Javel selon votre flacon, batterie, solaire, eau de pluie, poids du sac, temps de marche, stock profond, gaz par temps froid.
 9. **Matériel & budget**, **Plan & scénarios**, **Notice**.
@@ -89,6 +93,12 @@ Protomaps publie chaque jour un fond de carte OpenStreetMap mondial au format PM
 Les fichiers PMTiles *raster* (images) sont aussi acceptés.
 
 **Et le papier** : gardez des **cartes papier** (IGN TOP 25 / TOP 100 ou équivalent) et une **boussole**. La Suède (MSB) les recommande explicitement pour l'évacuation.
+
+## Accès administrateur
+Une **clé administrateur** (licence `KS1.` de formule `admin`, sans expiration) débloque toutes les fonctions : onglet ★ Premium → « J'ai une clé de licence » → coller la clé → Activer. Le badge affiche alors « ★ Admin ».
+- Elle est signée avec la clé en service. Tant que l'app est en mode test, c'est la clé de démonstration. Après `node tools/license.mjs keygen`, générez une nouvelle clé administrateur avec `node tools/license.mjs issue --plan admin --email vous@exemple.fr`.
+- Sur iOS, cette clé n'est acceptée que si `devAdmin: true` est défini dans `js/config.js` (builds de test internes). Pour tester les achats sans payer, utilisez le bac à sable d'Apple (voir `IOS.md`).
+- Ne diffusez pas cette clé : elle vaut accès complet et définitif.
 
 ## 4. Sauvegarde
 

@@ -49,6 +49,10 @@
     return S.inventory.filter(it => it.expiry && new Date(it.expiry).getTime() <= lim).sort((a, b) => a.expiry.localeCompare(b.expiry));
   }
   function pillarScore(p) { const n = p.items.length, c = p.items.filter((_, i) => S.checks[p.id + ':' + i]).length; return { c, n, pct: n ? Math.round(c / n * 100) : 0 }; }
+  function rescaleHome() {
+    const n = Math.max(1, (+S.profile.adults || 0) + (+S.profile.children || 0)), d = +S.profile.days || 3, W = +S.profile.waterL || 4;
+    for (const it of S.homePlan) { const r = Bags.HOME_RULES[it.gearId]; if (r && it.auto !== false) { it.auto = true; it.qty = r.q(n, d, W); } }
+  }
   function bagTotals(b) {
     let w = 0, cost = 0, left = 0, have = 0;
     for (const it of b.items) { const q = +it.qty || 1; w += q * (+it.weight_g || 0); cost += q * (+it.price || 0); if (it.have) have++; else left += q * (+it.price || 0); }
@@ -97,7 +101,9 @@
     const inv = [...S.inventory].sort((a, b) => (a.expiry || '9999').localeCompare(b.expiry || '9999'));
     $('#tab-home').innerHTML = `
     <div class="card">
-      <h2>Besoins calculés — ${persons()} personne(s), ${P.days} jours</h2>
+      <h2>Besoins calculés — ${persons()} personne(s)</h2>
+      <label>Durée d'autonomie visée <select data-homedays="1">${[3, 7, 14, 30, 60, 90].map(d => `<option value="${d}" ${+P.days === d ? 'selected' : ''}>${d} jours</option>`).join('')}</select></label>
+      <p class="small muted">Change les quantités d'eau et de nourriture ci-dessous, les consommables de vos achats « maison » (jerricans, pastilles, papier, sacs, gaz) et votre état des lieux.</p>
       <div class="tablewrap"><table><tr><th>Poste</th><th class="num">Besoin</th><th class="num">En stock</th><th class="num">Manque</th></tr>
       <tr><td>Eau de boisson (${P.waterL} L/pers/j)</td><td class="num">${n.water.toFixed(0)} L</td><td class="num">${s.water.toFixed(1)} L</td><td class="num">${Math.max(0, n.water - s.water).toFixed(1)} L</td></tr>
       <tr><td>Énergie alimentaire (${P.kcal} kcal/pers/j)</td><td class="num">${n.kcal.toLocaleString('fr-FR')} kcal</td><td class="num">${Math.round(s.kcal).toLocaleString('fr-FR')} kcal</td><td class="num">${Math.max(0, Math.round(n.kcal - s.kcal)).toLocaleString('fr-FR')} kcal</td></tr>
@@ -189,26 +195,33 @@
         <p class="small"><b>Réflexes :</b> ${(e.reflexes || []).map(r => h(r.t)).join(' · ')}</p></details>`).join('')}</div></div>`;
   }
   function renderBag() {
+    const K = +S.profile.kcal || 2100;
     $('#tab-bag').innerHTML = `
     <div class="card">
-      <h2>Sacs d'évacuation (72 h)</h2>
-      <p class="small">Un sac par personne, prêt à partir. Le guide SGDSN demande de le ranger dans un endroit facile d'accès et de le vérifier deux fois par an. Le poids n'a pas de norme officielle : testez le sac chargé sur une marche de plusieurs kilomètres.</p>
-      <button class="btn" data-act="bagnew">+ Nouveau sac</button>
+      <h2>Mes sacs</h2>
+      <p class="small">Deux types de sac, deux usages : le <b>sac d'évacuation</b> sert à rejoindre vite un lieu sûr ; le <b>sac de survie</b> sert à tenir en autonomie en pleine nature. Choisissez le type et la <b>durée d'autonomie</b> : les quantités de consommables (eau, traitement de l'eau, nourriture, combustible, hygiène…) s'ajustent automatiquement. Testez toujours le sac chargé sur une vraie marche.</p>
+      <div class="row"><button class="btn" data-act="bagnew" data-type="evac">+ Sac d'évacuation</button><button class="btn" data-act="bagnew" data-type="survie">+ Sac de survie</button></div>
     </div>
-    ${S.bags.map(b => { const t = bagTotals(b); return `<div class="card" data-bag="${b.id}">
-      <div class="row"><input value="${h(b.name)}" data-bagname="${b.id}" style="font-weight:600;flex:1 1 200px"> <button class="link danger" data-bagdel="${b.id}">supprimer le sac</button></div>
-      <div class="row small"><span class="chip">${t.have}/${t.n} objets prêts</span><span class="chip">Poids : ${kg(t.w)}</span><span class="chip">Coût total : ${eur(t.cost)}</span><span class="chip">Reste à acheter : ${eur(t.left)}</span></div>
+    ${S.bags.map(b => { b.type = b.type || 'evac'; const T = Bags.TYPES[b.type]; b.days = b.days || T.def; const t = bagTotals(b); return `<div class="card bagcard bag-${b.type}" data-bag="${b.id}">
+      <div class="row"><span class="bagicon">${T.icon}</span><input value="${h(b.name)}" data-bagname="${b.id}" style="font-weight:600;flex:1 1 200px"> <button class="link danger" data-bagdel="${b.id}">supprimer le sac</button></div>
+      <div class="row">
+        <label>Type <select data-bagtype="${b.id}">${Object.entries(Bags.TYPES).map(([k, x]) => `<option value="${k}" ${b.type === k ? 'selected' : ''}>${x.name}</option>`).join('')}</select></label>
+        <label>Autonomie <select data-bagdays="${b.id}">${T.durations.map(d => `<option value="${d}" ${+b.days === d ? 'selected' : ''}>${Bags.dLabel(d)}</option>`).join('')}</select></label>
+      </div>
+      <details class="small"><summary class="muted">À quoi sert un ${T.name.toLowerCase()} ?</summary><p>${h(T.purpose)}</p><p class="src">${T.src.map(x => `<a href="${h(x.u)}" target="_blank" rel="noopener">${h(x.t)}</a>`).join(' · ')}</p></details>
+      <div class="row small"><span class="chip">${t.have}/${t.n} objets prêts</span><span class="chip">Poids connu : ${kg(t.w)}</span><span class="chip">Coût total : ${eur(t.cost)}</span><span class="chip">Reste à acheter : ${eur(t.left)}</span></div>
+      <div class="alert small">Pour ${Bags.dLabel(+b.days)} : ${b.type === 'evac' ? `${Math.min(+b.days, 3)} L d'eau portée + traitement de ${3 * b.days} L` : `traitement de ${4 * b.days} L d'eau`} · ${(K * b.days).toLocaleString('fr-FR')} kcal de nourriture (${K} kcal/jour, réglable dans le profil).</div>
       ${envSelector(b)}
       ${envPanel(b)}
       <div class="row"><select data-bagadd="${b.id}" style="flex:1 1 260px"><option value="">+ Ajouter depuis le catalogue…</option>${gearOptions(true)}</select>
-        <button class="btn ghost" data-bagessential="${b.id}">Pré-remplir : essentiels</button>
+        <button class="btn ghost" data-bagprefill="${b.id}">Pré-remplir : ${T.name.toLowerCase()} ${Bags.dLabel(+b.days)}</button>
         <button class="btn ghost" data-bagcustom="${b.id}">+ Objet personnalisé</button></div>
       <div class="tablewrap"><table><tr><th>✓</th><th>Objet</th><th class="num">Qté</th><th class="num">Poids u. (g)</th><th class="num">Prix u. (€)</th><th></th></tr>
-      ${b.items.map(it => `<tr><td><input type="checkbox" data-bh="${b.id}|${it.key}" ${it.have ? 'checked' : ''}></td><td>${h(it.name)}<div class="small muted">${h(it.category || '')}</div></td>
-        <td class="num"><input type="number" min="0" value="${it.qty}" data-bf="${b.id}|${it.key}|qty" style="width:4em"></td>
+      ${b.items.map(it => { const note = it.auto ? Bags.ruleNote(b, it) : ''; return `<tr><td><input type="checkbox" data-bh="${b.id}|${it.key}" ${it.have ? 'checked' : ''}></td><td>${h(it.name)}<div class="small muted">${h(it.category || '')}${it.auto ? ` · <span class="chip auto" title="${h(note || '')}">auto · ${Bags.dLabel(+b.days)}</span>${note ? ` <span class="small">${h(note)}</span>` : ''}` : ''}</div></td>
+        <td class="num"><input type="number" min="0" value="${it.qty}" data-bf="${b.id}|${it.key}|qty" style="width:4em">${it.unit ? `<div class="small muted">${h(it.unit)}</div>` : ''}</td>
         <td class="num"><input type="number" min="0" value="${it.weight_g || 0}" data-bf="${b.id}|${it.key}|weight_g" style="width:5.5em"></td>
         <td class="num"><input type="number" min="0" step="0.01" value="${it.price || 0}" data-bf="${b.id}|${it.key}|price" style="width:6em"></td>
-        <td><button class="link danger" data-bdel="${b.id}|${it.key}">✕</button></td></tr>`).join('') || '<tr><td colspan="6" class="muted">Sac vide : utilisez « Pré-remplir : essentiels » ou le catalogue.</td></tr>'}
+        <td><button class="link danger" data-bdel="${b.id}|${it.key}">✕</button></td></tr>`; }).join('') || `<tr><td colspan="6" class="muted">Sac vide : utilisez « Pré-remplir ».</td></tr>`}
       </table></div></div>`; }).join('')}
     ${renderEnvCompare()}
     <div class="card"><h3>Listes de référence officielles</h3>
@@ -245,7 +258,7 @@
       ${bar(S.profile.budget ? b.total / S.profile.budget * 100 : 0, b.total > S.profile.budget ? 'bad' : '')}
       <div class="tablewrap"><table><tr><th>Catégorie</th><th class="num">Prévu</th><th class="num">Acquis</th></tr>${Object.entries(b.byCat).sort((a, c) => c[1].total - a[1].total).map(([c, v]) => `<tr><td>${h(c)}</td><td class="num">${eur(v.total)}</td><td class="num">${eur(v.spent)}</td></tr>`).join('') || '<tr><td colspan="3" class="muted">Ajoutez des objets à un sac ou à la maison.</td></tr>'}</table></div>
       <h3>Achats pour la maison</h3>
-      <div class="tablewrap"><table><tr><th>✓</th><th>Objet</th><th class="num">Qté</th><th class="num">Prix u.</th><th></th></tr>${S.homePlan.map(it => `<tr><td><input type="checkbox" data-hh="${it.key}" ${it.have ? 'checked' : ''}></td><td>${h(it.name)}<div class="small muted">${h(it.category)}</div></td><td class="num"><input type="number" min="0" value="${it.qty}" data-hq="${it.key}" style="width:4em"></td><td class="num">${eur(it.price)}</td><td><button class="link danger" data-hdel="${it.key}">✕</button></td></tr>`).join('') || '<tr><td colspan="5" class="muted">Rien pour l\'instant — bouton « + Maison » dans le catalogue.</td></tr>'}</table></div>
+      <div class="tablewrap"><table><tr><th>✓</th><th>Objet</th><th class="num">Qté</th><th class="num">Prix u.</th><th></th></tr>${S.homePlan.map(it => `<tr><td><input type="checkbox" data-hh="${it.key}" ${it.have ? 'checked' : ''}></td><td>${h(it.name)}<div class="small muted">${h(it.category)}${it.auto && Bags.HOME_RULES[it.gearId] ? ` · <span class="chip auto">auto · ${S.profile.days} j</span> ${h(Bags.HOME_RULES[it.gearId].note)}` : ''}</div></td><td class="num"><input type="number" min="0" value="${it.qty}" data-hq="${it.key}" style="width:4em"></td><td class="num">${eur(it.price)}</td><td><button class="link danger" data-hdel="${it.key}">✕</button></td></tr>`).join('') || '<tr><td colspan="5" class="muted">Rien pour l\'instant — bouton « + Maison » dans le catalogue.</td></tr>'}</table></div>
       <button class="btn ghost" data-act="homeessential">Pré-remplir maison : essentiels</button> <button class="btn ghost" data-act="plancsv">Exporter le plan (CSV)</button> <button class="btn ghost" data-act="catcsv">Exporter le catalogue (CSV)</button>
     </div>
     <div class="card"><h2>Catalogue du matériel (${GEAR.length} références)</h2>
@@ -355,6 +368,7 @@
   }
   function commit() { App.save(); if (RENDER[current]) RENDER[current](); }
   App.go = show;
+  App.rescaleHome = rescaleHome;
   function moreSheet() {
     const items = [['bag', '🎒', 'Sacs'], ['home', '🏠', 'Stock maison'], ['field', '📚', 'Terrain'], ['calc', '🧮', 'Calculateurs'], ['gear', '🛒', 'Matériel & budget'], ['plan', '👪', 'Plan & scénarios'], ['notice', 'ℹ️', 'Notice'], ['premium', '★', 'Premium']];
     const w = document.createElement('div'); w.className = 'sheet-wrap';
@@ -363,7 +377,7 @@
     document.body.appendChild(w);
   }
   App.refresh = () => { badge(); if (RENDER[current]) RENDER[current](); };
-  function badge() { const b = $('#planBadge'); if (b) { b.textContent = Premium.isPremium() ? '★ Premium' : 'Gratuit'; b.className = 'planbadge ' + (Premium.isPremium() ? 'pro' : ''); } }
+  function badge() { const b = $('#planBadge'); if (b) { b.textContent = Premium.isPremium() ? (Premium.state.lic && Premium.state.lic.plan === 'admin' ? '★ Admin' : '★ Premium') : 'Gratuit'; b.className = 'planbadge ' + (Premium.isPremium() ? 'pro' : ''); } }
   function toCsv(rows) { return '﻿' + rows.map(r => r.map(v => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`).join(';')).join('\n'); }
   function applyTheme() { if (S.theme) document.documentElement.dataset.theme = S.theme; else delete document.documentElement.dataset.theme; }
 
@@ -376,9 +390,12 @@
     if (d.bagname) { S.bags.find(b => b.id === d.bagname).name = t.value; return commit(); }
     if (d.bagadd) { const g = GEAR_BY_ID[t.value]; if (g) S.bags.find(b => b.id === d.bagadd).items.push(lineFromGear(g)); return commit(); }
     if (d.bh) { const [b, k] = d.bh.split('|'); S.bags.find(x => x.id === b).items.find(x => x.key === k).have = t.checked; return commit(); }
-    if (d.bf) { const [b, k, f] = d.bf.split('|'); S.bags.find(x => x.id === b).items.find(x => x.key === k)[f] = +t.value; return commit(); }
+    if (d.bf) { const [b, k, f] = d.bf.split('|'), it = S.bags.find(x => x.id === b).items.find(x => x.key === k); it[f] = +t.value; if (f === 'qty') it.auto = false; return commit(); }
+    if (d.bagtype) { const b = S.bags.find(x => x.id === d.bagtype); b.type = t.value; const T = Bags.TYPES[b.type]; if (!T.durations.includes(+b.days)) b.days = T.def; Bags.rescale(b, +S.profile.kcal || 2100, GEAR_BY_ID, uid); return commit(); }
+    if (d.bagdays) { const b = S.bags.find(x => x.id === d.bagdays); b.days = +t.value; Bags.rescale(b, +S.profile.kcal || 2100, GEAR_BY_ID, uid); return commit(); }
+    if (d.homedays) { S.profile.days = +t.value; rescaleHome(); return commit(); }
     if (d.hh) { S.homePlan.find(x => x.key === d.hh).have = t.checked; return commit(); }
-    if (d.hq) { S.homePlan.find(x => x.key === d.hq).qty = +t.value; return commit(); }
+    if (d.hq) { const it = S.homePlan.find(x => x.key === d.hq); it.qty = +t.value; it.auto = false; return commit(); }
     if (d.note) { S.notes[d.note] = t.value; return App.save(); }
     if (d.act === 'theme') { S.theme = t.value || null; applyTheme(); return App.save(); }
     if (d.act === 'import' && t.files[0]) {
@@ -403,6 +420,7 @@
     if (d.envadd) { const [bid, k] = d.envadd.split('|'); S.bags.find(x => x.id === bid).items.push(envLine(k)); return commit(); }
     if (d.envaddall) { const b = S.bags.find(x => x.id === d.envaddall), have = new Set(b.items.map(i => i.envKey)); (b.env || []).forEach(id => (ENV_BY_ID[id].add || []).forEach((a, i) => { const k = id + ':' + i; if (a.priority === 'essentiel' && !have.has(k)) b.items.push(envLine(k)); })); return commit(); }
     if (d.bagdel) { UI.confirm('Supprimer ce sac et sa liste ?', 'Supprimer').then(ok => { if (ok) { S.bags = S.bags.filter(b => b.id !== d.bagdel); commit(); } }); return; }
+    if (d.bagprefill) { Bags.prefill(S.bags.find(x => x.id === d.bagprefill), GEAR_BY_ID, +S.profile.kcal || 2100, uid); return commit(); }
     if (d.bagessential) { const b = S.bags.find(x => x.id === d.bagessential), have = new Set(b.items.map(i => i.gearId)); GEAR.filter(g => g.scope !== 'maison' && g.priority === 'essentiel' && !have.has(g.id)).forEach(g => b.items.push(lineFromGear(g))); return commit(); }
     if (d.bagcustom) { UI.ask('Objet personnalisé', [{ name: 'n', label: 'Nom de l\'objet', required: true }], 'Ajouter').then(o => { const n = o && o.n; if (n) { S.bags.find(x => x.id === d.bagcustom).items.push({ key: uid(), name: n, category: 'Personnel', qty: 1, weight_g: 0, price: 0, have: false }); commit(); } }); return; }
     if (d.bdel) { const [b, k] = d.bdel.split('|'); const bag = S.bags.find(x => x.id === b); bag.items = bag.items.filter(x => x.key !== k); return commit(); }
@@ -412,11 +430,11 @@
     if (d.ctdel) { S.contacts = S.contacts.filter(x => x.id !== d.ctdel); return commit(); }
     switch (d.act) {
       case 'bagnew': if (S.bags.length >= Premium.LIMITS.bags && !Premium.gate('La version gratuite comprend un sac. Premium permet un sac par personne.')) return;
-        S.bags.push({ id: uid(), name: 'Sac ' + (S.bags.length + 1), owner: '', items: [], env: [...(S.profile.lieu || []), ...(S.profile.climat || [])] }); return commit();
+        { const ty = d.type || 'evac', T = Bags.TYPES[ty], nb = { id: uid(), type: ty, days: T.def, name: T.name + ' ' + (S.bags.filter(x => (x.type || 'evac') === ty).length + 1), owner: '', items: [], env: [...(S.profile.lieu || []), ...(S.profile.climat || [])] }; Bags.prefill(nb, GEAR_BY_ID, +S.profile.kcal || 2100, uid); S.bags.push(nb); } return commit();
       case 'onboarded': S.onboarded = true; App.save(); return show('audit');
       case 'audcsv': if (!Premium.gate('La liste de courses personnalisée fait partie de Premium.')) return;
         return App.download('etat-des-lieux-manques.csv', Needs.gapsCsv(S), 'text/csv');
-      case 'homeessential': { const have = new Set(S.homePlan.map(i => i.gearId)); GEAR.filter(g => g.scope !== 'sac' && g.priority === 'essentiel' && !have.has(g.id)).forEach(g => S.homePlan.push(lineFromGear(g))); return commit(); }
+      case 'homeessential': { const have = new Set(S.homePlan.map(i => i.gearId)); GEAR.filter(g => g.scope !== 'sac' && g.priority === 'essentiel' && !have.has(g.id)).forEach(g => { const l = lineFromGear(g); if (Bags.HOME_RULES[g.id]) l.auto = true; S.homePlan.push(l); }); rescaleHome(); return commit(); }
       case 'checked': S.lastCheck = today(); return commit();
       case 'export': return App.download(`kit-survie-sauvegarde-${today()}.json`, JSON.stringify(S, null, 1), 'application/json');
       case 'reset': UI.confirm('Effacer toutes vos données locales ? Les cartes téléchargées restent en cache.', 'Tout effacer').then(ok => { if (ok) { try { localStorage.removeItem('survie.v1'); } catch (e) { } location.reload(); } }); return;
