@@ -10,7 +10,7 @@ window.KS_CONFIG = {
   checkout: { annual: '', lifetime: '' },
   /* iOS (App Store) : identifiants des produits d'achat intégré créés dans App Store Connect.
      annual = abonnement auto-renouvelable ; lifetime = achat non consommable. */
-  iap: { annual: 'com.survonomy.premium.annual', lifetime: 'com.survonomy.premium.lifetime' },
+  iap: { annual: 'com.holdout.premium.annual', lifetime: 'com.holdout.premium.lifetime' },
   termsUrl: 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/',
   privacyUrl: '',
   renewUrl: '',

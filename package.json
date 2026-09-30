@@ -1,8 +1,8 @@
 {
-  "name": "survonomy",
+  "name": "holdout",
   "version": "1.0.0",
   "private": true,
-  "description": "Survonomy — application de préparation aux crises, hors ligne (web + iOS via Capacitor)",
+  "description": "Holdout — application de préparation aux crises, hors ligne (web + iOS via Capacitor)",
   "scripts": {
     "build:web": "node tools/build-www.mjs",
     "ios:sync": "npm run build:web && npx cap sync ios",

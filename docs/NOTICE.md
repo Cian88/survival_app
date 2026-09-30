@@ -1,4 +1,4 @@
-# Notice d'utilisation — Survonomy
+# Notice d'utilisation — Holdout
 
 > Outil d'aide à la préparation. Il ne remplace ni les consignes des autorités (préfecture, secours), ni une formation aux premiers secours.
 > Toutes vos données restent sur votre appareil (navigateur). Rien n'est envoyé à un serveur.

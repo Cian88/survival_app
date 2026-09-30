@@ -1,6 +1,6 @@
 {
-  "appId": "com.survonomy.app",
-  "appName": "Survonomy",
+  "appId": "com.holdout.app",
+  "appName": "Holdout",
   "webDir": "www",
   "ios": {
     "contentInset": "never",

@@ -1,6 +1,6 @@
-# Survonomy
+# Holdout
 
-*Survival + autonomy : préparation et survie, hors ligne. Un nom lisible dans toutes les langues.*
+*To hold out : tenir bon, jusqu'au bout. Préparation, survie et autonomie, hors ligne.*
 
 Application **locale, personnelle et hors ligne**, construite autour de la survie **à l'instant T** de son utilisateur :
 - un **profil** (foyer, santé, logement, domicile, environnement) qui personnalise tout le reste ;

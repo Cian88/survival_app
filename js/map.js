@@ -453,7 +453,7 @@
   }
   function exportGPX() {
     const w = myPoints().map(p => `<wpt lat="${p.lat}" lon="${p.lon}"><name>${esc(p.name)}</name><desc>${esc((MY_TYPES[p.type] || MY_TYPES.autre).label + (p.note ? ' — ' + p.note : ''))}</desc></wpt>`).join('\n');
-    App.download('mes-points.gpx', `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Survonomy" xmlns="http://www.topografix.com/GPX/1/1">\n${w}\n</gpx>`, 'application/gpx+xml');
+    App.download('mes-points.gpx', `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Holdout" xmlns="http://www.topografix.com/GPX/1/1">\n${w}\n</gpx>`, 'application/gpx+xml');
   }
   function importGeo(file) {
     const r = new FileReader();

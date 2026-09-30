@@ -17,7 +17,7 @@
     });
     let perm = await Geolocation.checkPermissions();
     if (perm.location !== 'granted') perm = await Geolocation.requestPermissions();
-    if (perm.location === 'denied') throw new Error('autorisation de localisation refusée (Réglages > Survonomy > Position)');
+    if (perm.location === 'denied') throw new Error('autorisation de localisation refusée (Réglages > Holdout > Position)');
     const p = await Geolocation.getCurrentPosition({ enableHighAccuracy: true, timeout: 20000, maximumAge: 60000 });
     return { lat: p.coords.latitude, lon: p.coords.longitude, acc: p.coords.accuracy };
   }
