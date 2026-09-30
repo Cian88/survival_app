@@ -354,7 +354,7 @@
   }
 
   /* ---------- Rendu & événements ---------- */
-  const RENDER = { dash: renderDash, home: renderHome, bag: renderBag, gear: renderGear, plan: renderPlan, notice: renderNotice };
+  const RENDER = { dash: renderDash, home: renderHome, bag: renderBag, gear: renderGear, calc: () => Calc.render($('#tab-calc')), plan: renderPlan, notice: renderNotice };
   let current = 'dash';
   function show(tab) {
     current = tab;
