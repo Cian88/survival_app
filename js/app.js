@@ -23,6 +23,7 @@
       a.href = URL.createObjectURL(new Blob([content], { type: mime || 'text/plain' }));
       a.download = name; document.body.appendChild(a); a.click();
       setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+      if (window.self !== window.top) UI.showText(name, content); // cadre intégré (ex. Artifact) : téléchargement souvent bloqué
     },
   };
   const S = App.state;
@@ -266,7 +267,6 @@
       <textarea data-note="famille">${h(S.notes.famille)}</textarea>
       <label style="display:block">PIMS — Plan individuel de mise en sûreté (risques de l'adresse via Géorisques, pièce refuge, coupures eau/gaz/électricité) :</label>
       <textarea data-note="pims">${h(S.notes.pims)}</textarea>
-      <button class="btn ghost" onclick="window.print()">Imprimer le plan</button>
       <p class="src">${srcLinks(['sgdsn', 'georisques'])}</p>
     </div>
     <h2>Réflexes par scénario</h2>
@@ -297,7 +297,7 @@
         <li><b>Carte</b> : relief Europe et fond vectoriel intégrés ; <u>avant une coupure</u>, téléchargez le relief détaillé et les points OSM (eau, santé, énergie, dangers…) de vos zones (domicile, travail, famille, itinéraires). Ajoutez vos points de rendez-vous et caches, exportez-les en GPX pour un GPS.</li>
         <li><b>Carte détaillée de toute l'Europe hors ligne</b> : téléchargez un extrait <code>.pmtiles</code> (voir <code>docs/NOTICE.md</code>, section Carte) et chargez-le depuis la carte.</li>
         <li><b>Sauvegarde</b> : exportez régulièrement vos données (bouton ci-dessous) sur une clé USB. Vider les données du navigateur efface l'application locale.</li>
-        <li><b>Imprimer</b> : imprimez plan familial, contacts et listes ; le papier fonctionne sans batterie.</li>
+        <li><b>Imprimer</b> (version locale, Ctrl+P / Cmd+P) : imprimez plan familial, contacts et listes ; le papier fonctionne sans batterie.</li>
       </ol>
     </div>
     <div class="card"><h2>Données & réglages</h2>
@@ -339,7 +339,7 @@
     if (d.act === 'theme') { S.theme = t.value || null; applyTheme(); return App.save(); }
     if (d.act === 'import' && t.files[0]) {
       const r = new FileReader();
-      r.onload = () => { try { const o = JSON.parse(r.result); if (!o.profile) throw 0; if (confirm('Remplacer toutes les données actuelles par cette sauvegarde ?')) { Store.save(o); location.reload(); } } catch (err) { alert('Fichier de sauvegarde invalide.'); } };
+      r.onload = () => { try { const o = JSON.parse(r.result); if (!o.profile) throw 0; UI.confirm('Remplacer toutes les données actuelles par cette sauvegarde ?', 'Remplacer').then(ok => { if (ok) { Store.save(o); location.reload(); } }); } catch (err) { UI.notice('Fichier de sauvegarde invalide.'); } };
       r.readAsText(t.files[0]);
     }
   });
@@ -349,9 +349,9 @@
     if (d.tab) return show(d.tab);
     if (d.quick) { S.inventory.push({ id: uid(), name: d.quick === '9' ? 'Pack eau 6 × 1,5 L' : d.quick === '5' ? 'Bidon eau 5 L' : 'Jerrican eau 20 L', cat: 'eau', qty: 1, litres: +d.quick, kcal: 0, expiry: '', where: '' }); return commit(); }
     if (d.invdel) { S.inventory = S.inventory.filter(x => x.id !== d.invdel); return commit(); }
-    if (d.bagdel) { if (confirm('Supprimer ce sac ?')) { S.bags = S.bags.filter(b => b.id !== d.bagdel); commit(); } return; }
+    if (d.bagdel) { UI.confirm('Supprimer ce sac et sa liste ?', 'Supprimer').then(ok => { if (ok) { S.bags = S.bags.filter(b => b.id !== d.bagdel); commit(); } }); return; }
     if (d.bagessential) { const b = S.bags.find(x => x.id === d.bagessential), have = new Set(b.items.map(i => i.gearId)); GEAR.filter(g => g.scope !== 'maison' && g.priority === 'essentiel' && !have.has(g.id)).forEach(g => b.items.push(lineFromGear(g))); return commit(); }
-    if (d.bagcustom) { const n = prompt('Nom de l\'objet :'); if (n) { S.bags.find(x => x.id === d.bagcustom).items.push({ key: uid(), name: n, category: 'Personnel', qty: 1, weight_g: 0, price: 0, have: false }); commit(); } return; }
+    if (d.bagcustom) { UI.ask('Objet personnalisé', [{ name: 'n', label: 'Nom de l\'objet', required: true }], 'Ajouter').then(o => { const n = o && o.n; if (n) { S.bags.find(x => x.id === d.bagcustom).items.push({ key: uid(), name: n, category: 'Personnel', qty: 1, weight_g: 0, price: 0, have: false }); commit(); } }); return; }
     if (d.bdel) { const [b, k] = d.bdel.split('|'); const bag = S.bags.find(x => x.id === b); bag.items = bag.items.filter(x => x.key !== k); return commit(); }
     if (d.tobag) { const bag = S.bags.find(b => b.id === $('#gbag').value) || S.bags[0]; bag.items.push(lineFromGear(GEAR_BY_ID[d.tobag])); t.textContent = '✓ ajouté'; App.save(); return setTimeout(renderGear, 600); }
     if (d.tohome) { const g = GEAR_BY_ID[d.tohome], l = lineFromGear(g); S.homePlan.push(l); t.textContent = '✓ ajouté'; App.save(); return setTimeout(renderGear, 600); }
@@ -362,7 +362,7 @@
       case 'homeessential': { const have = new Set(S.homePlan.map(i => i.gearId)); GEAR.filter(g => g.scope !== 'sac' && g.priority === 'essentiel' && !have.has(g.id)).forEach(g => S.homePlan.push(lineFromGear(g))); return commit(); }
       case 'checked': S.lastCheck = today(); return commit();
       case 'export': return App.download(`kit-survie-sauvegarde-${today()}.json`, JSON.stringify(S, null, 1), 'application/json');
-      case 'reset': if (confirm('Effacer toutes vos données locales ? (les cartes téléchargées restent en cache)')) { localStorage.removeItem('survie.v1'); location.reload(); } return;
+      case 'reset': UI.confirm('Effacer toutes vos données locales ? Les cartes téléchargées restent en cache.', 'Tout effacer').then(ok => { if (ok) { try { localStorage.removeItem('survie.v1'); } catch (e) { } location.reload(); } }); return;
       case 'invcsv': return App.download('inventaire.csv', toCsv([['Article', 'Catégorie', 'Quantité', 'Litres/unité', 'kcal/unité', 'Péremption', 'Emplacement'], ...S.inventory.map(i => [i.name, CAT_LABEL[i.cat], i.qty, i.litres, i.kcal, i.expiry, i.where])]), 'text/csv');
       case 'plancsv': return App.download('plan-achat.csv', toCsv([['Emplacement', 'Objet', 'Catégorie', 'Quantité', 'Prix unitaire', 'Total', 'Acquis'], ...planLines().map(l => [l.where, l.name, l.category, l.qty, l.price, (l.qty || 1) * (l.price || 0), l.have ? 'oui' : 'non'])]), 'text/csv');
       case 'catcsv': return App.download('catalogue-materiel.csv', toCsv([['Catégorie', 'Objet', 'Modèle', 'Qté', 'Poids (g)', 'Prix (€)', 'Statut prix', 'Priorité', 'Usage', 'Lien', 'Note'], ...GEAR.map(g => [g.category, g.name, g.model, g.qty, g.weight_g, g.price_eur, g.price_status, g.priority, g.scope, g.url, g.note])]), 'text/csv');

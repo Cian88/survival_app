@@ -226,7 +226,7 @@
     el.onclick = async ev => {
       const k = ev.target.dataset.zone, d = ev.target.dataset.delzone;
       if (k) { const z = zones.find(x => x.key === k); map.fitBounds([[z.bbox[0], z.bbox[1]], [z.bbox[2], z.bbox[3]]]); }
-      if (d && confirm('Supprimer cette zone et ses points ?')) { await idb.del('osm', d); renderOsm(); }
+      if (d && await UI.confirm('Supprimer cette zone et ses points ?', 'Supprimer')) { await idb.del('osm', d); renderOsm(); }
     };
   }
   async function downloadOsm() {
@@ -267,7 +267,8 @@
       if (lat == null || !cat || !cats.includes(cat)) continue;
       elements.push({ type: e.type, id: e.id, lat: +lat.toFixed(6), lon: +lon.toFixed(6), cat, tags: e.tags });
     }
-    const name = prompt('Nom de la zone (ex. « Domicile », « Maison de famille ») :', 'Zone ' + new Date().toLocaleDateString('fr-FR')) || 'Zone';
+    const ans = await UI.ask('Enregistrer la zone', [{ name: 'n', label: 'Nom de la zone (ex. « Domicile », « Maison de famille »)', value: 'Zone ' + new Date().toLocaleDateString('fr-FR') }], 'Enregistrer');
+    const name = (ans && ans.n) || 'Zone ' + new Date().toLocaleDateString('fr-FR');
     const key = 'z' + Date.now();
     await idb.put('osm', key, { key, name, bbox, date: Date.now(), cats, elements });
     st.textContent = `${elements.length} points enregistrés pour « ${name} » (disponibles hors ligne).`;
@@ -338,9 +339,10 @@
     const el = $('#myList');
     if (el) el.innerHTML = myPoints().length ? myPoints().map(p => `<li><button class="link" data-goto="${p.id}">${esc(p.name)}</button> <small class="muted">${esc((MY_TYPES[p.type] || MY_TYPES.autre).label)}</small></li>`).join('') : '<li class="muted">Aucun point. Cliquez sur « Ajouter un point » puis sur la carte.</li>';
   }
-  function addPoint(latlng) {
-    const name = prompt('Nom du point :'); if (!name) return;
-    const type = $('#myType').value, note = prompt('Note (facultatif) :') || '';
+  async function addPoint(latlng) {
+    const o = await UI.ask('Nouveau point — ' + (MY_TYPES[$('#myType').value] || MY_TYPES.autre).label, [{ name: 'name', label: 'Nom du point', required: true }, { name: 'note', label: 'Note (facultatif)' }], 'Ajouter');
+    if (!o || !o.name) return;
+    const name = o.name, type = $('#myType').value, note = o.note || '';
     myPoints().push({ id: 'p' + Date.now(), name, type, note, lat: latlng.lat, lon: latlng.lng });
     App.save(); renderMine();
   }
@@ -365,7 +367,7 @@
           (fc.features || []).filter(f => f.geometry && f.geometry.type === 'Point').forEach((f, i) => myPoints().push({ id: 'p' + Date.now() + i, name: f.properties.name || 'Point', type: MY_TYPES[f.properties.type] ? f.properties.type : 'autre', note: f.properties.note || '', lat: f.geometry.coordinates[1], lon: f.geometry.coordinates[0] }));
         }
         App.save(); renderMine();
-      } catch (e) { alert('Fichier non reconnu (GeoJSON ou GPX attendu).'); }
+      } catch (e) { UI.notice('Fichier non reconnu (GeoJSON ou GPX attendu).'); }
     };
     r.readAsText(file);
   }
@@ -492,16 +494,16 @@
     $('#pmFile').onchange = e => e.target.files[0] && loadPmtiles(e.target.files[0]);
     $('#btnMeasure').onclick = toggleMeasure;
     $('#btnLocate').onclick = () => {
-      if (!navigator.geolocation) return alert('Géolocalisation indisponible.');
+      if (!navigator.geolocation) return UI.notice('Géolocalisation indisponible sur cet appareil ou dans ce contexte.');
       navigator.geolocation.getCurrentPosition(p => {
         const ll = [p.coords.latitude, p.coords.longitude];
         L.circle(ll, { radius: p.coords.accuracy, color: '#0a84ff', weight: 1 }).addTo(map);
         L.circleMarker(ll, { radius: 7, color: '#fff', weight: 2, fillColor: '#0a84ff', fillOpacity: 1 }).addTo(map).bindPopup(`Vous êtes ici (± ${Math.round(p.coords.accuracy)} m)`).openPopup();
         map.setView(ll, Math.max(map.getZoom(), 12));
-      }, err => alert('Position indisponible : ' + err.message), { enableHighAccuracy: true, timeout: 20000 });
+      }, err => UI.notice('Position indisponible : ' + err.message), { enableHighAccuracy: true, timeout: 20000 });
     };
-    $('#btnClearOtm').onclick = async () => { if (confirm('Vider le cache OpenTopoMap ?')) { await idb.deletePrefix('tiles', 'otm/'); storageInfo(); } };
-    $('#btnClearDem').onclick = async () => { if (confirm('Vider le cache relief ?')) { await idb.deletePrefix('tiles', 'dem/'); storageInfo(); } };
+    $('#btnClearOtm').onclick = async () => { if (await UI.confirm('Vider le cache OpenTopoMap ?', 'Vider')) { await idb.deletePrefix('tiles', 'otm/'); storageInfo(); } };
+    $('#btnClearDem').onclick = async () => { if (await UI.confirm('Vider le cache relief ?', 'Vider')) { await idb.deletePrefix('tiles', 'dem/'); storageInfo(); } };
     $('#mapPanel').addEventListener('click', e => {
       const g = e.target.dataset.goto; if (g) { const p = myPoints().find(x => x.id === g); map.setView([p.lat, p.lon], 14); }
     });
