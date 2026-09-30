@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Holdout</title>
+<meta name="description" content="Outil local et hors ligne : écosystème de survie domestique, sac d'évacuation, matériel et budget, carte topographique Europe.">
+<meta name="theme-color" content="#1d3b2a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="stylesheet" href="lib/leaflet/leaflet.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo">⛺</span><div><b>Holdout</b><small id="netState">…</small></div><button id="planBadge" class="planbadge" data-tab="premium">Gratuit</button></div>
+  <nav id="tabs" role="tablist">
+    <button data-tab="now" class="on now-tab">⚡ Instant T</button>
+    <button data-tab="audit">État des lieux</button>
+    <button data-tab="map">Carte hors ligne</button>
+    <button data-tab="profile">Mon profil</button>
+    <button data-tab="bag">Sacs</button>
+    <button data-tab="home">Stock maison</button>
+    <button data-tab="field">Terrain</button>
+    <button data-tab="calc">Calculateurs</button>
+    <button data-tab="gear">Matériel & budget</button>
+    <button data-tab="plan">Plan & scénarios</button>
+    <button data-tab="notice">Notice</button>
+    <button data-tab="premium" class="pro-tab">★ Premium</button>
+  </nav>
+</header>
+
+<main>
+  <section id="tab-now" class="tab on"></section>
+  <section id="tab-audit" class="tab"></section>
+  <section id="tab-profile" class="tab"></section>
+  <section id="tab-home" class="tab"></section>
+  <section id="tab-bag" class="tab"></section>
+  <section id="tab-gear" class="tab"></section>
+  <section id="tab-field" class="tab"></section>
+  <section id="tab-calc" class="tab"></section>
+  <section id="tab-map" class="tab">
+    <div class="maplayout">
+      <aside id="mapPanel" class="mappanel"></aside>
+      <div id="map"></div>
+    </div>
+  </section>
+  <section id="tab-plan" class="tab"></section>
+  <section id="tab-notice" class="tab"></section>
+  <section id="tab-premium" class="tab"></section>
+</main>
+
+<nav id="bottombar" aria-label="Navigation principale">
+  <button data-tab="now" class="on"><span>⚡</span>Instant T</button>
+  <button data-tab="audit"><span>📋</span>État des lieux</button>
+  <button data-tab="map"><span>🗺</span>Carte</button>
+  <button data-tab="profile"><span>👤</span>Profil</button>
+  <button data-more><span>☰</span>Plus</button>
+</nav>
+<footer class="foot small muted">Données stockées uniquement sur cet appareil. Outil d'aide à la préparation : il ne remplace ni les consignes des autorités ni une formation aux premiers secours.</footer>
+
+<script src="lib/capacitor.js"></script>
+<script src="js/native.js"></script>
+<script src="lib/leaflet/leaflet.js"></script>
+<script src="lib/pmtiles.js"></script>
+<script src="lib/protomaps-leaflet.js"></script>
+<script src="data/base_europe.js"></script>
+<script src="data/poi_europe.js"></script>
+<script src="js/config.js"></script>
+<script src="js/store.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/knowledge.js"></script>
+<script src="js/aps.js"></script>
+<script src="js/gear.js"></script>
+<script src="js/env.js"></script>
+<script src="js/bags.js"></script>
+<script src="js/calc.js"></script>
+<script src="js/field.js"></script>
+<script src="js/needs.js"></script>
+<script src="js/profile.js"></script>
+<script src="js/now.js"></script>
+<script src="js/premium.js"></script>
+<script src="js/map.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

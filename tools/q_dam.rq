@@ -1,0 +1,7 @@
+SELECT ?item ?itemLabel ?countryLabel ?coord ?height ?cap WHERE {
+  ?item wdt:P31/wdt:P279* wd:Q12323; wdt:P625 ?coord; wdt:P17 ?country; wdt:P2048 ?height.
+  ?country wdt:P30 wd:Q46.
+  FILTER(?height >= 50)
+  OPTIONAL { ?item wdt:P2234 ?cap. }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "fr,en". }
+}

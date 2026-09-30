@@ -1,0 +1,10 @@
+{
+  "appId": "com.holdout.app",
+  "appName": "Holdout",
+  "webDir": "www",
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#1d3b2a",
+    "limitsNavigationsToAppBoundDomains": false
+  }
+}
