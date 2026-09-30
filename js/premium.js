@@ -119,7 +119,7 @@
     const P = C.prices, L = state.lic, price = k => storePrices[IAP[k]] || P[k].label;
     const adminBox = C.devAdmin ? `<div class="card alertcard"><h3>Accès administrateur (build de développement)</h3><p class="small">Visible seulement si <code>devAdmin: true</code> dans js/config.js. À désactiver avant toute soumission à l'App Store.</p><textarea id="licIn" placeholder="KS1.…" style="min-height:70px"></textarea><div class="row"><button class="btn" data-lic="activate">Activer</button>${state.lic && state.token ? '<button class="btn ghost danger" data-lic="remove">Retirer</button>' : ''}</div><div id="admMsg" class="small"></div></div>` : '';
     el.innerHTML = `
-    <div class="card"><h2>★ Tenir Premium</h2>
+    <div class="card"><h2>★ Survonomy Premium</h2>
       ${state.active ? `<div class="alert">✅ Premium actif — formule <b>${h(PLAN_NAME[L.plan] || L.plan)}</b>${L.exp ? `, renouvellement ou fin le <b>${new Date(L.exp * 1000).toLocaleDateString('fr-FR')}</b>` : ', sans date de fin'}${state.cached ? ' (vérifié lors de la dernière connexion)' : ''}.</div>`
         : `<p>La version gratuite couvre l'essentiel pour réagir. <b>Premium</b> rend l'application vraiment <b>personnelle</b> : vos besoins réels, votre matériel, vos cartes hors ligne, votre situation à l'instant T.</p>`}
     </div>
@@ -160,7 +160,7 @@
     const cell = v => v === true ? '✓' : v === false ? '—' : h(v);
     el.innerHTML = `
     ${C.testMode ? '<div class="card alertcard"><b>Mode test.</b> La clé de vérification est une clé de démonstration (tools/test-keys) : ne vendez pas de licences tant que vous n\'avez pas généré votre propre clé (voir docs/MONETISATION.md).</div>' : ''}
-    <div class="card"><h2>★ Tenir Premium</h2>
+    <div class="card"><h2>★ Survonomy Premium</h2>
       ${state.active ? `<div class="alert">✅ Premium actif — formule <b>${h(PLAN_NAME[L.plan] || L.plan)}</b>${L.exp ? `, valable jusqu'au <b>${new Date(L.exp * 1000).toLocaleDateString('fr-FR')}</b>${state.inGrace ? ' (période de grâce : pensez à renouveler)' : ''}` : ', sans date de fin'}${L.who ? ` · ${h(L.who)}` : ''}.</div>`
         : `<p>La version gratuite couvre l'essentiel pour réagir. <b>Premium</b> transforme l'application en outil vraiment <b>personnel</b> : vos besoins réels, votre matériel, vos cartes hors ligne, votre situation à l'instant T.</p>${state.reason && state.reason !== 'aucune licence' ? `<p class="small danger">Licence enregistrée non valide : ${h(state.reason)}.</p>` : ''}`}
     </div>

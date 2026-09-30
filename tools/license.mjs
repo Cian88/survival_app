@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* Outil de licences Tenir (Node 18+).
+/* Outil de licences Survonomy (Node 18+).
    Les licences sont des jetons signés ECDSA P-256 (SHA-256), vérifiés hors ligne par l'application.
 
    node tools/license.mjs keygen                 → crée license-keys/private.jwk (à garder SECRET, hors dépôt)

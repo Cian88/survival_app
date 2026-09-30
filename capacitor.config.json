@@ -1,6 +1,6 @@
 {
-  "appId": "fr.tenir.app",
-  "appName": "Tenir",
+  "appId": "com.survonomy.app",
+  "appName": "Survonomy",
   "webDir": "www",
   "ios": {
     "contentInset": "never",

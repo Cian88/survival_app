@@ -1,8 +1,8 @@
 {
-  "name": "tenir",
+  "name": "survonomy",
   "version": "1.0.0",
   "private": true,
-  "description": "Tenir — application de préparation aux crises, hors ligne (web + iOS via Capacitor)",
+  "description": "Survonomy — application de préparation aux crises, hors ligne (web + iOS via Capacitor)",
   "scripts": {
     "build:web": "node tools/build-www.mjs",
     "ios:sync": "npm run build:web && npx cap sync ios",

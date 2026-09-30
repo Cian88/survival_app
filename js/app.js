@@ -1,4 +1,4 @@
-/* Tenir — logique de l'application (vanilla JS, aucun serveur requis). */
+/* Survonomy — logique de l'application (vanilla JS, aucun serveur requis). */
 (function () {
   const $ = (s, r = document) => r.querySelector(s);
   const h = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -436,7 +436,7 @@
         return App.download('etat-des-lieux-manques.csv', Needs.gapsCsv(S), 'text/csv');
       case 'homeessential': { const have = new Set(S.homePlan.map(i => i.gearId)); GEAR.filter(g => g.scope !== 'sac' && g.priority === 'essentiel' && !have.has(g.id)).forEach(g => { const l = lineFromGear(g); if (Bags.HOME_RULES[g.id]) l.auto = true; S.homePlan.push(l); }); rescaleHome(); return commit(); }
       case 'checked': S.lastCheck = today(); return commit();
-      case 'export': return App.download(`tenir-sauvegarde-${today()}.json`, JSON.stringify(S, null, 1), 'application/json');
+      case 'export': return App.download(`survonomy-sauvegarde-${today()}.json`, JSON.stringify(S, null, 1), 'application/json');
       case 'reset': UI.confirm('Effacer toutes vos données locales ? Les cartes téléchargées restent en cache.', 'Tout effacer').then(ok => { if (ok) { try { localStorage.removeItem('survie.v1'); } catch (e) { } location.reload(); } }); return;
       case 'invcsv': return App.download('inventaire.csv', toCsv([['Article', 'Catégorie', 'Quantité', 'Litres/unité', 'kcal/unité', 'Péremption', 'Emplacement'], ...S.inventory.map(i => [i.name, CAT_LABEL[i.cat], i.qty, i.litres, i.kcal, i.expiry, i.where])]), 'text/csv');
       case 'plancsv': return App.download('plan-achat.csv', toCsv([['Emplacement', 'Objet', 'Catégorie', 'Quantité', 'Prix unitaire', 'Total', 'Acquis'], ...planLines().map(l => [l.where, l.name, l.category, l.qty, l.price, (l.qty || 1) * (l.price || 0), l.have ? 'oui' : 'non'])]), 'text/csv');

@@ -1,6 +1,6 @@
-# Tenir
+# Survonomy
 
-*Préparation et survie, hors ligne. Le nom dit l'objectif : tenir 72 heures, deux semaines, plus longtemps.*
+*Survival + autonomy : préparation et survie, hors ligne. Un nom lisible dans toutes les langues.*
 
 Application **locale, personnelle et hors ligne**, construite autour de la survie **à l'instant T** de son utilisateur :
 - un **profil** (foyer, santé, logement, domicile, environnement) qui personnalise tout le reste ;

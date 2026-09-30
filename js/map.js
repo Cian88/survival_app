@@ -453,7 +453,7 @@
   }
   function exportGPX() {
     const w = myPoints().map(p => `<wpt lat="${p.lat}" lon="${p.lon}"><name>${esc(p.name)}</name><desc>${esc((MY_TYPES[p.type] || MY_TYPES.autre).label + (p.note ? ' — ' + p.note : ''))}</desc></wpt>`).join('\n');
-    App.download('mes-points.gpx', `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Tenir" xmlns="http://www.topografix.com/GPX/1/1">\n${w}\n</gpx>`, 'application/gpx+xml');
+    App.download('mes-points.gpx', `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Survonomy" xmlns="http://www.topografix.com/GPX/1/1">\n${w}\n</gpx>`, 'application/gpx+xml');
   }
   function importGeo(file) {
     const r = new FileReader();
@@ -630,6 +630,18 @@
     map.createPane('basevec').style.zIndex = 250;
     map.createPane('vec').style.zIndex = 390;
     L.control.scale({ imperial: false }).addTo(map);
+    // Flèche du nord, toujours affichée : la carte (projection Web Mercator) n'est jamais tournée, le haut est donc le nord géographique.
+    const North = L.Control.extend({
+      onAdd() {
+        const d = L.DomUtil.create('div', 'leaflet-control north-arrow');
+        d.title = 'Nord géographique : le haut de la carte. La carte ne tourne jamais. Le nord magnétique indiqué par une boussole s\'en écarte de quelques degrés (déclinaison magnétique, variable selon le lieu et l\'année).';
+        d.setAttribute('role', 'img'); d.setAttribute('aria-label', 'Nord en haut de la carte');
+        d.innerHTML = '<svg viewBox="0 0 32 44" width="30" height="41" aria-hidden="true"><text x="16" y="11" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">N</text><path d="M16 14 L24 40 L16 34 L8 40 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M16 14 L16 34 L8 40 Z" fill="currentColor"/></svg>';
+        L.DomEvent.disableClickPropagation(d);
+        return d;
+      },
+    });
+    new North({ position: 'topleft' }).addTo(map);
 
     const reliefImg = L.imageOverlay('data/relief_europe.jpg', RELIEF_BOUNDS, { attribution: ATTR_DEM, interactive: false });
     const reliefBase = L.layerGroup([reliefImg]);

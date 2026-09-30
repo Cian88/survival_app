@@ -1,4 +1,4 @@
-# Notice d'utilisation — Tenir
+# Notice d'utilisation — Survonomy
 
 > Outil d'aide à la préparation. Il ne remplace ni les consignes des autorités (préfecture, secours), ni une formation aux premiers secours.
 > Toutes vos données restent sur votre appareil (navigateur). Rien n'est envoyé à un serveur.
@@ -40,6 +40,8 @@ L'application tourne autour de **votre** situation : votre foyer, votre logement
 10. **★ Premium** : offres (29,90 €/an ou 59,90 € à vie) et activation d'une clé de licence, vérifiée sur l'appareil sans Internet. Tout ce qui sert en urgence reste gratuit. Le détail est dans [`MONETISATION.md`](MONETISATION.md).
 
 ## 3. La carte hors ligne
+
+**Orientation** : la carte n'est jamais tournée, le **haut est toujours le nord géographique**. Une flèche « N » reste affichée en permanence en haut à gauche, sous les boutons de zoom. Le nord magnétique indiqué par une boussole s'en écarte de quelques degrés (déclinaison magnétique, variable selon le lieu et l'année) : pour un azimut précis, corrigez-la.
 
 ### Cartes topographiques hors ligne : l'essentiel
 1. Renseignez votre domicile dans **Mon profil**.
