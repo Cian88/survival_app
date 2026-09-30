@@ -172,7 +172,7 @@
   function envSelector(b) {
     if (!ENVS.length) return '';
     b.env = b.env || [];
-    const group = axis => ENVS.filter(e => e.axis === axis).map(e => `<button class="envchip ${b.env.includes(e.id) ? 'on' : ''}" data-env="${b.id}|${e.id}" aria-pressed="${b.env.includes(e.id)}">${h(e.name)}</button>`).join('');
+    const group = axis => ENVS.filter(e => e.axis === axis).map(e => `<button class="envchip ${b.env.includes(e.id) ? 'on' : ''}" data-env="${b.id}|${e.id}" aria-pressed="${b.env.includes(e.id)}">${h(e.short || e.name)}</button>`).join('');
     return `<div class="envsel"><span class="small muted">Lieu :</span> ${group('lieu')} <span class="small muted">Climat :</span> ${group('climat')}</div>`;
   }
   function envPanel(b) {
