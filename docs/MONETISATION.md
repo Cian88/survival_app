@@ -2,11 +2,12 @@
 
 ## Offres
 
-| Formule | Prix TTC | Équivalent mensuel |
-|---|---:|---:|
-| Mensuel | **3,90 €** par mois, sans engagement | 3,90 € |
-| Annuel | **29,90 €** par an | ≈ 2,49 € (−36 % par rapport au mensuel, qui revient à 46,80 € sur un an) |
-| À vie | **59,90 €** une seule fois | — (environ 2 ans d'abonnement annuel) |
+| Formule | Prix TTC | Remarque |
+|---|---:|---|
+| Annuel | **29,90 €** par an | abonnement renouvelable, résiliable |
+| À vie | **59,90 €** une seule fois | plus avantageux dès la 3e année |
+
+Pas d'offre mensuelle.
 
 Les prix se modifient dans `js/config.js` → `prices`.
 
@@ -33,7 +34,7 @@ Principe retenu : **tout ce qui sert à réagir en urgence reste gratuit**. Prem
 Les limites se règlent dans `js/premium.js` (`LIMITS`, `FREE_CALCS`).
 
 ## iOS : achats intégrés Apple obligatoires
-Sur l'App Store, la règle 3.1.1 impose les achats intégrés d'Apple et **interdit les clés de licence**. L'application iOS utilise donc StoreKit (abonnements mensuel et annuel, achat à vie, restauration des achats). Le système de licences décrit ci-dessous ne sert que pour la **version web**. Voir [`IOS.md`](IOS.md).
+Sur l'App Store, la règle 3.1.1 impose les achats intégrés d'Apple et **interdit les clés de licence**. L'application iOS utilise donc StoreKit (abonnement annuel, achat à vie, restauration des achats). Le système de licences décrit ci-dessous ne sert que pour la **version web**. Voir [`IOS.md`](IOS.md).
 
 ## Comment fonctionne la licence (version web, sans serveur, hors ligne)
 
@@ -70,10 +71,10 @@ node tools/license.mjs keygen
 Frais, fonctionnalités et conditions de ces prestataires **n'ont pas été vérifiés ici** : comparez-les sur leurs sites.
 
 ### 3. Avec Stripe (modèle fourni)
-1. Créez 3 prix : 3,90 €/mois (récurrent), 29,90 €/an (récurrent) et 59,90 € (paiement unique). Créez ensuite 3 **Payment Links**.
+1. Créez 2 prix : 29,90 €/an (récurrent) et 59,90 € (paiement unique). Créez ensuite 2 **Payment Links**.
 2. Pour chaque lien, dans l'onglet *After payment*, choisissez la redirection vers `https://<votre-worker>/licence?session_id={CHECKOUT_SESSION_ID}`. Stripe remplace ce champ par l'identifiant de la session ([doc Stripe](https://docs.stripe.com/payment-links/post-payment)).
-3. Déployez `tools/licence-worker.js`, par exemple sur Cloudflare Workers, avec les secrets `STRIPE_SECRET_KEY`, `LICENCE_PRIVATE_JWK`, `PRICE_MONTHLY`, `PRICE_ANNUAL` et `PRICE_LIFETIME`.
-4. Dans `js/config.js`, renseignez `checkout.monthly`, `checkout.annual`, `checkout.lifetime` (les URL des Payment Links), `renewUrl` (`https://<votre-worker>/renew`) et `supportEmail`.
+3. Déployez `tools/licence-worker.js`, par exemple sur Cloudflare Workers, avec les secrets `STRIPE_SECRET_KEY`, `LICENCE_PRIVATE_JWK`, `PRICE_ANNUAL` et `PRICE_LIFETIME`.
+4. Dans `js/config.js`, renseignez `checkout.annual`, `checkout.lifetime` (les URL des Payment Links), `renewUrl` (`https://<votre-worker>/renew`) et `supportEmail`.
 5. Testez de bout en bout en **mode test Stripe** avant de passer en production.
 
 Le modèle de service a été contrôlé ici pour la signature : ses licences sont acceptées par l'application. L'appel à Stripe, lui, **n'a pas pu être testé** sans compte. À vérifier : sur les versions récentes de l'API Stripe, `current_period_end` se trouve dans les éléments de l'abonnement ; le modèle lit les deux emplacements.

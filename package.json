@@ -1,8 +1,8 @@
 {
-  "name": "kit-survie-europe",
+  "name": "tenir",
   "version": "1.0.0",
   "private": true,
-  "description": "Kit Survie Europe — application de préparation aux crises, hors ligne (web + iOS via Capacitor)",
+  "description": "Tenir — application de préparation aux crises, hors ligne (web + iOS via Capacitor)",
   "scripts": {
     "build:web": "node tools/build-www.mjs",
     "ios:sync": "npm run build:web && npx cap sync ios",

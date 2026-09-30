@@ -1,4 +1,4 @@
-# Notice d'utilisation — Kit Survie Europe
+# Notice d'utilisation — Tenir
 
 > Outil d'aide à la préparation. Il ne remplace ni les consignes des autorités (préfecture, secours), ni une formation aux premiers secours.
 > Toutes vos données restent sur votre appareil (navigateur). Rien n'est envoyé à un serveur.
@@ -31,13 +31,13 @@ L'application tourne autour de **votre** situation : votre foyer, votre logement
 5. **Sacs** : deux types, pour deux usages.
    - **Sac d'évacuation** : rejoindre vite un lieu sûr (proches, hébergement), de 24 h à 7 jours, le plus souvent en ville ou en voiture. Priorités : papiers, espèces, médicaments, eau, chargeur, vêtements. Sac discret, sans arme.
    - **Sac de survie** : tenir en autonomie en pleine nature, de 24 h à 14 jours. Contenu : abri, feu, eau à traiter, gamelle qui va au feu, orientation, outils (les « 10 C » de Dave Canterbury).
-   - **Sélecteur d'autonomie** (24 h, 48 h, 72 h, 5, 7, 10 ou 14 jours) : les consommables marqués « auto » se recalculent. C'est le cas de l'eau portée (1 L/jour, 3 L au plus), des pastilles, des rations (kcal du profil), des repas lyophilisés, des cartouches de gaz, des lingettes, des chaussettes et des médicaments. Le panneau solaire s'ajoute à partir de 5 jours. Chaque règle affiche sa base ; « hypothèse » signale un choix sans source chiffrée. Si vous modifiez une quantité à la main, elle n'est plus recalculée.
+   - **Sélecteur d'autonomie** (24 h, 48 h, 72 h, 5, 7, 10 ou 14 jours) : seuls les **consommables** se recalculent : eau portée (1 L/jour, 3 L au plus), pastilles, rations (kcal du profil), repas lyophilisés, cartouches de gaz, allume-feu, piles, lingettes, médicaments. Les **équipements durables** (filtre, réchaud, panneau solaire, vêtements lavables, outils) ne dépendent pas de la durée : un filtre sert 1 jour comme 3 mois. Chaque règle affiche sa base ; « hypothèse » signale un choix sans source chiffrée. Si vous modifiez une quantité à la main, elle n'est plus recalculée.
    - Variantes selon le lieu et le climat.
-6. **Stock maison** : durée d'autonomie visée (3 à 90 jours), inventaire daté (litres, kcal, péremption) et 9 piliers. La durée recalcule aussi les achats « maison » marqués « auto » : jerricans (personnes × jours × L/jour ÷ 20 L), pastilles, papier toilette, sacs, cartouches de gaz.
+6. **Stock maison** : durée d'autonomie visée (3 à 90 jours), inventaire daté (litres, kcal, péremption) et 9 piliers. La durée recalcule les consommables des achats « maison » : pastilles, papier toilette, sacs, cartouches de gaz. L'eau **stockée** (et donc le nombre de jerricans) est plafonnée à **14 jours** : au-delà, l'état des lieux demande une **source d'eau renouvelable** (pluie, puits, cours d'eau) et un traitement. Les équipements (filtre, récupérateur, panneaux solaires, station électrique, réchaud) ne se multiplient pas avec la durée.
 7. **Terrain** : ce que disent les praticiens, les forums et les témoins de crises réelles.
 8. **Calculateurs** : eau, dose de Javel selon votre flacon, batterie, solaire, eau de pluie, poids du sac, temps de marche, stock profond, gaz par temps froid.
 9. **Matériel & budget**, **Plan & scénarios**, **Notice**.
-10. **★ Premium** : offres (3,90 €/mois, 29,90 €/an, 59,90 € à vie) et activation d'une clé de licence, vérifiée sur l'appareil sans Internet. Tout ce qui sert en urgence reste gratuit. Le détail est dans [`MONETISATION.md`](MONETISATION.md).
+10. **★ Premium** : offres (29,90 €/an ou 59,90 € à vie) et activation d'une clé de licence, vérifiée sur l'appareil sans Internet. Tout ce qui sert en urgence reste gratuit. Le détail est dans [`MONETISATION.md`](MONETISATION.md).
 
 ## 3. La carte hors ligne
 

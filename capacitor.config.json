@@ -1,6 +1,6 @@
 {
-  "appId": "fr.kitsurvie.europe",
-  "appName": "Kit Survie",
+  "appId": "fr.tenir.app",
+  "appName": "Tenir",
   "webDir": "www",
   "ios": {
     "contentInset": "never",

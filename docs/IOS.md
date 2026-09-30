@@ -7,7 +7,7 @@ L'application iOS est le **même code** que la version web, intégré dans une a
 | Fonction | Module | Rôle |
 |---|---|---|
 | Position GPS | `@capacitor/geolocation` | Instant T, carte, domicile. Fonctionne sans Internet. Autorisation demandée au premier usage |
-| Achats intégrés | `@capgo/native-purchases` (StoreKit 2) | Abonnements mensuel et annuel, achat à vie, restauration, gestion de l'abonnement |
+| Achats intégrés | `@capgo/native-purchases` (StoreKit 2) | Abonnement annuel, achat à vie, restauration, gestion de l'abonnement |
 | Export de fichiers | `@capacitor/filesystem` + `@capacitor/share` | CSV, sauvegarde JSON, GPX, packs de cartes `.kspack` → feuille de partage iOS (Fichiers, AirDrop, e-mail…) |
 | Sauvegarde de sécurité | `@capacitor/preferences` | Copie de l'état dans le stockage natif, restaurée si le stockage web est vidé |
 | Interface | CSS | Barre d'onglets en bas, zones sûres (encoche, barre d'accueil), icône et écran de démarrage |
@@ -35,22 +35,21 @@ npm run ios:sync            # assemble www/ et le copie dans le projet iOS
 npm run ios:open            # ouvre ios/App dans Xcode
 ```
 Dans Xcode :
-1. Onglet *Signing & Capabilities* : choisissez votre **Team** et vérifiez le **Bundle Identifier** (`fr.kitsurvie.europe` par défaut, à remplacer par le vôtre ici et dans `capacitor.config.json`). Ajoutez la capacité **In-App Purchase**.
+1. Onglet *Signing & Capabilities* : choisissez votre **Team** et vérifiez le **Bundle Identifier** (`fr.tenir.app` par défaut, à remplacer par le vôtre ici et dans `capacitor.config.json`). Ajoutez la capacité **In-App Purchase**.
 2. Choisissez un simulateur ou votre iPhone, puis lancez l'app (▶).
-3. **Tester les achats sans payer** : créez un fichier *StoreKit Configuration* (File › New › StoreKit Configuration File), ajoutez-y les 3 produits ci-dessous, puis sélectionnez-le dans *Product › Scheme › Edit Scheme › Run › Options*. Vous pouvez aussi utiliser un compte *Sandbox* dans App Store Connect.
+3. **Tester les achats sans payer** : créez un fichier *StoreKit Configuration* (File › New › StoreKit Configuration File), ajoutez-y les 2 produits ci-dessous, puis sélectionnez-le dans *Product › Scheme › Edit Scheme › Run › Options*. Vous pouvez aussi utiliser un compte *Sandbox* dans App Store Connect.
 
 Après chaque modification du code web : `npm run ios:sync`.
 
 ## App Store Connect : les produits
-Créez l'app, puis les achats intégrés. Leurs identifiants doivent correspondre à `js/config.js` → `iap` :
+Créez l'app (nom : **Tenir**), puis les 2 achats intégrés. Leurs identifiants doivent correspondre à `js/config.js` → `iap` :
 
 | Produit | Type | Identifiant | Prix visé |
 |---|---|---|---|
-| Premium mensuel | Abonnement auto-renouvelable, groupe « Premium » | `fr.kitsurvie.premium.mensuel` | 3,90 € |
-| Premium annuel | Abonnement auto-renouvelable, même groupe | `fr.kitsurvie.premium.annuel` | 29,90 € |
-| Premium à vie | Non consommable | `fr.kitsurvie.premium.avie` | 59,90 € |
+| Premium annuel | Abonnement auto-renouvelable (groupe « Premium ») | `fr.tenir.premium.annuel` | 29,90 € |
+| Premium à vie | Non consommable | `fr.tenir.premium.avie` | 59,90 € |
 
-- **Prix** : Apple propose 900 paliers de prix, y compris des terminaisons en ,90 ou ,95 (d'après la [documentation Apple sur les prix](https://developer.apple.com/help/app-store-connect/manage-app-pricing/set-a-price/)). Vérifiez dans App Store Connect que 3,90 €, 29,90 € et 59,90 € sont disponibles pour la France ; sinon, prenez le palier le plus proche. L'app affiche toujours le **prix renvoyé par l'App Store**, dans la devise de l'utilisateur.
+- **Prix** : Apple propose 900 paliers de prix, y compris des terminaisons en ,90 ou ,95 (d'après la [documentation Apple sur les prix](https://developer.apple.com/help/app-store-connect/manage-app-pricing/set-a-price/)). Vérifiez dans App Store Connect que 29,90 € et 59,90 € sont disponibles pour la France ; sinon, prenez le palier le plus proche. L'app affiche toujours le **prix renvoyé par l'App Store**, dans la devise de l'utilisateur.
 - **Commission** : Apple prélève une commission sur chaque vente, et le taux dépend de votre situation (programme pour petits développeurs, ancienneté de l'abonnement). Vérifiez les conditions en vigueur sur developer.apple.com, car je ne les ai pas vérifiées ici.
 
 ## Fiche App Store et validation

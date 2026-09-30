@@ -2,7 +2,7 @@
 
 *Observé le 30/09/2026. Méthode : métadonnées de toutes les vidéos longues et des lives récupérées avec yt-dlp (titres, dates, descriptions), sous-titres automatiques FR de 49 vidéos, site officiel, et trois PDF APS en accès public. Les citations proviennent des sous-titres automatiques, qui contiennent des erreurs de transcription. Les montants indiqués sont ceux cités par l'auteur au moment de chaque vidéo.*
 
-> Synthèse réalisée pour l'application **Kit Survie Europe**. Les affirmations renvoient à des vidéos ou à des PDF publics de la chaîne. Il s'agit de l'avis d'un créateur de contenu, **pas d'une source officielle** : pour les quantités de référence, l'application s'appuie d'abord sur les guides officiels (voir `SOURCES.md`) et signale les écarts.
+> Synthèse réalisée pour l'application **Tenir**. Les affirmations renvoient à des vidéos ou à des PDF publics de la chaîne. Il s'agit de l'avis d'un créateur de contenu, **pas d'une source officielle** : pour les quantités de référence, l'application s'appuie d'abord sur les guides officiels (voir `SOURCES.md`) et signale les écarts.
 
 ---
 

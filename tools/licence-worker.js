@@ -6,7 +6,7 @@
    Variables secrètes à définir (wrangler secret put …) :
      STRIPE_SECRET_KEY   clé secrète Stripe (sk_live_… ou sk_test_…)
      LICENCE_PRIVATE_JWK contenu de license-keys/private.jwk (généré par `node tools/license.mjs keygen`)
-     PRICE_MONTHLY, PRICE_ANNUAL, PRICE_LIFETIME  identifiants des prix Stripe (price_…)
+     PRICE_ANNUAL, PRICE_LIFETIME  identifiants des prix Stripe (price_…)
    À vérifier avant mise en production : version d'API Stripe du compte (champ current_period_end), textes légaux. */
 const b64u = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 const enc = s => new TextEncoder().encode(s);
@@ -30,7 +30,7 @@ async function licenceFor(env, sessionId) {
   const s = await stripe(env, `checkout/sessions/${sessionId}?expand[]=line_items&expand[]=subscription`);
   if (s.status !== 'complete' || !['paid', 'no_payment_required'].includes(s.payment_status)) throw new Error('paiement non confirmé');
   const price = s.line_items && s.line_items.data[0] && s.line_items.data[0].price.id;
-  const plan = price === env.PRICE_LIFETIME ? 'lifetime' : price === env.PRICE_ANNUAL ? 'annual' : price === env.PRICE_MONTHLY ? 'monthly' : null;
+  const plan = price === env.PRICE_LIFETIME ? 'lifetime' : price === env.PRICE_ANNUAL ? 'annual' : null;
   if (!plan) throw new Error('prix inconnu');
   let exp = null;
   if (plan !== 'lifetime') {

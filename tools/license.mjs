@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* Outil de licences Kit Survie Europe (Node 18+).
+/* Outil de licences Tenir (Node 18+).
    Les licences sont des jetons signés ECDSA P-256 (SHA-256), vérifiés hors ligne par l'application.
 
    node tools/license.mjs keygen                 → crée license-keys/private.jwk (à garder SECRET, hors dépôt)
@@ -7,7 +7,7 @@
    node tools/license.mjs issue --plan annual --email client@exemple.fr [--months 12] [--key chemin.jwk] [--sid cs_...]
    node tools/license.mjs verify <jeton> [--pub chemin.jwk]
 
-   Plans : monthly (1 mois), annual (12 mois), lifetime (sans expiration), admin (toutes les fonctions, sans expiration). */
+   Plans : annual (12 mois), lifetime (sans expiration), admin (toutes les fonctions, sans expiration). */
 import { generateKeyPairSync, createPrivateKey, createPublicKey, sign, verify, createHash, randomUUID } from 'node:crypto';
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -17,7 +17,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2), cmd = args[0];
 const opt = k => { const i = args.indexOf('--' + k); return i > 0 ? args[i + 1] : undefined; };
 const b64u = b => Buffer.from(b).toString('base64url');
-const PLANS = { monthly: 1, annual: 12, lifetime: null, admin: null };
+const PLANS = { annual: 12, lifetime: null, admin: null };
 
 function issue(privJwk, { plan, email, months, sid }) {
   if (!(plan in PLANS)) throw new Error('plan inconnu : ' + plan);

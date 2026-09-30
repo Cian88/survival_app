@@ -1,4 +1,7 @@
 /* Types de sac et quantités de consommables selon la durée d'autonomie.
+   Principe : seuls les CONSOMMABLES (eau, nourriture, traitement de l'eau, combustible, piles, hygiène, médicaments)
+   varient avec la durée. Les ÉQUIPEMENTS DURABLES (filtre, réchaud, panneau solaire, vêtements lavables, outils…)
+   restent à la même quantité : un filtre sert aussi bien 1 jour que 3 mois.
    - Sac d'évacuation : quitter vite son domicile pour rejoindre un lieu sûr (proches, hébergement, centre d'accueil).
    - Sac de survie : tenir en autonomie en milieu naturel, sans aide extérieure (abri, feu, eau, orientation, outils).
    Les règles de quantité citent leur base ; « hypothèse » signale un choix raisonnable sans source chiffrée. */
@@ -25,12 +28,12 @@
       items: [
         { g: 'G001' }, { g: 'G002' }, { g: 'G003', q: () => 1 },
         { g: 'G004' }, { g: 'G009', q: d => 2 * min(d, 3), note: '≈ 1 L d\'eau portée par jour, plafonné à 3 L (au-delà : traiter l\'eau trouvée) — Creek Stewart, The Prepared' },
-        { g: 'G005', q: d => d >= 2 ? 1 : 0, note: 'filtre dès 2 jours' }, { g: 'G007', q: d => ceil(d * 3 / 50), note: 'boîtes de 50 comprimés (1 cp/L) pour 3 L/jour — MSB' },
+        { g: 'G005' }, { g: 'G007', q: d => ceil(d * 3 / 50), note: 'boîtes de 50 comprimés (1 cp/L) pour 3 L/jour — MSB' },
         { g: 'G015', q: (d, K) => ceil(d * K / 2300), note: 'rations sans cuisson : besoin kcal/jour du profil ÷ 2 300 kcal par boîte NRG-5 (chiffre cité par APS)' },
         { g: 'G016', q: d => d, note: '1 barre par jour (moral, en-cas) — hypothèse' },
         { g: 'G027' }, { g: 'G031' }, { g: 'G034' }, { g: 'G035' }, { g: 'G036' }, { g: 'G037' },
-        { g: 'G038', q: d => min(d, 3), note: '1 paire par jour, 3 au plus (on lave) — hypothèse' },
-        { c: 'sous_vet', n: 'Sous-vêtements de rechange', cat: 'Vêtements', q: d => min(d, 3), note: 'hypothèse' },
+        { g: 'G038', q: () => 2 },
+        { c: 'sous_vet', n: 'Sous-vêtements de rechange (lavables)', cat: 'Vêtements', q: () => 2 },
         { g: 'G039' }, { g: 'G041' }, { g: 'G044' }, { g: 'G048' }, { g: 'G051' },
         { g: 'G064' }, { g: 'G065' }, { g: 'G066' }, { g: 'G068' }, { g: 'G070' }, { g: 'G072' },
         { g: 'G074', q: d => ceil(d / 3), note: 'paquets de 60 lingettes, 1 pour 3 jours — hypothèse' }, { g: 'G075' },
@@ -62,23 +65,25 @@
         { c: 'bandana', n: 'Bandana en coton', cat: 'Outils', src: SRC.c10 },
         { g: 'G053' }, { g: 'G054' }, { g: 'G051' }, { g: 'G052' },
         { g: 'G039' }, { g: 'G041', q: d => ceil(d / 5), note: '1 lot de piles par tranche de 5 jours — hypothèse' },
-        { g: 'G044' }, { g: 'G045', q: d => d >= 5 ? 1 : 0, note: 'panneau solaire à partir de 5 jours' },
+        { g: 'G044' }, { g: 'G045' },
         { g: 'G064' }, { g: 'G065' }, { g: 'G066' },
         { g: 'G071' }, { g: 'G074', q: d => ceil(d / 3), note: 'hypothèse' }, { g: 'G075' },
         { g: 'G032' }, { g: 'G033' }, { g: 'G034' }, { g: 'G035' }, { g: 'G036' }, { g: 'G037' },
-        { g: 'G038', q: d => min(d, 4), note: '4 paires au plus (on lave) — hypothèse' },
+        { g: 'G038', q: () => 3 },
       ],
     },
   };
   const dLabel = d => d === 1 ? '24 h' : d === 2 ? '48 h' : d === 3 ? '72 h' : d + ' jours';
 
+  /* Une règle est « consommable » si sa quantité dépend de la durée (q(1) ≠ q(14)). */
+  const isConso = r => !!r.q && r.q(1, 2100) !== r.q(14, 2100);
   function lineFor(rule, d, K, GEAR_BY_ID, uid) {
     const qty = rule.q ? rule.q(d, K) : 1;
     if (rule.g) {
       const g = GEAR_BY_ID[rule.g]; if (!g) return null;
-      return { key: uid(), gearId: g.id, rid: rule.g, name: g.name + (g.model ? ' — ' + g.model : ''), category: g.category, qty, weight_g: g.weight_g || 0, price: g.price_eur || 0, have: false, auto: !!rule.q };
+      return { key: uid(), gearId: g.id, rid: rule.g, name: g.name + (g.model ? ' — ' + g.model : ''), category: g.category, qty, weight_g: g.weight_g || 0, price: g.price_eur || 0, have: false, auto: isConso(rule), kind: isConso(rule) ? 'conso' : 'durable' };
     }
-    return { key: uid(), rid: rule.c, name: rule.n, category: rule.cat || 'Personnel', qty, unit: rule.unit, weight_g: 0, price: 0, have: false, auto: !!rule.q };
+    return { key: uid(), rid: rule.c, name: rule.n, category: rule.cat || 'Personnel', qty, unit: rule.unit, weight_g: 0, price: 0, have: false, auto: isConso(rule), kind: isConso(rule) ? 'conso' : 'durable' };
   }
   /* Pré-remplit un sac selon son type et sa durée (sans doublon). */
   function prefill(bag, GEAR_BY_ID, K, uid) {
@@ -90,24 +95,27 @@
     const T = TYPES[bag.type || 'evac'], d = bag.days || T.def;
     for (const it of bag.items) {
       if (!it.auto) continue;
-      const r = T.items.find(x => (x.g || x.c) === (it.rid || it.gearId)); if (!r || !r.q) continue;
+      const r = T.items.find(x => (x.g || x.c) === (it.rid || it.gearId)); if (!r || !isConso(r)) { it.auto = false; continue; }
       it.qty = r.q(d, K);
     }
-    // Consommables qui deviennent nécessaires avec une durée plus longue (ex. panneau solaire, filtre)
+    // Consommables qui deviennent nécessaires avec une durée plus longue (quantité nulle à 1 jour)
     if (GEAR_BY_ID && bag.items.length) {
       const have = new Set(bag.items.map(i => i.rid || i.gearId));
-      for (const r of T.items) if (r.q && !have.has(r.g || r.c) && r.q(d, K) > 0 && r.q(1, K) === 0) { const l = lineFor(r, d, K, GEAR_BY_ID, uid); if (l) bag.items.push(l); }
+      for (const r of T.items) if (isConso(r) && !have.has(r.g || r.c) && r.q(d, K) > 0 && r.q(1, K) === 0) { const l = lineFor(r, d, K, GEAR_BY_ID, uid); if (l) bag.items.push(l); }
     }
   }
   const ruleNote = (bag, it) => { const r = TYPES[bag.type || 'evac'].items.find(x => (x.g || x.c) === (it.rid || it.gearId)); return r && r.note; };
   /* Stock maison : consommables proportionnels au foyer et à la durée. */
+  /* Maison : l'eau STOCKÉE est plafonnée à 14 jours (repère des praticiens). Au-delà, on s'appuie sur une source
+     renouvelable (pluie, puits, cours d'eau) + un traitement : le filtre et les récupérateurs sont durables. */
+  const WATER_STORE_MAX = 14;
   const HOME_RULES = {
-    G010: { q: (n, d, W) => Math.ceil(n * d * W / 20), note: 'jerricans de 20 L pour l\'eau du foyer (personnes × jours × L/jour)' },
+    G010: { q: (n, d, W) => Math.ceil(n * Math.min(d, WATER_STORE_MAX) * W / 20), note: 'jerricans de 20 L pour l\'eau stockée (personnes × jours × L/jour), plafonnée à 14 jours : au-delà, source renouvelable + traitement' },
     G012: { q: n => n, note: 'eau en bouteilles pour les 72 premières heures : 6 L par personne (SGDSN)' },
     G007: { q: (n, d) => Math.max(1, Math.ceil(n * d * 3 / 50)), note: 'de quoi traiter 3 L/pers./jour de secours' },
     G073: { q: (n, d) => Math.max(1, Math.ceil(n * d / 14)), note: '1 paquet de 12 rouleaux par personne et par tranche de 14 jours — hypothèse' },
     G075: { q: (n, d) => Math.max(1, Math.ceil(n * d / 10)), note: '1 lot de 10 sacs par personne et par tranche de 10 jours (toilettes de secours) — hypothèse' },
     G021: { q: (n, d) => Math.max(1, Math.ceil(n * d * 1.5 * 20 / 230)), note: 'cartouches de 230 g : 1,5 L bouilli/pers./jour × 13–20 g/L (non vérifié) — hypothèse' },
   };
-  window.Bags = { TYPES, SRC, dLabel, prefill, rescale, lineFor, ruleNote, HOME_RULES };
+  window.Bags = { TYPES, SRC, dLabel, prefill, rescale, lineFor, ruleNote, HOME_RULES, WATER_STORE_MAX, isConso };
 })();

@@ -1,4 +1,6 @@
-# Kit Survie Europe
+# Tenir
+
+*Préparation et survie, hors ligne. Le nom dit l'objectif : tenir 72 heures, deux semaines, plus longtemps.*
 
 Application **locale, personnelle et hors ligne**, construite autour de la survie **à l'instant T** de son utilisateur :
 - un **profil** (foyer, santé, logement, domicile, environnement) qui personnalise tout le reste ;
@@ -6,7 +8,7 @@ Application **locale, personnelle et hors ligne**, construite autour de la survi
 - un écran **Instant T** : position GPS sans Internet, autonomie réelle, actions par situation, ressources et dangers les plus proches, cap vers le domicile ou le point de rendez-vous ;
 - des **cartes topographiques hors ligne**, dont la carte **IGN officielle** (Plan IGN et estompage, Licence Ouverte Etalab 2.0) téléchargeable par zone, exportable et importable.
 
-**Version gratuite et Premium** : l'essentiel pour réagir (Instant T, carte intégrée, 1 pack de carte, 1 sac…) est gratuit. Premium (3,90 €/mois, 29,90 €/an ou 59,90 € à vie) débloque la personnalisation complète. Les licences sont signées et vérifiées hors ligne. Voir [`docs/MONETISATION.md`](docs/MONETISATION.md).
+**Version gratuite et Premium** : l'essentiel pour réagir (Instant T, carte intégrée, 1 pack de carte, 1 sac…) est gratuit. Premium (29,90 €/an ou 59,90 € à vie) débloque la personnalisation complète. Les licences sont signées et vérifiées hors ligne. Voir [`docs/MONETISATION.md`](docs/MONETISATION.md).
 
 Elle permet aussi de préparer :
 - un **écosystème de survie domestique** : stock d'eau et de nourriture, énergie, santé, hygiène, communication, documents, sécurité, plan familial ;
@@ -42,6 +44,9 @@ Vous pouvez aussi ouvrir `index.html` directement. Pour un usage hors ligne comp
 - [`docs/SOURCES.md`](docs/SOURCES.md) : sources, licences et méthode
 - [`docs/MONETISATION.md`](docs/MONETISATION.md) : offres, gratuit / Premium, licences, mise en vente
 - [`docs/IOS.md`](docs/IOS.md) : application iOS (compilation, achats intégrés, App Store)
+
+## Logique des quantités
+Seuls les **consommables** (eau, nourriture, pastilles, combustible, piles, hygiène, médicaments) varient avec la durée d'autonomie. Les **équipements durables** (filtre, réchaud, panneaux solaires, station électrique, outils, vêtements lavables) gardent la même quantité : un filtre sert 1 jour comme 3 mois. L'eau **stockée** à la maison est plafonnée à 14 jours ; au-delà, l'app demande une source renouvelable et un traitement.
 
 ## Structure
 ```

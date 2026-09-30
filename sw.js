@@ -1,6 +1,6 @@
 /* Service worker : met l'application en cache pour un usage 100 % hors ligne.
    Les tuiles de carte et points OSM sont gérés séparément dans IndexedDB (js/map.js). */
-const VERSION = 'kit-survie-v10';
+const VERSION = 'tenir-v11';
 const SHELL = [
   './', 'index.html', 'css/app.css', 'manifest.webmanifest', 'icons/icon.svg',
   'lib/leaflet/leaflet.js', 'lib/leaflet/leaflet.css', 'lib/leaflet/images/layers.png', 'lib/leaflet/images/layers-2x.png',

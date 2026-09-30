@@ -8,7 +8,7 @@
   const KEY = 'survie.licence';
   const LIMITS = { packs: 1, packKm: 10, packZoom: 14, osmZones: 1, bags: 1, inventory: 15 };
   const FREE_CALCS = ['eau', 'poids', 'marche'];
-  const PLAN_NAME = { monthly: 'Mensuel', annual: 'Annuel', lifetime: 'À vie', admin: 'Administrateur (toutes les fonctions)' };
+  const PLAN_NAME = { monthly: 'Mensuel (ancienne offre)', annual: 'Annuel', lifetime: 'À vie', admin: 'Administrateur (toutes les fonctions)' };
   const FEATURES = [
     ['Instant T : actions par situation, numéros d\'urgence, position GPS', true, true],
     ['Carte Europe intégrée (relief, fond, nucléaire, barrages, centrales)', true, true],
@@ -64,7 +64,7 @@
       const ok = c && (c.exp == null || now <= c.exp + grace);
       state = ok ? { active: true, lic: c, reason: '', iap: true, cached: true } : { active: false, lic: null, reason: 'achats non vérifiables : ' + e.message, iap: true };
     }
-    Native.Purchases.getProducts({ productIdentifiers: [IAP.monthly, IAP.annual].filter(Boolean), productType: 'subs' })
+    Native.Purchases.getProducts({ productIdentifiers: [IAP.annual].filter(Boolean), productType: 'subs' })
       .then(r => (r.products || []).forEach(p => { storePrices[p.identifier || p.productIdentifier] = p.priceString; })).catch(() => { });
     Native.Purchases.getProducts({ productIdentifiers: [IAP.lifetime].filter(Boolean), productType: 'inapp' })
       .then(r => (r.products || []).forEach(p => { storePrices[p.identifier || p.productIdentifier] = p.priceString; })).catch(() => { });
@@ -106,7 +106,7 @@
   function upsell(what) {
     const w = document.createElement('div'); w.className = 'modal-wrap';
     w.innerHTML = `<div class="modal" role="dialog" aria-modal="true"><h3>★ Fonction Premium</h3><p>${h(what)}</p>
-      <p class="small">Premium rend l'application réellement adaptée à vous : profil complet, état des lieux détaillé, Instant T personnalisé, cartes hors ligne illimitées. À partir de ${h(C.prices.monthly.label)} par mois, ${h(C.prices.annual.label)} par an ou ${h(C.prices.lifetime.label)} à vie.</p>
+      <p class="small">Premium rend l'application réellement adaptée à vous : profil complet, état des lieux détaillé, Instant T personnalisé, cartes hors ligne illimitées. ${h(C.prices.annual.label)} par an, ou ${h(C.prices.lifetime.label)} une fois pour toutes.</p>
       <div class="row end"><button class="btn ghost" data-x>Plus tard</button><button class="btn" data-see>Voir les offres</button></div></div>`;
     document.body.appendChild(w);
     w.querySelector('[data-x]').onclick = () => w.remove();
@@ -119,20 +119,20 @@
     const P = C.prices, L = state.lic, price = k => storePrices[IAP[k]] || P[k].label;
     const adminBox = C.devAdmin ? `<div class="card alertcard"><h3>Accès administrateur (build de développement)</h3><p class="small">Visible seulement si <code>devAdmin: true</code> dans js/config.js. À désactiver avant toute soumission à l'App Store.</p><textarea id="licIn" placeholder="KS1.…" style="min-height:70px"></textarea><div class="row"><button class="btn" data-lic="activate">Activer</button>${state.lic && state.token ? '<button class="btn ghost danger" data-lic="remove">Retirer</button>' : ''}</div><div id="admMsg" class="small"></div></div>` : '';
     el.innerHTML = `
-    <div class="card"><h2>★ Kit Survie Premium</h2>
+    <div class="card"><h2>★ Tenir Premium</h2>
       ${state.active ? `<div class="alert">✅ Premium actif — formule <b>${h(PLAN_NAME[L.plan] || L.plan)}</b>${L.exp ? `, renouvellement ou fin le <b>${new Date(L.exp * 1000).toLocaleDateString('fr-FR')}</b>` : ', sans date de fin'}${state.cached ? ' (vérifié lors de la dernière connexion)' : ''}.</div>`
         : `<p>La version gratuite couvre l'essentiel pour réagir. <b>Premium</b> rend l'application vraiment <b>personnelle</b> : vos besoins réels, votre matériel, vos cartes hors ligne, votre situation à l'instant T.</p>`}
     </div>
     <div class="plans">
-      ${[['monthly', 'Mensuel', 'S\'abonner'], ['annual', 'Annuel', 'S\'abonner'], ['lifetime', 'À vie', 'Acheter']].map(([k, n, cta]) => `
-        <div class="card plan ${k === 'annual' ? 'best' : ''}">${k === 'annual' ? '<div class="badge">Le plus avantageux sur 1 an</div>' : ''}
+      ${[['annual', 'Annuel', 'S\'abonner'], ['lifetime', 'À vie', 'Acheter']].map(([k, n, cta]) => `
+        <div class="card plan ${k === 'lifetime' ? 'best' : ''}">${k === 'lifetime' ? `<div class="badge">Le plus avantageux dès la ${Math.floor(P.lifetime.amount / P.annual.amount) + 1}e année</div>` : ''}
           <h3>${n}</h3><div class="price">${h(price(k))}</div><div class="small muted">${h(P[k].per)}</div><p class="small">${h(P[k].note)}</p>
           <button class="btn" data-iap="${k}" ${state.active && L && (L.plan === 'lifetime' || L.plan === k) ? 'disabled' : ''}>${cta}</button></div>`).join('')}
     </div>
     <div class="card">
       <div class="row"><button class="btn ghost" data-iapx="restore">Restaurer mes achats</button>${state.active && L && L.plan !== 'lifetime' ? '<button class="btn ghost" data-iapx="manage">Gérer mon abonnement</button>' : ''}</div>
       <div id="licMsg" class="small"></div>
-      <p class="small muted">Paiement par votre compte Apple. Les abonnements mensuel et annuel se renouvellent automatiquement, sauf s'ils sont désactivés au moins 24 heures avant la fin de la période en cours. Gestion et résiliation dans Réglages › [votre nom] › Abonnements. L'achat « À vie » est un paiement unique.
+      <p class="small muted">Paiement par votre compte Apple. L'abonnement annuel se renouvelle automatiquement, sauf s'ils sont désactivés au moins 24 heures avant la fin de la période en cours. Gestion et résiliation dans Réglages › [votre nom] › Abonnements. L'achat « À vie » est un paiement unique.
       ${C.termsUrl ? `<a href="${h(C.termsUrl)}" target="_blank" rel="noopener">Conditions d'utilisation</a>` : ''} ${C.privacyUrl ? `· <a href="${h(C.privacyUrl)}" target="_blank" rel="noopener">Politique de confidentialité</a>` : ''}</p>
     </div>
     ${adminBox}
@@ -154,22 +154,22 @@
   }
   function render(el) {
     if (NATIVE) return renderIAP(el);
-    const P = C.prices, L = state.lic, yearlyOfMonthly = P.monthly.amount * 12, saving = yearlyOfMonthly - P.annual.amount;
+    const P = C.prices, L = state.lic;
     const fmt = n => n.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' });
-    const configured = C.checkout && (C.checkout.monthly || C.checkout.annual || C.checkout.lifetime);
+    const configured = C.checkout && (C.checkout.annual || C.checkout.lifetime);
     const cell = v => v === true ? '✓' : v === false ? '—' : h(v);
     el.innerHTML = `
     ${C.testMode ? '<div class="card alertcard"><b>Mode test.</b> La clé de vérification est une clé de démonstration (tools/test-keys) : ne vendez pas de licences tant que vous n\'avez pas généré votre propre clé (voir docs/MONETISATION.md).</div>' : ''}
-    <div class="card"><h2>★ Kit Survie Premium</h2>
+    <div class="card"><h2>★ Tenir Premium</h2>
       ${state.active ? `<div class="alert">✅ Premium actif — formule <b>${h(PLAN_NAME[L.plan] || L.plan)}</b>${L.exp ? `, valable jusqu'au <b>${new Date(L.exp * 1000).toLocaleDateString('fr-FR')}</b>${state.inGrace ? ' (période de grâce : pensez à renouveler)' : ''}` : ', sans date de fin'}${L.who ? ` · ${h(L.who)}` : ''}.</div>`
         : `<p>La version gratuite couvre l'essentiel pour réagir. <b>Premium</b> transforme l'application en outil vraiment <b>personnel</b> : vos besoins réels, votre matériel, vos cartes hors ligne, votre situation à l'instant T.</p>${state.reason && state.reason !== 'aucune licence' ? `<p class="small danger">Licence enregistrée non valide : ${h(state.reason)}.</p>` : ''}`}
     </div>
     <div class="plans">
-      ${[['monthly', 'Mensuel'], ['annual', 'Annuel'], ['lifetime', 'À vie']].map(([k, n]) => `
-        <div class="card plan ${k === 'annual' ? 'best' : ''}">
-          ${k === 'annual' ? `<div class="badge">Le plus avantageux sur 1 an · −${Math.round(saving / yearlyOfMonthly * 100)} %</div>` : ''}
+      ${[['annual', 'Annuel'], ['lifetime', 'À vie']].map(([k, n]) => `
+        <div class="card plan ${k === 'lifetime' ? 'best' : ''}">
+          ${k === 'lifetime' ? `<div class="badge">Le plus avantageux dès la ${Math.floor(P.lifetime.amount / P.annual.amount) + 1}e année</div>` : ''}
           <h3>${n}</h3><div class="price">${h(P[k].label)}</div><div class="small muted">${h(P[k].per)}</div>
-          <p class="small">${h(P[k].note)}${k === 'annual' ? ` (au lieu de ${fmt(yearlyOfMonthly)} en mensuel, soit ${fmt(saving)} d'économie)` : ''}${k === 'lifetime' ? ` (≈ ${Math.round(P.lifetime.amount / P.annual.amount * 10) / 10} années d'abonnement annuel)` : ''}</p>
+          <p class="small">${h(P[k].note)}${k === 'lifetime' ? ` (le prix de ${Math.round(P.lifetime.amount / P.annual.amount * 10) / 10} années d'abonnement)` : ''}</p>
           ${C.checkout[k] ? `<a class="btn buy" data-buy="${k}" href="${h(C.checkout[k])}" target="_blank" rel="noopener">Choisir ${n.toLowerCase()}</a>` : '<button class="btn" disabled title="Lien de paiement non configuré">Bientôt disponible</button>'}
         </div>`).join('')}
     </div>

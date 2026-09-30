@@ -1,4 +1,4 @@
-/* Kit Survie Europe — logique de l'application (vanilla JS, aucun serveur requis). */
+/* Tenir — logique de l'application (vanilla JS, aucun serveur requis). */
 (function () {
   const $ = (s, r = document) => r.querySelector(s);
   const h = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -103,7 +103,7 @@
     <div class="card">
       <h2>Besoins calculés — ${persons()} personne(s)</h2>
       <label>Durée d'autonomie visée <select data-homedays="1">${[3, 7, 14, 30, 60, 90].map(d => `<option value="${d}" ${+P.days === d ? 'selected' : ''}>${d} jours</option>`).join('')}</select></label>
-      <p class="small muted">Change les quantités d'eau et de nourriture ci-dessous, les consommables de vos achats « maison » (jerricans, pastilles, papier, sacs, gaz) et votre état des lieux.</p>
+      <p class="small muted">Seuls les consommables suivent la durée (nourriture, pastilles, papier, sacs, gaz). L'eau <b>stockée</b> est plafonnée à 14 jours : au-delà, il faut une source renouvelable (pluie, puits, cours d'eau) et un traitement ; filtre, récupérateur, panneaux solaires ou réchaud sont des équipements durables, dont la quantité ne dépend pas de la durée.</p>
       <div class="tablewrap"><table><tr><th>Poste</th><th class="num">Besoin</th><th class="num">En stock</th><th class="num">Manque</th></tr>
       <tr><td>Eau de boisson (${P.waterL} L/pers/j)</td><td class="num">${n.water.toFixed(0)} L</td><td class="num">${s.water.toFixed(1)} L</td><td class="num">${Math.max(0, n.water - s.water).toFixed(1)} L</td></tr>
       <tr><td>Énergie alimentaire (${P.kcal} kcal/pers/j)</td><td class="num">${n.kcal.toLocaleString('fr-FR')} kcal</td><td class="num">${Math.round(s.kcal).toLocaleString('fr-FR')} kcal</td><td class="num">${Math.max(0, Math.round(n.kcal - s.kcal)).toLocaleString('fr-FR')} kcal</td></tr>
@@ -199,7 +199,7 @@
     $('#tab-bag').innerHTML = `
     <div class="card">
       <h2>Mes sacs</h2>
-      <p class="small">Deux types de sac, deux usages : le <b>sac d'évacuation</b> sert à rejoindre vite un lieu sûr ; le <b>sac de survie</b> sert à tenir en autonomie en pleine nature. Choisissez le type et la <b>durée d'autonomie</b> : les quantités de consommables (eau, traitement de l'eau, nourriture, combustible, hygiène…) s'ajustent automatiquement. Testez toujours le sac chargé sur une vraie marche.</p>
+      <p class="small">Deux types de sac, deux usages : le <b>sac d'évacuation</b> sert à rejoindre vite un lieu sûr ; le <b>sac de survie</b> sert à tenir en autonomie en pleine nature. Choisissez le type et la <b>durée d'autonomie</b> : seuls les <b>consommables</b> (eau portée, pastilles, nourriture, gaz, piles, hygiène, médicaments) s'ajustent. Les <b>équipements durables</b> (filtre, réchaud, panneau solaire, vêtements, outils) gardent la même quantité : un filtre sert aussi bien 1 jour que 3 mois. Testez toujours le sac chargé sur une vraie marche.</p>
       <div class="row"><button class="btn" data-act="bagnew" data-type="evac">+ Sac d'évacuation</button><button class="btn" data-act="bagnew" data-type="survie">+ Sac de survie</button></div>
     </div>
     ${S.bags.map(b => { b.type = b.type || 'evac'; const T = Bags.TYPES[b.type]; b.days = b.days || T.def; const t = bagTotals(b); return `<div class="card bagcard bag-${b.type}" data-bag="${b.id}">
@@ -217,7 +217,7 @@
         <button class="btn ghost" data-bagprefill="${b.id}">Pré-remplir : ${T.name.toLowerCase()} ${Bags.dLabel(+b.days)}</button>
         <button class="btn ghost" data-bagcustom="${b.id}">+ Objet personnalisé</button></div>
       <div class="tablewrap"><table><tr><th>✓</th><th>Objet</th><th class="num">Qté</th><th class="num">Poids u. (g)</th><th class="num">Prix u. (€)</th><th></th></tr>
-      ${b.items.map(it => { const note = it.auto ? Bags.ruleNote(b, it) : ''; return `<tr><td><input type="checkbox" data-bh="${b.id}|${it.key}" ${it.have ? 'checked' : ''}></td><td>${h(it.name)}<div class="small muted">${h(it.category || '')}${it.auto ? ` · <span class="chip auto" title="${h(note || '')}">auto · ${Bags.dLabel(+b.days)}</span>${note ? ` <span class="small">${h(note)}</span>` : ''}` : ''}</div></td>
+      ${b.items.map(it => { const note = it.auto ? Bags.ruleNote(b, it) : ''; return `<tr><td><input type="checkbox" data-bh="${b.id}|${it.key}" ${it.have ? 'checked' : ''}></td><td>${h(it.name)}<div class="small muted">${h(it.category || '')}${it.auto ? ` · <span class="chip auto" title="${h(note || '')}">consommable · ${Bags.dLabel(+b.days)}</span>${note ? ` <span class="small">${h(note)}</span>` : ''}` : it.kind === 'durable' ? ' · <span class="chip" title="Même quantité quelle que soit la durée">durable</span>' : ''}</div></td>
         <td class="num"><input type="number" min="0" value="${it.qty}" data-bf="${b.id}|${it.key}|qty" style="width:4em">${it.unit ? `<div class="small muted">${h(it.unit)}</div>` : ''}</td>
         <td class="num"><input type="number" min="0" value="${it.weight_g || 0}" data-bf="${b.id}|${it.key}|weight_g" style="width:5.5em"></td>
         <td class="num"><input type="number" min="0" step="0.01" value="${it.price || 0}" data-bf="${b.id}|${it.key}|price" style="width:6em"></td>
@@ -436,7 +436,7 @@
         return App.download('etat-des-lieux-manques.csv', Needs.gapsCsv(S), 'text/csv');
       case 'homeessential': { const have = new Set(S.homePlan.map(i => i.gearId)); GEAR.filter(g => g.scope !== 'sac' && g.priority === 'essentiel' && !have.has(g.id)).forEach(g => { const l = lineFromGear(g); if (Bags.HOME_RULES[g.id]) l.auto = true; S.homePlan.push(l); }); rescaleHome(); return commit(); }
       case 'checked': S.lastCheck = today(); return commit();
-      case 'export': return App.download(`kit-survie-sauvegarde-${today()}.json`, JSON.stringify(S, null, 1), 'application/json');
+      case 'export': return App.download(`tenir-sauvegarde-${today()}.json`, JSON.stringify(S, null, 1), 'application/json');
       case 'reset': UI.confirm('Effacer toutes vos données locales ? Les cartes téléchargées restent en cache.', 'Tout effacer').then(ok => { if (ok) { try { localStorage.removeItem('survie.v1'); } catch (e) { } location.reload(); } }); return;
       case 'invcsv': return App.download('inventaire.csv', toCsv([['Article', 'Catégorie', 'Quantité', 'Litres/unité', 'kcal/unité', 'Péremption', 'Emplacement'], ...S.inventory.map(i => [i.name, CAT_LABEL[i.cat], i.qty, i.litres, i.kcal, i.expiry, i.where])]), 'text/csv');
       case 'plancsv': return App.download('plan-achat.csv', toCsv([['Emplacement', 'Objet', 'Catégorie', 'Quantité', 'Prix unitaire', 'Total', 'Acquis'], ...planLines().map(l => [l.where, l.name, l.category, l.qty, l.price, (l.qty || 1) * (l.price || 0), l.have ? 'oui' : 'non'])]), 'text/csv');
