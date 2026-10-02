@@ -14,21 +14,23 @@ Ces références sont adaptées à l'application existante. Le brief utilisateur
 
 | Décision | Source et rôle | Adaptation à Holdout |
 | --- | --- | --- |
-| Blanc et bleu brume en clair | Bevel : canvas `#ffffff`, surfaces `#ebf0f8` | Cartes lisibles, sans ombre ni accumulation de bordures |
-| Noir et graphite en sombre | Linear : `#08090a`, `#0f1011`, `#161718` | Surfaces différenciées par leur luminosité, contours fins |
+| Fond clair et cartes sauge | Bevel pour les formes ; identité verte demandée par l’utilisateur : `#f8faf7`, `#eef3e9` | Vert forêt `#345844` pour les actions et indicateurs, navigation `#263c30` |
+| Noir et cartes gris foncé | Linear pour la hiérarchie ; cartes `#24272b`, contrôles `#191b1f`, regroupements `#30343a` demandés par l’utilisateur | Les cartes se détachent du canvas noir `#08090a`, contours `#363b42` |
 | Sans empattements dans les deux modes | Typographie système de Bevel et hiérarchie de Linear | Titres et indicateurs dans une même famille, chiffres tabulaires |
-| Bleu `#415eee` réservé aux métriques claires | Bevel : couleur de visualisation des données | Icônes et barres des réserves ; aucune action bleue universelle |
+| Indicateurs vert forêt `#345844` en clair | Identité Holdout demandée par l’utilisateur | Même teinte pour les réserves, les actions et les sélections |
 | Citron `#e4f222` réservé aux actions principales sombres | Linear : action principale | Classe explicite `.btn.primary` ; liens, cases et navigation restent neutres |
-| Texte secondaire renforcé | Contraste sur les surfaces réellement utilisées | `#5d626b` en clair et `#a4a8b0` en sombre |
+| Texte secondaire renforcé | Contraste sur les surfaces réellement utilisées | `#566458` en clair et `#a4a8b0` en sombre |
 | Avertissements et dangers conservés | Sémantique métier existante | Les alertes restent distinguables des actions et sélections |
 | Coins de 24 px et boutons capsules | Bevel + préférence explicite de l'utilisateur | Même géométrie dans les deux thèmes, sans diluer les palettes |
 | Navigation latérale et barre mobile | Architecture Holdout | Quatre métriques sur ordinateur, deux colonnes sur mobile |
 | Carte vectorielle locale | Illustration existante, rôle explicatif | Aperçu explicitement illustré, sans ajout de photos décoratives |
 
-`--accent` sert aux liens, icônes et sélections neutres ; `--action` sert uniquement aux actions principales. Les préférences système utilisent les mêmes tokens que le mode sombre explicite. Les actifs restent locaux et disponibles hors ligne. Le cache applicatif passe à `holdout-v31`.
+`--accent` sert aux liens, icônes et sélections (vert en clair, neutre en sombre) ; `--action` sert uniquement aux actions principales. Les préférences système utilisent les mêmes tokens que le mode sombre explicite. Les actifs restent locaux et disponibles hors ligne. Le cache applicatif passe à `holdout-v32`.
 
 ## Vérification
 
 Contrôles navigateur avec un foyer de démonstration isolé : accueil, état des lieux, profil, sacs, stock maison, plan et paramètres, dans les deux thèmes, à 320, 390, 768, 820, 1024 et 1440 px. Soit 84 combinaisons sans débordement horizontal ni carte hors écran. Contrôle visuel sur ordinateur et téléphone, sélection de situation et case à cocher, choix du thème sombre conservé après rechargement. Aucun message d'erreur de console sur ce parcours.
 
 Tests rapides du workflow de publication : cartes hors ligne, points OSM, catalogue, chiffrement du compte et synchronisation Premium. Cette vérification locale des interfaces ne remplace pas un essai sur matériel iOS natif.
+
+Ajustement des palettes : vert conservé en clair et cartes gris foncé en sombre, sans modification de la structure. Vérification visuelle à 390 et 1440 px, paramètres et contrastes des textes/actions.

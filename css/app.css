@@ -1,44 +1,44 @@
-/* Holdout — Bevel-inspired Expedition and Linear-inspired Signal. Local assets only.
-   Neutral accent is shared by links, icons and selections. Action color is CTA-only. */
+/* Holdout — rounded Expedition in green and Signal on dark grey cards.
+   Green identity in light mode; neutral selections and CTA-only citrus in dark mode. */
 :root {
   color-scheme: light;
-  --bg: #ffffff; --panel: #ebf0f8; --ink: #222326; --muted: #5d626b; --line: #d8dfe9;
-  --accent: #1f2025; --accent-ink: #ffffff; --action: #1f2025; --action-ink: #ffffff;
-  --button: #1f2025; --button-ink: #ffffff; --input-bg: #ffffff; --card-line: transparent; --metric-color: #415eee;
-  --warn: #80551f; --bad: #9a392b; --good: #345844; --chip: #dfe6f0; --shadow: none;
-  --nav: #ffffff; --radius: 24px; --control-radius: 14px;
-  --nav-text: #454a52; --nav-muted: #656a73; --nav-active: #ebf0f8; --nav-active-ink: #222326; --nav-marker: #222326;
+  --bg: #f8faf7; --panel: #eef3e9; --ink: #25392e; --muted: #566458; --line: #d8e2d2;
+  --accent: #345844; --accent-ink: #ffffff; --action: #345844; --action-ink: #ffffff;
+  --button: #345844; --button-ink: #ffffff; --input-bg: #ffffff; --card-line: transparent; --metric-color: #345844;
+  --warn: #80551f; --bad: #9a392b; --good: #345844; --chip: #dfe8d8; --shadow: none;
+  --nav: #263c30; --radius: 24px; --control-radius: 14px;
+  --nav-text: #e4ebdc; --nav-muted: #c1cfb9; --nav-active: #ffffff13; --nav-active-ink: #ffffff; --nav-marker: #b4c99c;
   --hero-bg: var(--bg); --hero-ink: var(--ink); --hero-muted: var(--muted); --hero-line: var(--line); --hero-edge: transparent;
   --title-font: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; --title-weight: 600; --kpi-font: inherit; --emblem-radius: 50%;
   --priority-high-bg: #f2dfdb; --priority-high-ink: #873b29; --priority-mid-bg: #f0e5d1; --priority-mid-ink: #79511e;
-  --priority-low-bg: #dfe6f0; --priority-low-ink: #454a52; --status-ink: #ffffff; --bad-ink: #ffffff;
-  --map-preview-filter: grayscale(.65); --map-pin: #1f2025;
+  --priority-low-bg: #dfe8d8; --priority-low-ink: #345844; --status-ink: #ffffff; --bad-ink: #ffffff;
+  --map-preview-filter: none; --map-pin: #345844;
   --hero-border-width: 0px; --hero-edge-width: 0px; --hero-padding: 0px; --hero-title-size: 40px; --hero-title-size-mobile: 30px; --metric-edge-width: 1px; --metric-edge-color: var(--card-line);
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #08090a; --panel: #0f1011; --ink: #f7f8f8; --muted: #a4a8b0; --line: #323334;
+  --bg: #08090a; --panel: #24272b; --ink: #f7f8f8; --muted: #a4a8b0; --line: #41464d;
   --accent: #d0d6e0; --accent-ink: #08090a; --action: #e4f222; --action-ink: #08090a;
-  --button: #23252a; --button-ink: #f7f8f8; --input-bg: #08090a; --card-line: #23252a; --metric-color: #d0d6e0;
-  --warn: #dfbc7d; --bad: #f2917e; --good: #9ac3b1; --chip: #161718;
-  --nav: #0f1011; --nav-text: #d0d6e0; --nav-muted: #a4a8b0; --nav-active: #23252a; --nav-active-ink: #f7f8f8; --nav-marker: #d0d6e0;
+  --button: #363b42; --button-ink: #f7f8f8; --input-bg: #191b1f; --card-line: #363b42; --metric-color: #d0d6e0;
+  --warn: #dfbc7d; --bad: #f2917e; --good: #9ac3b1; --chip: #30343a;
+  --nav: #141617; --nav-text: #d0d6e0; --nav-muted: #a4a8b0; --nav-active: #30343a; --nav-active-ink: #f7f8f8; --nav-marker: #d0d6e0;
   --title-weight: 590;
   --priority-high-bg: #30211f; --priority-high-ink: #f2917e; --priority-mid-bg: #30291e; --priority-mid-ink: #dfbc7d;
-  --priority-low-bg: #23252a; --priority-low-ink: #d0d6e0; --status-ink: #08090a; --bad-ink: #08090a;
+  --priority-low-bg: #30343a; --priority-low-ink: #d0d6e0; --status-ink: #08090a; --bad-ink: #08090a;
   --map-preview-filter: grayscale(1) brightness(.38); --map-pin: #d0d6e0;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-  color-scheme: dark;
-  --bg: #08090a; --panel: #0f1011; --ink: #f7f8f8; --muted: #a4a8b0; --line: #323334;
-  --accent: #d0d6e0; --accent-ink: #08090a; --action: #e4f222; --action-ink: #08090a;
-  --button: #23252a; --button-ink: #f7f8f8; --input-bg: #08090a; --card-line: #23252a; --metric-color: #d0d6e0;
-  --warn: #dfbc7d; --bad: #f2917e; --good: #9ac3b1; --chip: #161718;
-  --nav: #0f1011; --nav-text: #d0d6e0; --nav-muted: #a4a8b0; --nav-active: #23252a; --nav-active-ink: #f7f8f8; --nav-marker: #d0d6e0;
-  --title-weight: 590;
-  --priority-high-bg: #30211f; --priority-high-ink: #f2917e; --priority-mid-bg: #30291e; --priority-mid-ink: #dfbc7d;
-  --priority-low-bg: #23252a; --priority-low-ink: #d0d6e0; --status-ink: #08090a; --bad-ink: #08090a;
-  --map-preview-filter: grayscale(1) brightness(.38); --map-pin: #d0d6e0;
+    color-scheme: dark;
+    --bg: #08090a; --panel: #24272b; --ink: #f7f8f8; --muted: #a4a8b0; --line: #41464d;
+    --accent: #d0d6e0; --accent-ink: #08090a; --action: #e4f222; --action-ink: #08090a;
+    --button: #363b42; --button-ink: #f7f8f8; --input-bg: #191b1f; --card-line: #363b42; --metric-color: #d0d6e0;
+    --warn: #dfbc7d; --bad: #f2917e; --good: #9ac3b1; --chip: #30343a;
+    --nav: #141617; --nav-text: #d0d6e0; --nav-muted: #a4a8b0; --nav-active: #30343a; --nav-active-ink: #f7f8f8; --nav-marker: #d0d6e0;
+    --title-weight: 590;
+    --priority-high-bg: #30211f; --priority-high-ink: #f2917e; --priority-mid-bg: #30291e; --priority-mid-ink: #dfbc7d;
+    --priority-low-bg: #30343a; --priority-low-ink: #d0d6e0; --status-ink: #08090a; --bad-ink: #08090a;
+    --map-preview-filter: grayscale(1) brightness(.38); --map-pin: #d0d6e0;
   }
 }
 * { box-sizing: border-box; }
