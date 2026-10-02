@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototype carte topo vectorielle</title>
+<link rel="stylesheet" href="lib/maplibre-gl.css">
+<style>
+  :root { --bg: #f5f6f2; --panel: #ffffffee; --ink: #1d2a22; --muted: #5b6b60; --line: #d9ddd5; --accent: #2f6b4f; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #15201b; --panel: #1d2a24ee; --ink: #e8efe9; --muted: #9fb0a5; --line: #31443a; --accent: #7cc4a0; } }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); font: 14px/1.4 system-ui, sans-serif; }
+  #map { position: fixed; inset: 0; }
+  .panel { position: fixed; top: 12px; left: 12px; width: min(340px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow: auto; box-sizing: border-box;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; box-shadow: 0 4px 18px #0002; z-index: 2; }
+  .panel h1 { font-size: 15px; margin: 0 0 4px; }
+  .panel p { margin: 6px 0; }
+  .muted { color: var(--muted); font-size: 12px; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  button { font: inherit; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 8px; padding: 6px 10px; cursor: pointer; }
+  button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+  table { border-collapse: collapse; width: 100%; font-size: 12px; margin-top: 6px; }
+  td { padding: 2px 0; } td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+  #status { font-size: 12px; margin-top: 6px; }
+  details summary { cursor: pointer; font-weight: 600; margin-top: 8px; }
+  @media (max-width: 600px) { .panel:not([open]) { width: auto; } }
+</style>
+</head>
+<body>
+<div id="map" aria-label="Carte topographique des Pyrénées autour d'Andorre"></div>
+<details class="panel" open>
+  <summary>Prototype · carte topo vectorielle hors ligne</summary>
+  <p class="muted">Pyrénées, Andorre et Ariège (environ 65 × 60 km). Fond OpenStreetMap vectoriel (Protomaps), relief et courbes de niveau calculés sur l'appareil à partir des altitudes Mapterhorn.</p>
+  <table id="sizes"></table>
+  <div id="status">Chargement…</div>
+  <div class="row">
+    <button id="btnOtm" aria-pressed="false">Comparer avec OpenTopoMap (en ligne)</button>
+    <button id="btnShade" class="on" aria-pressed="true">Ombrage</button>
+    <button id="btnContours" class="on" aria-pressed="true">Courbes</button>
+  </div>
+  <div class="row"><button id="btnClear">Vider le stockage local</button></div>
+  <p class="muted" id="zoom"></p>
+</details>
+<script src="lib/pmtiles.js"></script>
+<script src="lib/basemaps.js"></script>
+<script src="lib/maplibre-contour.js"></script>
+<script type="module" src="app.mjs"></script>
+</body>
+</html>

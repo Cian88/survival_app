@@ -1,6 +1,6 @@
 # Application iOS : compiler, tester, publier
 
-L'application iOS est le **même code** que la version web, intégré dans une application native avec [Capacitor](https://capacitorjs.com) 8. Toutes les données (cartes intégrées, contenus, catalogue) sont **embarquées dans l'app** : elle fonctionne hors ligne dès l'installation. Les cartes IGN téléchargées par zone restent sur l'iPhone.
+L'application iOS est le **même code** que la version web, intégré dans une application native avec [Capacitor](https://capacitorjs.com) 8. Toutes les données (cartes intégrées, contenus, catalogue) sont **embarquées dans l'app** : elle fonctionne hors ligne dès l'installation. Les cartes topographiques téléchargées par zone restent sur l'iPhone. Point à vérifier sur appareil : la lecture des altitudes Mapterhorn depuis WKWebView (voir [`TUILES.md`](TUILES.md), « Points à surveiller »).
 
 ## Ce qui est natif sur iOS
 
@@ -9,7 +9,8 @@ L'application iOS est le **même code** que la version web, intégré dans une a
 | Position GPS | `@capacitor/geolocation` | Instant T, carte, domicile. Fonctionne sans Internet. Autorisation demandée au premier usage |
 | Achats intégrés | `@capgo/native-purchases` (StoreKit 2) | Abonnement annuel, achat à vie, restauration, gestion de l'abonnement |
 | Export de fichiers | `@capacitor/filesystem` + `@capacitor/share` | CSV, sauvegarde JSON, GPX, packs de cartes `.kspack` → feuille de partage iOS (Fichiers, AirDrop, e-mail…) |
-| Sauvegarde de sécurité | `@capacitor/preferences` | Copie de l'état dans le stockage natif, restaurée si le stockage web est vidé |
+| Sauvegarde de sécurité | `@capacitor/preferences` | Copie de l'état et du compte dans le stockage natif, restaurée si le stockage web est vidé |
+| Connexion Google et Apple | `@capgo/capacitor-social-login` 8.5.12 | Les pages de connexion web ne fonctionnent pas dans l'app : connexion native. Réglages : capacité Xcode « Sign in with Apple », schéma d'URL Google dans `Info.plist` (voir [`COMPTES.md`](COMPTES.md)) |
 | Interface | CSS | Barre d'onglets en bas, zones sûres (encoche, barre d'accueil), icône et écran de démarrage |
 
 Appels téléphoniques : les boutons 112 / 15 / 18 / 17 / SMS 114 ouvrent le téléphone de l'iPhone.

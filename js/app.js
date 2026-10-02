@@ -17,7 +17,13 @@
   };
   const App = window.App = {
     state: Object.assign(structuredClone(DEFAULT), Store.load()),
-    save() { Store.save(this.state); },
+    save() { Store.save(this.state); if (window.Account) Account.changed(); },
+    /* Remplace l'état par celui reçu de la synchronisation, sans changer d'objet (les modules gardent leur référence). */
+    applyState(next) {
+      for (const k of Object.keys(this.state)) delete this.state[k];
+      Object.assign(this.state, structuredClone(next || {}));
+      normalize(); Store.save(this.state); if (this.refresh) this.refresh();
+    },
     download(name, content, mime) {
       if (window.Native && Native.isNative) return Native.saveFile(name, content, mime).catch(e => UI.notice('Export impossible : ' + e.message));
       const a = document.createElement('a');
@@ -28,10 +34,13 @@
     },
   };
   const S = App.state;
-  for (const k in DEFAULT) if (S[k] == null) S[k] = structuredClone(DEFAULT[k]);
-  for (const k in DEFAULT.profile) if (S.profile[k] == null) S.profile[k] = structuredClone(DEFAULT.profile[k]);
-  S.audit = S.audit || {};
-  if (!S.bags.length) S.bags.push({ id: uid(), name: 'Sac adulte 1', owner: '', items: [], env: [] });
+  function normalize() {
+    for (const k in DEFAULT) if (S[k] == null) S[k] = structuredClone(DEFAULT[k]);
+    for (const k in DEFAULT.profile) if (S.profile[k] == null) S.profile[k] = structuredClone(DEFAULT.profile[k]);
+    S.audit = S.audit || {};
+    if (!S.bags.length) S.bags.push({ id: uid(), name: 'Sac adulte 1', owner: '', items: [], env: [] });
+  }
+  normalize();
 
   /* ---------- Calculs ---------- */
   function persons() { return (+S.profile.adults || 0) + (+S.profile.children || 0); }
@@ -329,10 +338,10 @@
     ${A ? `<div class="card"><h2>Apprendre Préparer (Sur)vivre — ce qu'on en retient</h2>${A.html}</div>` : ''}
     <div class="card"><h2>Notice d'utilisation</h2>
       <ol>
-        <li><b>Installer hors ligne</b> : ouvrez l'application via un petit serveur local (<code>lancer.sh</code> ou <code>lancer.bat</code>) ou depuis son adresse web, puis « Installer l'application » / « Ajouter à l'écran d'accueil ». Toute l'application (relief et fond vectoriel Europe compris) est alors disponible sans connexion. Un double-clic sur <code>index.html</code> fonctionne aussi, mais sans installation.</li>
+        <li><b>Installer hors ligne</b> : ouvrez l'application via un petit serveur local (<code>lancer.sh</code> ou <code>lancer.bat</code>) ou depuis son adresse web, puis « Installer l'application » / « Ajouter à l'écran d'accueil ». Toute l'application (relief Europe intégré compris) est alors disponible sans connexion. Un double-clic sur <code>index.html</code> fonctionne aussi, mais sans installation.</li>
         <li><b>Mon profil</b> (à remplir en premier) : foyer, santé, logement, position du domicile, lieu et climat, compétences. Tout le reste s'adapte à ces réponses.</li>
         <li><b>État des lieux</b> : votre matériel face à vos besoins calculés (eau, nourriture, chaleur, lumière, santé, hygiène, communication, cartes, argent, sécurité, évacuation, savoirs). Les manques vitaux s'affichent en premier ; la liste de courses s'exporte en CSV.</li>
-        <li><b>Carte hors ligne</b> : téléchargez <u>avant</u> une crise le pack de votre zone. En France, c'est la carte officielle IGN (routes, chemins, courbes de niveau, lieux-dits) avec l'estompage du relief ; ailleurs en Europe, le relief. Ajoutez les points OSM (eau, santé, abris, dangers) et vos points de rendez-vous. Ensuite, tout fonctionne sans Internet, et le GPS du téléphone aussi.</li>
+        <li><b>Carte hors ligne</b> : téléchargez <u>avant</u> une crise le pack de votre zone : carte topographique complète (routes, sentiers, courbes de niveau, relief), partout en Europe. Ajoutez les points OSM (eau, santé, abris, dangers) et vos points de rendez-vous. Ensuite, tout fonctionne sans Internet, et le GPS du téléphone aussi.</li>
         <li><b>Instant T</b> : le jour où ça arrive. Localisez-vous, choisissez la situation, puis suivez les actions. L'écran montre votre matériel disponible, les ressources et dangers les plus proches (distance et cap), le chemin vers le domicile ou le point de rendez-vous, et les numéros utiles.</li>
         <li><b>Sacs</b>, <b>Stock maison</b>, <b>Matériel & budget</b> : le détail de ce que vous possédez et de ce que vous prévoyez d'acheter.</li>
         <li><b>Terrain</b> et <b>Calculateurs</b> : le savoir des praticiens et des crises réelles, et les outils de dimensionnement.</li>
@@ -347,7 +356,7 @@
       <button class="btn ghost danger" data-act="reset">Tout effacer</button>
     </div>
     <div class="card"><h2>Sources</h2><ul>${Object.values(SOURCES).map(s => `<li><a href="${s.u}" target="_blank" rel="noopener">${h(s.t)}</a></li>`).join('')}</ul>
-      <p class="small">Cartographie : Natural Earth (domaine public) ; Terrain Tiles AWS/Mapzen (EU-DEM Copernicus, SRTM…) ; Wikidata (CC0) ; WRI Global Power Plant Database (CC BY 4.0) ; OpenStreetMap (ODbL) ; OpenTopoMap (CC-BY-SA). Bibliothèques : Leaflet (BSD-2), PMTiles & protomaps-leaflet (BSD-3). Détails : <code>docs/SOURCES.md</code>.</p></div>`;
+      <p class="small">Cartographie : OpenStreetMap via Protomaps (ODbL) ; Mapterhorn (IGN, CNIG, Copernicus…) ; Terrain Tiles AWS/Mapzen (EU-DEM Copernicus, SRTM…) ; Wikidata (CC0) ; WRI Global Power Plant Database (CC BY 4.0). Bibliothèques : Leaflet (BSD-2), MapLibre GL, pmtiles, Protomaps basemaps, maplibre-contour (BSD-3), maplibre-gl-leaflet (ISC) ; polices Noto Sans (OFL). Détails : <code>docs/SOURCES.md</code>.</p></div>`;
   }
 
   /* ---------- Rendu & événements ---------- */
@@ -374,6 +383,7 @@
   document.querySelector('[data-brand-icon]').innerHTML = UI.icon('compass');
   function renderProfile() {
     Profile.render($('#tab-profile'), S);
+    if (window.Account && Account.user) { $('#tab-profile').insertAdjacentHTML('afterbegin', '<div class="card" id="accountCard"></div>'); Account.renderCard(); }
     if (!S.onboarded) $('#tab-profile').insertAdjacentHTML('afterbegin', `<div class="card welcome"><h2>Bienvenue</h2><p>Cette application se construit autour de <b>vous</b> : votre foyer, votre logement, votre environnement. Remplissez ce profil (2 minutes), puis consultez votre <b>état des lieux matériel</b>, préparez votre <b>carte hors ligne</b> et gardez l'onglet <b>Instant T</b> pour le moment où ça arrive.</p><button class="btn" data-act="onboarded">C'est fait : voir mon état des lieux</button></div>`);
   }
   function show(tab) {
@@ -517,5 +527,6 @@
   if (!S.onboarded) startTab = 'profile';
   show(RENDER[startTab] || startTab === 'map' ? startTab : 'now');
   Premium.load().then(() => App.refresh());
+  if (window.Account) Account.init();
   if ('serviceWorker' in navigator && /^https?:/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW', err));
 })();

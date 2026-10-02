@@ -1,7 +1,7 @@
 # Notice d'utilisation — Holdout
 
 > Outil d'aide à la préparation. Il ne remplace ni les consignes des autorités (préfecture, secours), ni une formation aux premiers secours.
-> Toutes vos données restent sur votre appareil (navigateur). Rien n'est envoyé à un serveur.
+> Vos données vivent sur votre appareil. Votre compte en garde une copie **chiffrée sur l'appareil avant envoi** : personne d'autre que vous, pas même Holdout, ne peut la lire.
 
 ## 1. Installation et usage hors ligne
 
@@ -9,7 +9,7 @@
 |---|---|---|
 | **Serveur local (recommandé)** | Linux/macOS : `./lancer.sh` — Windows : double-clic sur `lancer.bat` (Python 3 requis), puis ouvrir `http://localhost:8765` | Oui, après le premier chargement : le *service worker* met toute l'application en cache ; vous pouvez l'installer (menu du navigateur → « Installer l'application »). |
 | **Hébergement web** (ex. GitHub Pages) | Publier le dépôt, ouvrir l'URL sur téléphone, « Ajouter à l'écran d'accueil » | Oui, après le premier chargement. |
-| **Double-clic sur `index.html`** | Ouvre le fichier directement | Oui pour l'application et la carte intégrée ; pas d'installation possible, et le stockage dépend du navigateur. |
+| **Double-clic sur `index.html`** | Ouvre le fichier directement | Oui pour l'application et le relief intégré ; pas d'installation possible, et le stockage dépend du navigateur. |
 
 **Conseil** : copiez aussi le dossier complet sur une clé USB et sur un deuxième appareil (téléphone + ordinateur).
 
@@ -44,30 +44,28 @@ L'application tourne autour de **votre** situation : votre foyer, votre logement
 **Orientation** : la carte n'est jamais tournée, le **haut est toujours le nord géographique**. Une flèche « N » reste affichée en permanence en haut à gauche, sous les boutons de zoom. Le nord magnétique indiqué par une boussole s'en écarte de quelques degrés (déclinaison magnétique, variable selon le lieu et l'année) : pour un azimut précis, corrigez-la.
 
 ### Cartes topographiques hors ligne : l'essentiel
+La carte est une **carte topographique dessinée sur l'appareil** : routes, chemins et sentiers, forêts, cours d'eau, lieux-dits, sommets avec leur altitude, ombrage du relief et courbes de niveau (tous les 10 m au plus près), partout en Europe. Elle reste nette à tous les zooms. En ligne, toute l'Europe s'affiche. Hors ligne, s'affichent vos **packs** et les zones déjà consultées ; ailleurs, l'image du relief Europe, intégrée à l'application, sert de repère.
+
 1. Renseignez votre domicile dans **Mon profil**.
 2. Ouvrez **Carte hors ligne → 📥 Cartes hors ligne**, puis choisissez :
    - **Zone** : autour du domicile, autour de votre position GPS, ou la zone affichée.
-   - **Rayon** : de 5 à 1 000 km, autour du domicile ou de la position GPS. Les rayons de 100, 200, 300, 500 et 750 km sont également disponibles. Le rayon maximal est accessible en gratuit comme en Premium.
-   - **Détail max** : le zoom 14 correspond environ à l'échelle 1:25 000, le zoom 15 au détail randonnée.
-3. Choisissez les sources :
-   - **IGN Plan topographique** (France) : carte officielle de l'IGN, avec routes, chemins, courbes de niveau et lieux-dits.
-   - **IGN Estompage** (France) : ombrage du relief, superposé au plan.
-   - **Relief et altitudes** (toute l'Europe) : utile hors de France et pour l'altitude au clic.
-4. Vérifiez l'estimation de taille, puis téléchargez. Le pack reste sur l'appareil. Ajoutez d'autres packs pour le travail, la famille et vos itinéraires.
-5. Hors ligne, choisissez le fond **« IGN topographique – France (packs hors ligne) »**. Si vous zoomez au-delà du détail téléchargé, l'application agrandit la tuile disponible, ce qui donne une image plus floue mais toujours lisible.
-6. **Exporter** un pack crée un fichier `.kspack` à copier sur une clé USB ou un autre appareil ; on le réimporte avec « Importer un pack ».
+   - **Rayon** : de 5 à 1 000 km. Pour la zone affichée, c'est la demi-largeur de l'écran qui compte : zoomez sur la zone à garder.
+   - Le pack contient toujours **tout le détail**, jusqu'aux sentiers et aux courbes de 10 m. Ordre de grandeur : 5 Mo pour 12 km de rayon, environ 45 Mo pour une zone de 65 × 60 km.
+3. Vérifiez l'estimation de taille, puis téléchargez. Le pack reste sur l'appareil. Ajoutez d'autres packs pour le travail, la famille et vos itinéraires.
+4. Hors ligne, il n'y a rien à choisir : la carte affiche les packs.
+5. **Exporter** un pack crée un fichier `.kspack` à copier sur une clé USB ou un autre appareil ; on le réimporte avec « Importer un pack ».
 
-**Cartes IGN officielles : ce qui est accessible.**
-- Depuis le 1er janvier 2021, les données publiques de l'IGN sont gratuites, sous **Licence Ouverte Etalab 2.0**. Le Plan IGN et l'estompage sont servis sans clé par la Géoplateforme (`data.geopf.fr`), et l'application les utilise.
-- Le **SCAN 25** (la carte TOP 25 numérisée) demande une clé personnelle, créée sur cartes.gouv.fr. Même l'application officielle gratuite **Cartes IGN** ne le propose pas hors ligne : l'IGN indique que « le SCAN 25 [n'est] pas téléchargeable hors ligne car soumis à des droits de diffusion », mais qu'« il est possible de télécharger des zones du plan IGN pour les consulter hors ligne » ([ign.fr](https://www.ign.fr/telechargez-application-cartographique-cartes-ign)). C'est aussi le choix de cette application.
-- Pour avoir le SCAN 25 hors ligne, il reste la **carte papier TOP 25** (voir `docs/MATERIEL.md`) ou une application tierce sous abonnement (non testée ici).
+Les données viennent d'OpenStreetMap (fond) et de Mapterhorn (altitudes : IGN pour la France, CNIG pour l'Espagne, Copernicus ailleurs). Fonctionnement et hébergement : [`TUILES.md`](TUILES.md).
+
+**Packs des versions précédentes** (IGN, relief, OpenTopoMap) : ils ne s'affichent plus. Ils restent dans la liste, marqués « ancienne carte », pour libérer leur espace en un clic.
 
 ### À télécharger AVANT une coupure (par zone)
 1. Centrez la carte sur votre zone (domicile, travail, école, famille, itinéraires d'évacuation).
-2. **Cartes** : créez un pack par zone (voir ci-dessus). Le relief détaillé de toute l'Europe est l'une des sources proposées dans le pack.
+2. **Cartes** : créez un pack par zone (voir ci-dessus).
 3. **Points OSM** (zoom ≥ 9) : cochez les catégories (eau, santé, secours/abris, énergie, dangers, ravitaillement), puis téléchargez et nommez la zone. Les points sont stockés sur l'appareil.
    - ⚠ Une fontaine ou une source cartographiée n'est pas forcément potable : traitez l'eau.
-4. Recommencez pour chaque zone utile. « Stockage & sources » indique l'espace utilisé. Il n'y a aucun plafond de tuiles par pack : l'estimation indique le volume à télécharger, et l'espace disponible sur l'appareil détermine ce qui peut être conservé. Si le stockage ne permet plus d'enregistrer les tuiles, le téléchargement s'arrête avec un message ; les tuiles non enregistrées ne sont pas comptées comme disponibles hors ligne. L'application demande au navigateur un stockage persistant.
+4. Recommencez pour chaque zone utile. « Stockage & sources » indique l'espace utilisé. Si le stockage ne permet plus d'enregistrer les tuiles, le téléchargement s'arrête avec un message ; les tuiles non enregistrées ne sont pas comptées comme disponibles hors ligne. L'application demande au navigateur un stockage persistant.
+5. « Vider le cache de navigation » efface les tuiles gardées en consultant la carte, sans toucher aux packs.
 
 ### Mes points
 Ajoutez vos points de rendez-vous, caches, refuges, points d'eau vérifiés et dangers. Vous pouvez les exporter en **GPX** (pour un GPS ou une application de randonnée) ou en **GeoJSON**, et les importer depuis ces deux formats.
@@ -75,24 +73,7 @@ Ajoutez vos points de rendez-vous, caches, refuges, points d'eau vérifiés et d
 ### Outils
 - **Ma position** : GPS du téléphone, fonctionne sans Internet.
 - **Mesurer** : distance cumulée et temps de marche indicatif à 4 km/h sur terrain plat, sans compter le dénivelé.
-- **Clic sur la carte** : coordonnées décimales et en degrés-minutes-secondes, et altitude.
-
-### OpenTopoMap (en ligne)
-Carte topographique détaillée (courbes de niveau, sentiers). Pour respecter ce service bénévole, l'application **ne propose pas de téléchargement en masse** : seules les tuiles que vous consultez sont conservées en cache. Pour une carte détaillée hors ligne, utilisez un fichier PMTiles.
-
-### Carte détaillée de toute l'Europe hors ligne (PMTiles)
-Protomaps publie chaque jour un fond de carte OpenStreetMap mondial au format PMTiles (licences BSD / ODbL), qu'on peut découper :
-
-1. Téléchargez l'outil `pmtiles` : https://github.com/protomaps/go-pmtiles/releases
-2. Choisissez une version récente sur https://maps.protomaps.com/builds/
-3. Extrayez l'Europe (ou votre région), en limitant le zoom maximal :
-   ```
-   pmtiles extract https://build.protomaps.com/AAAAMMJJ.pmtiles europe.pmtiles --bbox=-25,34,45,72 --maxzoom=12
-   ```
-   La taille du fichier augmente très vite avec `--maxzoom`. Ajoutez `--dry-run` pour connaître la taille avant de télécharger. Pour une région seulement, réduisez la `--bbox`.
-4. Dans la carte, ouvrez « Carte détaillée hors ligne » et choisissez le fichier. Il doit être rechargé à chaque ouverture de l'application, car le navigateur ne peut pas le relire seul.
-
-Les fichiers PMTiles *raster* (images) sont aussi acceptés.
+- **Clic sur la carte** : coordonnées décimales et en degrés-minutes-secondes, et altitude. L'altitude (≈ 15 m de précision horizontale) vient du pack de la zone, ou de la connexion.
 
 **Et le papier** : gardez des **cartes papier** (IGN TOP 25 / TOP 100 ou équivalent) et une **boussole**. La Suède (MSB) les recommande explicitement pour l'évacuation.
 
@@ -102,7 +83,18 @@ Une **clé administrateur** (licence `KS1.` de formule `admin`, sans expiration)
 - Sur iOS, cette clé n'est acceptée que si `devAdmin: true` est défini dans `js/config.js` (builds de test internes). Pour tester les achats sans payer, utilisez le bac à sable d'Apple (voir `IOS.md`).
 - Ne diffusez pas cette clé : elle vaut accès complet et définitif.
 
-## 4. Sauvegarde
+## 4. Compte et sauvegarde
+
+### Le compte
+- **Au premier lancement**, créez un compte (e-mail et mot de passe, Google ou Apple), ou connectez-vous. **Sans réseau**, la création par e-mail fonctionne : le compte est enregistré en ligne dès que le réseau revient.
+- **Le code de secours**, affiché une seule fois à la création, est le seul moyen de retrouver vos données si vous oubliez votre mot de passe. Notez-le ou imprimez-le, et rangez-le avec vos papiers importants, hors du téléphone.
+- **Google ou Apple** : choisissez une **phrase de chiffrement**. Elle protège vos données et permet de vous reconnecter sans réseau.
+- **Synchronisation** : profil, inventaire, sacs, plan, contacts et points sont sauvegardés et synchronisés entre vos appareils dès que le réseau le permet. Les cartes et points OSM téléchargés restent propres à chaque appareil.
+- **Hors ligne** : l'application reste ouverte. Après une déconnexion, vous vous reconnectez sans réseau avec votre mot de passe (ou votre phrase) sur un appareil déjà utilisé.
+- **Mot de passe oublié** (réseau nécessaire) : un lien par e-mail permet d'en choisir un nouveau ; votre code de secours vous est ensuite demandé une fois dans l'application.
+- **Profil → Mon compte** : état de la sauvegarde, changement de mot de passe ou de phrase, nouveau code de secours, déconnexion, suppression du compte.
+
+### Copies de sécurité
 
 - **Notice & infos → Exporter mes données (JSON)** : sauvegarde complète (profil, inventaire, sacs, plan, contacts, points). Gardez-en une copie sur une clé USB.
 - Si vous effacez les données du navigateur (cookies et données de site), vous perdez les données locales **et** les cartes téléchargées.

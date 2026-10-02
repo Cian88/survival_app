@@ -111,7 +111,7 @@
     add({ id: 'co_sifflet', fn: 'com', label: 'Sifflet (un par personne)', need: n, crit: 2, gear: 'G051', why: 'Se signaler sous des décombres (Ukraine, Turquie).', src: [S_.ukrstrike] });
     add({ id: 'co_pmr', fn: 'com', label: 'Talkies-walkies PMR446 (sans licence)', need: 1, unit: 'paire', crit: 3, gear: 'G050', why: 'Communication locale sans réseau (quelques centaines de mètres en ville).', src: [S_.pace] });
     // Cartes & orientation
-    add({ id: 'na_pack', fn: 'nav', label: 'Carte topographique hors ligne de ma zone (domicile)', crit: 1, auto: 'pack', why: 'Téléchargée dans l\'onglet Carte : fonctionne sans Internet, avec le GPS du téléphone.', src: [src('IGN – Géoplateforme', 'https://cartes.gouv.fr')] });
+    add({ id: 'na_pack', fn: 'nav', label: 'Carte topographique hors ligne de ma zone (domicile)', crit: 1, auto: 'pack', why: 'Téléchargée dans l\'onglet Carte : fonctionne sans Internet, avec le GPS du téléphone.', src: [src('OpenStreetMap / Mapterhorn', 'https://mapterhorn.com')] });
     add({ id: 'na_osm', fn: 'nav', label: 'Points utiles hors ligne de ma zone (eau, santé, abris, dangers)', crit: 2, auto: 'osm', why: 'Pour trouver le point d\'eau ou la pharmacie la plus proche sans réseau.', src: [src('OpenStreetMap', 'https://www.openstreetmap.org')] });
     add({ id: 'na_papier', fn: 'nav', label: 'Carte papier IGN TOP 25 de ma zone', need: 1, crit: 2, gear: 'G054', why: 'Fonctionne sans batterie.', src: [S_.msb] });
     add({ id: 'na_bouss', fn: 'nav', label: 'Boussole', need: 1, crit: 2, gear: 'G053', why: 'Avec la carte papier, pour les caps donnés par l\'onglet Instant T.', src: [S_.msb] });

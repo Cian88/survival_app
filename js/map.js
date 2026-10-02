@@ -1,43 +1,36 @@
 /* Carte topographique Europe, utilisable hors ligne.
-   Couches :
-   - Relief Europe intégré (image pré-calculée depuis les tuiles d'altitude Terrarium, 100 % hors ligne)
-   - Fond vectoriel intégré (Natural Earth : pays, frontières, fleuves, lacs, routes, villes)
-   - Relief MNT détaillé (tuiles Terrarium AWS Open Data, téléchargeables par zone et stockées dans IndexedDB)
-   - OpenTopoMap (en ligne ; seules les tuiles consultées sont gardées en cache, pas de téléchargement de masse)
-   - Fichier PMTiles local (extrait Protomaps / OSM importé par l'utilisateur)
+   - Fond : carte topographique vectorielle dessinée sur l'appareil (js/topo.js) : OpenStreetMap (Protomaps),
+     ombrage et courbes de niveau calculés à partir des altitudes Mapterhorn. En ligne, les tuiles sont lues
+     dans les fichiers PMTiles distants ; hors ligne, dans les packs téléchargés par zone (IndexedDB).
+   - Secours sans aucune connexion : image du relief Europe intégrée, sous les zones sans tuiles.
+   - Altitude au clic : mêmes altitudes Mapterhorn (packs, cache, puis réseau).
    - Points d'intérêt : nucléaire, barrages, centrales (intégrés) + points OSM téléchargés par zone + mes points */
 (function () {
   const $ = (s, r = document) => r.querySelector(s);
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const idb = Store.idb;
 
-  const TERRARIUM = 'https://elevation-tiles-prod.s3.amazonaws.com/terrarium/{z}/{x}/{y}.png';
-  const OTM = 'https://tile.opentopomap.org/{z}/{x}/{y}.png';
-  const IGN = (layer, style) => `https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=${layer}&STYLE=${style}&TILEMATRIXSET=PM&FORMAT=image/png&TILEMATRIX={z}&TILECOL={x}&TILEROW={y}`;
-  const ATTR_IGN = 'Carte : © <a href="https://cartes.gouv.fr" target="_blank" rel="noopener">IGN – Géoplateforme</a> (Licence Ouverte Etalab 2.0)';
-  /* Sources téléchargeables en « pack » hors ligne. kb = taille moyenne estimée d'une tuile. */
+  /* Sources des packs hors ligne (js/topo.js). kb = taille moyenne d'une tuile, mesurée sur les Pyrénées (02/10/2026).
+     Un pack prend toujours tout le détail disponible : une tuile vectorielle ne s'agrandit pas comme une image. */
   const TSRC = {
-    ign_plan: { tpl: IGN('GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2', 'normal'), kb: 60, max: 19, label: 'IGN Plan topographique (France : routes, chemins, courbes de niveau, toponymes)' },
-    ign_shad: { tpl: IGN('ELEVATION.ELEVATIONGRIDCOVERAGE.SHADOW', 'estompage_grayscale'), kb: 20, max: 15, label: 'IGN Estompage du relief (France)' },
-    dem: { tpl: TERRARIUM, kb: 60, max: 13, label: 'Relief et altitudes (toute l\'Europe)' },
+    osm: { kb: 4, max: 15, label: 'Fond OpenStreetMap (routes, chemins, forêts, lieux)' },
+    mdem: { kb: 140, max: 12, label: 'Relief (ombrage, courbes de niveau, altitudes)' },
   };
+  const CONCURRENCY = 6;
+  /* Packs des versions précédentes (IGN, relief, OpenTopoMap) : plus affichés, mais encore supprimables. */
+  const LEGACY_MAX = { ign_plan: 19, ign_shad: 15, dem: 13, otm: 17 };
+  const srcMax = k => TSRC[k] ? TSRC[k].max : LEGACY_MAX[k] || 0;
+  const isCurrent = p => (p.srcs || []).some(k => TSRC[k]);
+  /* Serveurs publics Overpass (OpenStreetMap), essayés dans l'ordre ; celui qui a répondu en dernier passe en tête. */
   const OVERPASS = [
     'https://overpass-api.de/api/interpreter',
-    'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
+    'https://overpass.kumi.systems/api/interpreter',
     'https://overpass.private.coffee/api/interpreter',
   ];
   const RELIEF_BOUNDS = [[31.952162238024968, -25.3125], [72.3957057065326, 47.8125]]; // emprise de l'image z7 (tuiles x 55–80, y 26–51)
-  const ATTR_DEM = 'Altitude : <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Terrain Tiles (Mapzen/AWS)</a> — EU-DEM Copernicus, SRTM/GMTED USGS, ETOPO1 NOAA, © Kartverket, © Environment Agency…';
-  const ATTR_NE = 'Fond : <a href="https://www.naturalearthdata.com" target="_blank" rel="noopener">Natural Earth</a> (domaine public)';
+  const ATTR_RELIEF = 'Relief de fond : <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Terrain Tiles (Mapzen/AWS)</a> — EU-DEM Copernicus, SRTM/GMTED USGS, ETOPO1 NOAA…';
 
-  const OSM_CATS = {
-    eau: { label: 'Eau (fontaines, sources, puits, points d\'eau)', color: '#1f78d1', q: ['node["amenity"="drinking_water"]', 'node["natural"="spring"]', 'nwr["man_made"="water_well"]', 'nwr["amenity"="water_point"]', 'node["man_made"="water_tap"]', 'nwr["man_made"="water_tower"]'] },
-    sante: { label: 'Santé (hôpitaux, pharmacies, médecins, défibrillateurs)', color: '#d62728', q: ['nwr["amenity"~"^(hospital|clinic|pharmacy|doctors)$"]', 'node["emergency"="defibrillator"]'] },
-    secours: { label: 'Secours & abris (pompiers, police, mairies, refuges, points de rassemblement)', color: '#9467bd', q: ['nwr["amenity"~"^(police|fire_station|townhall)$"]', 'nwr["amenity"="shelter"]["shelter_type"!~"^(public_transport|picnic_shelter)$"]', 'nwr["emergency"="assembly_point"]', 'nwr["tourism"~"^(alpine_hut|wilderness_hut)$"]'] },
-    energie: { label: 'Énergie (centrales, postes électriques HT, stations-service)', color: '#e6a100', q: ['nwr["power"="plant"]', 'nwr["power"="substation"]["substation"!~"^(minor_distribution|distribution)$"]', 'nwr["amenity"="fuel"]'] },
-    dangers: { label: 'Dangers (industrie chimique/pétrolière, dépôts, zones militaires, barrages)', color: '#111111', q: ['nwr["industrial"~"^(refinery|chemical|oil|gas|fuel)$"]', 'nwr["man_made"="storage_tank"]["content"~"oil|gas|fuel|chemical|petroleum"]', 'nwr["landuse"="military"]', 'nwr["hazard"]', 'nwr["waterway"="dam"]'] },
-    ravito: { label: 'Ravitaillement (supermarchés, quincailleries, marchés)', color: '#2ca02c', q: ['nwr["shop"~"^(supermarket|convenience|hardware|doityourself|outdoor)$"]', 'nwr["amenity"="marketplace"]'] },
-  };
+  const OSM_CATS = OsmPoints.CATS; // points utiles OpenStreetMap : catalogue dans js/osm-points.js
   const MY_TYPES = {
     rdv: { label: 'Point de rendez-vous', color: '#ff7f0e' },
     base: { label: 'Base / refuge', color: '#8c564b' },
@@ -48,12 +41,12 @@
     autre: { label: 'Autre', color: '#e377c2' },
   };
 
-  let rings = null, map, ctrl, layers = {}, osmGroups = {}, myLayer, nucLayer, measure = null, addMode = false, pmLayer = null;
+  let rings = null, map, ctrl, osmGroups = {}, myLayer, nucLayer, measure = null, addMode = false;
 
-  /* ---------- Tuiles avec cache IndexedDB ---------- */
-  function tileUrl(tpl, c) { return tpl.replace('{z}', c.z).replace('{x}', c.x).replace('{y}', c.y); }
-  async function getTileBlob(prefix, tpl, c, allowNet = true, requireStorage = false) {
-    const key = `${prefix}/${c.z}/${c.x}/${c.y}`;
+  /* ---------- Tuiles : packs et cache IndexedDB d'abord, puis fichiers PMTiles distants ---------- */
+  const EMPTY = new Blob([]); // tuile absente de l'archive (mer, hors zone) : mémorisée pour ne pas la redemander
+  async function getTileBlob(k, c, allowNet = true, requireStorage = false) {
+    const key = `${k}/${c.z}/${c.x}/${c.y}`;
     const storageFailure = cause => {
       const err = new Error('Stockage local indisponible ou plein : libérez de l’espace sur cet appareil.', { cause });
       err.name = 'TileStorageError';
@@ -61,136 +54,39 @@
     };
     try { const b = await idb.get('tiles', key); if (b) return b; } catch (e) { if (requireStorage) throw storageFailure(e); }
     if (!allowNet || !navigator.onLine) throw new Error('hors ligne');
-    const r = await fetch(tileUrl(tpl, c), { mode: 'cors' });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const b = await r.blob();
+    const b = (await Topo.remote(k, c)) || EMPTY;
     try { await idb.put('tiles', key, b); } catch (e) { if (requireStorage) throw storageFailure(e); }
     return b;
   }
 
-  /* Couche tuilée « cache d'abord » : tuiles des packs hors ligne, puis réseau si disponible.
-     Hors ligne, si un zoom n'a pas été téléchargé, on agrandit la tuile parente la plus proche. */
-  const CachedTiles = L.TileLayer.extend({
-    createTile(coords, done) {
-      const cv = document.createElement('canvas'); cv.width = cv.height = 256;
-      const ctx = cv.getContext('2d'), prefix = this.options.prefix, url = this._url;
-      const draw = (b, dz) => createImageBitmap(b).then(bmp => {
-        if (!dz) ctx.drawImage(bmp, 0, 0, 256, 256);
-        else { const k = 1 << dz, sz = 256 / k; ctx.drawImage(bmp, (coords.x & (k - 1)) * sz, (coords.y & (k - 1)) * sz, sz, sz, 0, 0, 256, 256); }
-        done(null, cv);
-      }).catch(e => done(e, cv));
-      getTileBlob(prefix, url, coords, true).then(b => draw(b, 0)).catch(async err => {
-        for (let dz = 1; dz <= 6 && coords.z - dz >= 0; dz++) {
-          try { const b = await getTileBlob(prefix, url, { z: coords.z - dz, x: coords.x >> dz, y: coords.y >> dz }, false); return draw(b, dz); } catch (e) { }
-        }
-        done(err, cv);
-      });
-      return cv;
-    },
-  });
-
-  /* Relief ombré calculé à partir des altitudes Terrarium */
+  /* Altitudes Terrarium (altitude au clic) */
   function decode(data) {
     const n = data.length / 4, e = new Float32Array(n);
     for (let i = 0; i < n; i++) e[i] = data[i * 4] * 256 + data[i * 4 + 1] + data[i * 4 + 2] / 256 - 32768;
     return e;
   }
-  const STOPS = [[-6000, [150, 180, 210]], [-200, [185, 210, 230]], [-0.5, [200, 222, 238]], [0, [172, 204, 146]], [200, [206, 222, 160]], [500, [232, 222, 164]], [1000, [214, 184, 128]], [1800, [184, 146, 108]], [2800, [222, 214, 206]], [4000, [250, 250, 250]]];
-  function tint(h) {
-    if (h <= STOPS[0][0]) return STOPS[0][1];
-    for (let i = 1; i < STOPS.length; i++) {
-      if (h <= STOPS[i][0]) {
-        const [a, ca] = STOPS[i - 1], [b, cb] = STOPS[i], t = (h - a) / (b - a);
-        return [ca[0] + (cb[0] - ca[0]) * t, ca[1] + (cb[1] - ca[1]) * t, ca[2] + (cb[2] - ca[2]) * t];
-      }
-    }
-    return STOPS[STOPS.length - 1][1];
-  }
-  function renderRelief(canvas, elev, z, y) {
-    const ctx = canvas.getContext('2d'), out = ctx.createImageData(256, 256), d = out.data;
-    const n = Math.pow(2, z), lat = Math.atan(Math.sinh(Math.PI * (1 - 2 * (y + 0.5) / n)));
-    const res = 156543.03392 * Math.cos(lat) / n, zf = z < 9 ? 3 : z < 12 ? 2 : 1.5;
-    const zen = Math.PI / 4, az = 135 * Math.PI / 180, cz = Math.cos(zen), sz = Math.sin(zen);
-    for (let r = 0; r < 256; r++) for (let c = 0; c < 256; c++) {
-      const i = r * 256 + c, h = elev[i];
-      const l = elev[r * 256 + Math.max(c - 1, 0)], rr = elev[r * 256 + Math.min(c + 1, 255)];
-      const u = elev[Math.max(r - 1, 0) * 256 + c], dn = elev[Math.min(r + 1, 255) * 256 + c];
-      const dx = (rr - l) / (2 * res), dy = (dn - u) / (2 * res);
-      const slope = Math.atan(zf * Math.hypot(dx, dy)), aspect = Math.atan2(dy, -dx);
-      const sh = Math.max(0, cz * Math.cos(slope) + sz * Math.sin(slope) * Math.cos(az - aspect));
-      const col = tint(h), f = h <= 0 ? 1 : 0.45 + 0.65 * sh;
-      d[i * 4] = Math.min(255, col[0] * f); d[i * 4 + 1] = Math.min(255, col[1] * f); d[i * 4 + 2] = Math.min(255, col[2] * f); d[i * 4 + 3] = 255;
-    }
-    ctx.putImageData(out, 0, 0);
-  }
   async function blobToElev(b) {
-    const bmp = await createImageBitmap(b);
-    const cv = document.createElement('canvas'); cv.width = cv.height = 256;
+    const bmp = await createImageBitmap(b), n = bmp.width;
+    const cv = document.createElement('canvas'); cv.width = cv.height = n;
     const cx = cv.getContext('2d', { willReadFrequently: true }); cx.drawImage(bmp, 0, 0);
-    return decode(cx.getImageData(0, 0, 256, 256).data);
+    return { e: decode(cx.getImageData(0, 0, n, n).data), n };
   }
-  const ReliefLayer = L.GridLayer.extend({
-    createTile(coords, done) {
-      const cv = document.createElement('canvas'); cv.width = cv.height = 256;
-      getTileBlob('dem', TERRARIUM, coords, this.options.online !== false)
-        .then(blobToElev).then(e => { renderRelief(cv, e, coords.z, coords.y); done(null, cv); })
-        .catch(err => done(err, cv));
-      return cv;
-    },
-  });
-
-  /* Altitude d'un point (utilise le cache puis le réseau) */
+  /* Altitude d'un point : détail 12 (≈ 15 m) si disponible, sinon un niveau plus grossier déjà en mémoire. */
   async function elevationAt(latlng) {
-    const z = 11, n = Math.pow(2, z);
+    const z = 12, n = Math.pow(2, z);
     const xf = (latlng.lng + 180) / 360 * n, lr = latlng.lat * Math.PI / 180;
     const yf = (1 - Math.log(Math.tan(lr) + 1 / Math.cos(lr)) / Math.PI) / 2 * n;
-    for (const zz of [11, 10, 9, 8, 7, 6]) {
+    for (const zz of [12, 11, 10, 9, 8, 7, 6]) {
       const k = Math.pow(2, z - zz), x = Math.floor(xf / k), y = Math.floor(yf / k);
       try {
-        const b = await getTileBlob('dem', TERRARIUM, { z: zz, x, y }, zz === 11);
-        const e = await blobToElev(b);
-        const px = Math.min(255, Math.floor((xf / k - x) * 256)), py = Math.min(255, Math.floor((yf / k - y) * 256));
-        return { h: Math.round(e[py * 256 + px]), z: zz };
+        const b = await getTileBlob('mdem', { z: zz, x, y }, zz === z);
+        if (!b.size) continue;
+        const { e, n: px } = await blobToElev(b);
+        const cx = Math.min(px - 1, Math.floor((xf / k - x) * px)), cy = Math.min(px - 1, Math.floor((yf / k - y) * px));
+        return { h: Math.round(e[cy * px + cx]), z: zz };
       } catch (err) { /* essayer un niveau plus grossier */ }
     }
     return null;
-  }
-
-  /* ---------- Fond vectoriel intégré ---------- */
-  function buildBase() {
-    const B = window.BASE_EUROPE;
-    const g = L.layerGroup();
-    // Données généralisées (Natural Earth) : utiles jusqu'au zoom 10, masquées au-delà pour ne pas brouiller les cartes détaillées.
-    const coarse = [
-      L.geoJSON(B.lakes, { pane: 'vec', interactive: false, style: { color: '#4f8fc4', weight: 0.6, fillColor: '#a9cbe6', fillOpacity: 0.9 } }),
-      L.geoJSON(B.rivers, { pane: 'vec', interactive: false, style: f => ({ color: '#3b82c4', weight: f.properties.scalerank <= 3 ? 1.6 : f.properties.scalerank <= 6 ? 1 : 0.6, opacity: 0.85 }) }),
-      L.geoJSON(B.boundaries, { pane: 'vec', interactive: false, style: { color: '#7a3b69', weight: 1.2, dashArray: '4 3', opacity: 0.8 } }),
-    ];
-    const roads = L.geoJSON(B.roads, { pane: 'vec', interactive: false, style: f => ({ color: '#b5462f', weight: f.properties.type === 'Major Highway' ? 1.4 : 0.8, opacity: 0.75 }) });
-    const places = L.layerGroup();
-    function refresh() {
-      const z = map.getZoom(), minPop = z < 5 ? 2e6 : z < 6 ? 5e5 : z < 7 ? 1.5e5 : 0;
-      places.clearLayers();
-      coarse.forEach(l => { if (z <= 10) { if (!g.hasLayer(l)) g.addLayer(l); } else if (g.hasLayer(l)) g.removeLayer(l); });
-      if (z >= 6 && z <= 10) { if (!g.hasLayer(roads)) g.addLayer(roads); } else if (g.hasLayer(roads)) g.removeLayer(roads);
-      if (z > 10) return;
-      const b = map.getBounds().pad(0.2);
-      for (const f of B.places.features) {
-        const p = f.properties, [lon, lat] = f.geometry.coordinates;
-        if ((p.pop_max || 0) < minPop || !b.contains([lat, lon])) continue;
-        L.circleMarker([lat, lon], { pane: 'vec', radius: p.pop_max > 1e6 ? 3.5 : 2.5, color: '#222', weight: 1, fillColor: '#fff', fillOpacity: 1, interactive: false })
-          .bindTooltip(esc(p.name), { permanent: true, direction: 'right', className: 'place-label', offset: [4, 0] }).addTo(places);
-      }
-    }
-    g.addLayer(places);
-    g.on('add', () => { map.on('zoomend moveend', refresh); refresh(); });
-    g.on('remove', () => map.off('zoomend moveend', refresh));
-    return g;
-  }
-  function buildCountries() {
-    return L.layerGroup([
-      L.geoJSON(window.BASE_EUROPE.countries, { pane: 'basevec', interactive: false, style: { color: '#9a9a8a', weight: 0.8, fillColor: '#efeadb', fillOpacity: 1 } }),
-    ]);
   }
 
   /* ---------- Points intégrés : nucléaire, barrages, centrales ---------- */
@@ -228,9 +124,10 @@
 
   /* ---------- Points OSM par zone (Overpass) ---------- */
   function osmPopup(e, cat) {
-    const t = e.tags || {}, keys = ['name', 'amenity', 'natural', 'man_made', 'emergency', 'power', 'industrial', 'shop', 'tourism', 'landuse', 'hazard', 'drinking_water', 'opening_hours', 'phone', 'operator', 'content', 'plant:source'];
-    const rows = keys.filter(k => t[k]).map(k => `<tr><td>${esc(k)}</td><td>${esc(t[k])}</td></tr>`).join('');
-    return `<b>${esc(t.name || OSM_CATS[cat].label.split(' (')[0])}</b><table class="tags">${rows}</table><small><a href="https://www.openstreetmap.org/${e.type}/${e.id}" target="_blank" rel="noopener">OSM ${e.type}/${e.id}</a> — données © contributeurs OpenStreetMap (ODbL). Vérifiez sur place (ex. potabilité de l'eau).</small>`;
+    const t = e.tags || {}, c = OSM_CATS[cat] || {}, type = OsmPoints.typeLabel(e);
+    const rows = OsmPoints.details(e).map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join('');
+    return `<b>${esc(t.name || type || c.short || 'Point')}</b>${t.name && type ? `<br><span class="muted">${esc(type)}</span>` : ''}${rows ? `<table class="tags">${rows}</table>` : ''}
+      ${c.note ? `<p class="small">${esc(c.note)}</p>` : ''}<small><a href="https://www.openstreetmap.org/${e.type}/${e.id}" target="_blank" rel="noopener">Voir sur OpenStreetMap</a> · données © contributeurs OpenStreetMap (ODbL). Vérifiez sur place.</small>`;
   }
   async function renderOsm() {
     for (const k in osmGroups) osmGroups[k].clearLayers();
@@ -239,7 +136,7 @@
     const seen = new Set();
     for (const z of zones) for (const e of z.elements) {
       const id = e.type + e.id + e.cat; if (seen.has(id)) continue; seen.add(id);
-      const c = OSM_CATS[e.cat]; if (!c) continue;
+      const c = OSM_CATS[e.cat]; if (!c || !osmGroups[e.cat]) continue;
       L.circleMarker([e.lat, e.lon], { radius: 5, color: '#fff', weight: 1, fillColor: c.color, fillOpacity: 1 }).bindPopup(osmPopup(e, e.cat)).addTo(osmGroups[e.cat]);
     }
     renderZones(zones);
@@ -253,6 +150,8 @@
       if (d && await UI.confirm('Supprimer cette zone et ses points ?', 'Supprimer')) { await idb.del('osm', d); renderOsm(); }
     };
   }
+  let preferredOverpass = null;
+  const overpassOrder = () => preferredOverpass ? [preferredOverpass, ...OVERPASS.filter(x => x !== preferredOverpass)] : OVERPASS;
   async function downloadOsm() {
     const cats = [...document.querySelectorAll('[name=osmcat]:checked')].map(i => i.value);
     const st = $('#osmStatus');
@@ -261,43 +160,43 @@
     if (map.getZoom() < 9) return st.textContent = 'Zoomez davantage (niveau ≥ 9, soit une zone d\'environ 100 km) pour limiter la charge sur les serveurs Overpass.';
     if (!navigator.onLine) return st.textContent = 'Connexion requise pour télécharger. Les zones déjà enregistrées restent disponibles hors ligne.';
     const b = map.getBounds(), bbox = [b.getSouth(), b.getWest(), b.getNorth(), b.getEast()].map(v => +v.toFixed(4));
-    const bb = bbox.join(',');
-    const parts = cats.flatMap(c => OSM_CATS[c].q.map(q => `${q}(${bb});`)).join('');
-    const query = `[out:json][timeout:90];(${parts});out center tags;`;
-    st.textContent = 'Téléchargement en cours…';
-    let data = null, lastErr;
-    for (const ep of OVERPASS) {
-      try {
-        const ac = new AbortController(), timer = setTimeout(() => ac.abort(), 100000);
-        st.textContent = 'Téléchargement en cours (' + new URL(ep).hostname + ')…';
-        const r = await fetch(ep, { method: 'POST', body: 'data=' + encodeURIComponent(query), headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, signal: ac.signal }).finally(() => clearTimeout(timer));
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        data = await r.json(); break;
-      } catch (e) { lastErr = e; }
+    // Une requête par catégorie : plus légères, et si un serveur surchargé lâche, les autres catégories sont gardées.
+    const raw = new Map(), ok = [], failed = [];
+    let lastErr = null;
+    for (const [i, c] of cats.entries()) {
+      let data = null;
+      for (const ep of overpassOrder()) {
+        for (let attempt = 0; attempt < (ep === OVERPASS[0] ? 2 : 1) && !data; attempt++) {
+          st.textContent = `Téléchargement ${i + 1}/${cats.length} : ${OSM_CATS[c].short}${attempt ? ' (nouvel essai)' : ''}…`;
+          try {
+            const ac = new AbortController(), timer = setTimeout(() => ac.abort(), 100000);
+            const r = await fetch(ep, { method: 'POST', body: 'data=' + encodeURIComponent(OsmPoints.query([c], bbox, 90)), headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, signal: ac.signal }).finally(() => clearTimeout(timer));
+            if (!r.ok) throw new Error(r.status === 429 || r.status === 504 ? 'serveur surchargé' : 'HTTP ' + r.status);
+            data = await r.json(); preferredOverpass = ep;
+          } catch (e) { lastErr = e.name === 'AbortError' ? new Error('pas de réponse') : e; if (!attempt && ep === OVERPASS[0]) await new Promise(r => setTimeout(r, 4000)); }
+        }
+        if (data) break;
+      }
+      if (!data) { failed.push(c); continue; }
+      ok.push(c);
+      for (const e of data.elements || []) raw.set(e.type + e.id, e); // un même objet peut relever de plusieurs catégories
     }
-    if (!data) return st.textContent = 'Échec Overpass (' + (lastErr && lastErr.message) + '). Réessayez plus tard.';
-    const classify = t => {
-      if (t.amenity === 'drinking_water' || t.natural === 'spring' || t.man_made === 'water_well' || t.amenity === 'water_point' || t.man_made === 'water_tap' || t.man_made === 'water_tower') return 'eau';
-      if (/^(hospital|clinic|pharmacy|doctors)$/.test(t.amenity) || t.emergency === 'defibrillator') return 'sante';
-      if (t.industrial || t.man_made === 'storage_tank' || t.landuse === 'military' || t.hazard || t.waterway === 'dam') return 'dangers';
-      if (t.power || t.amenity === 'fuel') return 'energie';
-      if (/^(police|fire_station|townhall|shelter)$/.test(t.amenity) || t.emergency === 'assembly_point' || t.tourism) return 'secours';
-      if (t.shop || t.amenity === 'marketplace') return 'ravito';
-      return null;
-    };
+    if (!ok.length) return st.textContent = `Serveurs OpenStreetMap indisponibles ou surchargés (${lastErr ? lastErr.message : 'erreur'}). Réessayez dans quelques minutes.`;
     const elements = [];
-    for (const e of data.elements || []) {
+    for (const e of raw.values()) {
       const lat = e.lat != null ? e.lat : e.center && e.center.lat, lon = e.lon != null ? e.lon : e.center && e.center.lon;
-      const cat = classify(e.tags || {});
-      if (lat == null || !cat || !cats.includes(cat)) continue;
-      elements.push({ type: e.type, id: e.id, lat: +lat.toFixed(6), lon: +lon.toFixed(6), cat, tags: e.tags });
+      const t = OsmPoints.classify(e, ok); // seulement parmi les catégories reçues : aucun point perdu
+      if (lat == null || !t) continue;
+      elements.push({ type: e.type, id: e.id, lat: +lat.toFixed(6), lon: +lon.toFixed(6), cat: t.cat, tags: e.tags });
     }
     const ans = await UI.ask('Enregistrer la zone', [{ name: 'n', label: 'Nom de la zone (ex. « Domicile », « Maison de famille »)', value: 'Zone ' + new Date().toLocaleDateString('fr-FR') }], 'Enregistrer');
     const name = (ans && ans.n) || 'Zone ' + new Date().toLocaleDateString('fr-FR');
     const key = 'z' + Date.now();
-    await idb.put('osm', key, { key, name, bbox, date: Date.now(), cats, elements });
-    st.textContent = `${elements.length} points enregistrés pour « ${name} » (disponibles hors ligne).`;
-    for (const c of cats) if (!map.hasLayer(osmGroups[c])) map.addLayer(osmGroups[c]);
+    await idb.put('osm', key, { key, name, bbox, date: Date.now(), cats: ok, elements });
+    const per = ok.map(c => [c, elements.filter(e => e.cat === c).length]).filter(([, n]) => n).map(([c, n]) => `${OSM_CATS[c].short} ${n}`).join(' · ');
+    st.textContent = `${elements.length} points enregistrés pour « ${name} » (disponibles hors ligne)${per ? ' : ' + per : ''}.`
+      + (failed.length ? ` Non téléchargé (serveurs surchargés) : ${failed.map(c => OSM_CATS[c].short).join(', ')} ; relancez pour ces catégories.` : '');
+    for (const c of ok) if (!map.hasLayer(osmGroups[c])) map.addLayer(osmGroups[c]);
     renderOsm();
   }
 
@@ -329,14 +228,14 @@
 
   /* ---------- Packs de cartes hors ligne ---------- */
   function* packTasks(bb, zmin, zmax, srcs) {
-    for (const k of srcs) for (const c of tilesForBox(bb, zmin, Math.min(zmax, TSRC[k].max))) yield [k, c];
+    for (const k of srcs) for (const c of tilesForBox(bb, zmin, Math.min(zmax, srcMax(k)))) yield [k, c];
   }
   function packEstimate(bb, zmin, zmax, srcs) {
     let n = 0, kb = 0;
-    for (const k of srcs) for (let z = zmin; z <= Math.min(zmax, TSRC[k].max); z++) {
+    for (const k of srcs) for (let z = zmin; z <= Math.min(zmax, srcMax(k)); z++) {
       const { x0, x1, y0, y1 } = tileBounds(bb, z);
       const count = Math.max(0, x1 - x0 + 1) * Math.max(0, y1 - y0 + 1);
-      n += count; kb += count * TSRC[k].kb;
+      n += count; kb += count * (TSRC[k] ? TSRC[k].kb : 0);
     }
     return { n, mb: Math.round(kb / 1024) };
   }
@@ -351,12 +250,12 @@
       while (!packAbort) {
         const task = tasks.next(); if (task.done) break;
         const [k, c] = task.value;
-        try { await getTileBlob(k, TSRC[k].tpl, c, true, true); }
+        try { await getTileBlob(k, c, true, true); }
         catch (e) { fail++; if (e.name === 'TileStorageError') { storageError = e; packAbort = true; } }
         done++; if (onProg && (done % 20 === 0 || done === total)) onProg(done, total, fail);
       }
     };
-    await Promise.all(Array.from({ length: 6 }, worker));
+    await Promise.all(Array.from({ length: CONCURRENCY }, worker));
     const rec = Object.assign({}, meta, { key: meta.key || 'p' + Date.now(), date: Date.now(), count: done - fail, fail, complete: !packAbort && fail === 0 });
     await idb.put('packs', rec.key, rec);
     if (storageError) throw storageError;
@@ -367,7 +266,7 @@
     const p = await idb.get('packs', key); if (!p) return;
     const others = (await listPacks()).filter(x => x.key !== key);
     const shared = new Map();
-    for (const o of others) for (const k of o.srcs) for (let z = o.zmin; z <= Math.min(o.zmax, TSRC[k].max); z++) {
+    for (const o of others) for (const k of o.srcs) for (let z = o.zmin; z <= Math.min(o.zmax, srcMax(k)); z++) {
       const key = `${k}/${z}`;
       if (!shared.has(key)) shared.set(key, []);
       shared.get(key).push(tileBounds(o.bbox, z));
@@ -377,6 +276,22 @@
       try { await idb.del('tiles', `${k}/${c.z}/${c.x}/${c.y}`); } catch (e) { }
     }
     await idb.del('packs', key);
+  }
+  /* Vide les tuiles gardées en naviguant (sources actuelles et anciennes), sans toucher à celles des packs. */
+  async function clearBrowseCache() {
+    const packs = await listPacks(), bounds = new Map();
+    const inPack = (k, z, x, y) => packs.some(p => {
+      if (!p.srcs.includes(k) || z < p.zmin || z > Math.min(p.zmax, srcMax(k))) return false;
+      const id = p.key + '/' + z; if (!bounds.has(id)) bounds.set(id, tileBounds(p.bbox, z));
+      const b = bounds.get(id); return x >= b.x0 && x <= b.x1 && y >= b.y0 && y <= b.y1;
+    });
+    let n = 0;
+    for (const k of await idb.keys('tiles')) {
+      const [src, z, x, y] = String(k).split('/'), zxy = [z, x, y].map(Number);
+      if (!(TSRC[src] || LEGACY_MAX[src])) continue;
+      if (!inPack(src, ...zxy)) { await idb.del('tiles', k); n++; }
+    }
+    return n;
   }
   /* Export d'un pack dans un fichier unique (copie sur clé USB, autre appareil) :
      "KSPACK1\n" + longueur de l'en-tête (uint32) + en-tête JSON + tuiles concaténées. */
@@ -397,6 +312,7 @@
     if (magic !== 'KSPACK1\n') throw new Error('fichier non reconnu');
     const hl = new DataView(await file.slice(8, 12).arrayBuffer()).getUint32(0);
     const { meta, index } = JSON.parse(new TextDecoder().decode(await file.slice(12, 12 + hl).arrayBuffer()));
+    if (!isCurrent(meta)) throw new Error('pack d’une ancienne version (IGN, relief ou OpenTopoMap), qui ne s’affiche plus');
     const base = 12 + hl; let batch = [];
     for (let i = 0; i < index.length; i++) {
       const [tk, o, l, t] = index[i];
@@ -412,7 +328,7 @@
 
   /* ---------- Proximité (utilisable sans afficher la carte) ---------- */
   async function coverage(lat, lon) {
-    const packs = (await listPacks()).filter(p => inBox(p.bbox, lat, lon));
+    const packs = (await listPacks()).filter(p => isCurrent(p) && inBox(p.bbox, lat, lon));
     let zones = []; try { zones = (await idb.all('osm')).filter(z => inBox(z.bbox, lat, lon)); } catch (e) { }
     return { packs, zones };
   }
@@ -423,7 +339,8 @@
     for (const z of zones) for (const e of z.elements) {
       if (!cats.includes(e.cat) || seen.has(e.type + e.id)) continue; seen.add(e.type + e.id);
       const t = e.tags || {};
-      add(e.cat, { name: t.name || t.amenity || t.natural || t.man_made || t.emergency || t.shop || t.power || t.tourism || e.cat, kind: t.amenity || t.natural || t.man_made || t.emergency || t.shop || t.power || t.tourism || t.industrial || t.landuse || '', lat: e.lat, lon: e.lon, d: distKm(lat, lon, e.lat, e.lon), b: bearing(lat, lon, e.lat, e.lon) });
+      const type = OsmPoints.typeLabel(e);
+      add(e.cat, { name: t.name || type || e.cat, kind: t.name ? type : '', lat: e.lat, lon: e.lon, d: distKm(lat, lon, e.lat, e.lon), b: bearing(lat, lon, e.lat, e.lon) });
     }
     if (cats.includes('nucleaire')) for (const p of POI_EUROPE.nuclear) { if (p.state && /annulé|abandonné|projet/i.test(p.state)) continue; add('nucleaire', { name: p.name, kind: p.state || 'statut non renseigné', lat: p.lat, lon: p.lon, d: distKm(lat, lon, p.lat, p.lon), b: bearing(lat, lon, p.lat, p.lon) }); }
     if (cats.includes('barrage')) for (const p of POI_EUROPE.dams) add('barrage', { name: p.name, kind: p.height_m + ' m', lat: p.lat, lon: p.lon, d: distKm(lat, lon, p.lat, p.lon), b: bearing(lat, lon, p.lat, p.lon) });
@@ -490,22 +407,6 @@
     r.readAsText(file);
   }
 
-  /* ---------- PMTiles local ---------- */
-  async function loadPmtiles(file) {
-    const st = $('#pmStatus');
-    try {
-      const src = new pmtiles.FileSource(file), p = new pmtiles.PMTiles(src), h = await p.getHeader();
-      if (pmLayer) { map.removeLayer(pmLayer); ctrl.removeLayer(pmLayer); }
-      if (h.tileType === 1) pmLayer = protomapsL.leafletLayer({ url: p, flavor: 'light', lang: 'fr', attribution: '© OpenStreetMap (ODbL), <a href="https://protomaps.com">Protomaps</a>' });
-      else pmLayer = pmtiles.leafletRasterLayer(p, { attribution: 'Fichier PMTiles local', maxNativeZoom: h.maxZoom });
-      ctrl.addBaseLayer(pmLayer, 'Fichier local : ' + file.name);
-      Object.values(layers.bases).forEach(l => map.hasLayer(l) && map.removeLayer(l));
-      pmLayer.addTo(map);
-      st.textContent = `Chargé : ${file.name} (zooms ${h.minZoom}–${h.maxZoom}, ${h.tileType === 1 ? 'vectoriel' : 'raster'}). À recharger à chaque ouverture (le navigateur ne peut pas relire le fichier seul).`;
-      if (h.minLon != null) map.fitBounds([[h.minLat, h.minLon], [h.maxLat, h.maxLon]]);
-    } catch (e) { st.textContent = 'Impossible de lire ce fichier PMTiles : ' + e.message; }
-  }
-
   /* ---------- Outils ---------- */
   function toggleMeasure() {
     const btn = $('#btnMeasure');
@@ -527,6 +428,7 @@
     return Native.getPosition().then(p => (gpsFix = Object.assign(p, { t: Date.now() })));
   }
   function homeLL() { const h = (App.state.profile || {}).home; return h && isFinite(h.lat) && isFinite(h.lon) && (h.lat || h.lon) ? h : null; }
+  const MAX_KM = 1000;
   const packUI = {
     async bbox() {
       const z = $('#pkZone').value, km = +$('#pkKm').value;
@@ -534,13 +436,19 @@
       if (z === 'home') { const h = homeLL(); if (!h) throw new Error('domicile non renseigné (onglet Mon profil)'); return boxAround(h.lat, h.lon, km); }
       const g = gpsFix || await getGPS(); return boxAround(g.lat, g.lon, km);
     },
-    srcs: () => [...document.querySelectorAll('[name=pksrc]:checked')].map(i => i.value),
+    srcs: () => Object.keys(TSRC),
+    /* Rayon effectif : celui choisi, ou la demi-largeur de la zone affichée. */
+    radiusKm(bb) {
+      if ($('#pkZone').value !== 'view') return +$('#pkKm').value;
+      const mid = (bb[0] + bb[2]) / 2;
+      return Math.round(Math.max(distKm(mid, bb[1], mid, bb[3]), distKm(bb[0], bb[1], bb[2], bb[1])) / 2);
+    },
     async estimate() {
       const el = $('#pkEst'); if (!el) return;
       try {
         if ($('#pkZone').value === 'gps' && !gpsFix) { el.textContent = 'Position GPS demandée au téléchargement.'; return; }
-        const e = packEstimate(await packUI.bbox(), 6, +$('#pkZ').value, packUI.srcs());
-        el.innerHTML = `${e.n.toLocaleString('fr-FR')} tuiles ≈ <b>${e.mb.toLocaleString('fr-FR')} Mo</b> (estimation) — sans plafond de tuiles.`;
+        const e = packEstimate(await packUI.bbox(), 0, 15, packUI.srcs());
+        el.innerHTML = `${e.n.toLocaleString('fr-FR')} tuiles ≈ <b>${e.mb.toLocaleString('fr-FR')} Mo</b> (estimation).`;
       } catch (err) { el.textContent = err.message; }
     },
     async download() {
@@ -548,21 +456,21 @@
       if (packDownloading) return;
       packDownloading = true; $('#btnPack').disabled = true;
       try {
+        if (!Topo.configured('osm')) return st.textContent = 'Fond de carte non configuré (KS_CONFIG.map.osm) : téléchargement impossible pour l’instant.';
+        const bbox = await packUI.bbox(), srcs = packUI.srcs(), radius = packUI.radiusKm(bbox);
+        if (radius > MAX_KM) return st.textContent = `Un pack couvre au plus ${MAX_KM.toLocaleString('fr-FR')} km de rayon : zoomez sur la zone à garder.`;
         if (!Premium.isPremium()) {
           const L = Premium.LIMITS;
-          if ((await listPacks()).length >= L.packs) return Premium.upsell(`La version gratuite comprend ${L.packs} pack de carte hors ligne. Premium : packs illimités (domicile, travail, famille, itinéraires).`);
-          if (+$('#pkKm').value > L.packKm || +$('#pkZ').value > L.packZoom) return Premium.upsell(`En gratuit, un pack couvre jusqu'à ${L.packKm} km et le détail ${L.packZoom}. Premium : jusqu'à 1 000 km et le détail 16.`);
+          if ((await listPacks()).filter(isCurrent).length >= L.packs) return Premium.upsell(`La version gratuite comprend ${L.packs} pack de carte hors ligne. Premium : packs illimités (domicile, travail, famille, itinéraires).`);
+          if (radius > L.packKm) return Premium.upsell(`En gratuit, un pack couvre jusqu'à ${L.packKm.toLocaleString('fr-FR')} km. Premium : jusqu'à ${MAX_KM.toLocaleString('fr-FR')} km.`);
         }
-        const bbox = await packUI.bbox(), srcs = packUI.srcs();
-        if (!srcs.length) return st.textContent = 'Choisissez au moins une source.';
         const z = $('#pkZone').value, km = +$('#pkKm').value;
         const def = z === 'home' ? `Domicile (${km} km)` : z === 'gps' ? `Position du ${new Date().toLocaleDateString('fr-FR')} (${km} km)` : 'Zone ' + new Date().toLocaleDateString('fr-FR');
         const o = await UI.ask('Nom du pack', [{ name: 'n', label: 'Nom (ex. « Domicile », « Chez mes parents »)', value: def }], 'Télécharger');
         if (!o) return;
         st.textContent = 'Téléchargement…';
-        const rec = await downloadPack({ name: o.n || def, bbox, zmin: 6, zmax: +$('#pkZ').value, srcs }, (d, n, f) => { st.textContent = `${d.toLocaleString('fr-FR')} / ${n.toLocaleString('fr-FR')} tuiles (${f} échecs)…`; });
+        const rec = await downloadPack({ name: o.n || def, bbox, zmin: 0, zmax: 15, srcs }, (d, n, f) => { st.textContent = `${d.toLocaleString('fr-FR')} / ${n.toLocaleString('fr-FR')} tuiles (${f} échecs)…`; });
         st.textContent = `Pack « ${rec.name} » : ${rec.count.toLocaleString('fr-FR')} tuiles disponibles hors ligne${rec.fail ? ` (${rec.fail} échecs : relancez pour compléter)` : ''}.`;
-        if (!map.hasLayer(layers.bases['IGN topographique – France (packs hors ligne)']) && srcs.some(k => k.startsWith('ign'))) { Object.values(layers.bases).forEach(l => map.hasLayer(l) && map.removeLayer(l)); layers.bases['IGN topographique – France (packs hors ligne)'].addTo(map); }
         packUI.list(); storageInfo();
       } catch (err) { st.textContent = 'Impossible : ' + err.message; packUI.list(); storageInfo(); }
       finally { packDownloading = false; $('#btnPack').disabled = false; }
@@ -570,7 +478,7 @@
     async list() {
       const el = $('#packList'); if (!el) return;
       const packs = await listPacks();
-      el.innerHTML = packs.length ? packs.map(p => `<li><b>${esc(p.name)}</b> — ${p.count.toLocaleString('fr-FR')} tuiles, détail ${p.zmax}, ${new Date(p.date).toLocaleDateString('fr-FR')}${p.complete ? '' : ' <span class="danger">incomplet</span>'}<br><button class="link" data-pkgo="${p.key}">voir</button> · <button class="link" data-pkexp="${p.key}">exporter</button> · <button class="link danger" data-pkdel="${p.key}">supprimer</button></li>`).join('') : '<li class="muted">Aucun pack. Commencez par votre domicile.</li>';
+      el.innerHTML = packs.length ? packs.map(p => isCurrent(p) ? `<li><b>${esc(p.name)}</b> — ${p.count.toLocaleString('fr-FR')} tuiles, ${new Date(p.date).toLocaleDateString('fr-FR')}${p.complete ? '' : ' <span class="danger">incomplet</span>'}<br><button class="link" data-pkgo="${p.key}">voir</button> · <button class="link" data-pkexp="${p.key}">exporter</button> · <button class="link danger" data-pkdel="${p.key}">supprimer</button></li>` : `<li class="muted"><b>${esc(p.name)}</b> — ancienne carte (IGN, relief ou OpenTopoMap), qui ne s'affiche plus<br><button class="link danger" data-pkdel="${p.key}">supprimer et libérer l'espace</button></li>`).join('') : '<li class="muted">Aucun pack. Commencez par votre domicile.</li>';
       el.onclick = async ev => {
         const d = ev.target.dataset, p = packs.find(x => x.key === (d.pkgo || d.pkexp || d.pkdel));
         if (!p) return;
@@ -581,7 +489,7 @@
         if (d.pkdel && await UI.confirm(`Supprimer le pack « ${p.name} » et ses tuiles ?`, 'Supprimer')) { await deletePack(p.key); packUI.list(); storageInfo(); }
       };
       const h = homeLL(), cov = $('#packCover');
-      if (cov) cov.innerHTML = h ? (packs.some(p => inBox(p.bbox, h.lat, h.lon)) ? '✅ Votre domicile est couvert par un pack hors ligne.' : '⚠ Votre domicile n\'est couvert par aucun pack hors ligne.') : 'Renseignez votre domicile dans « Mon profil » pour préparer sa carte en un clic.';
+      if (cov) cov.innerHTML = h ? (packs.some(p => isCurrent(p) && inBox(p.bbox, h.lat, h.lon)) ? '✅ Votre domicile est couvert par un pack hors ligne.' : '⚠ Votre domicile n\'est couvert par aucun pack hors ligne.') : 'Renseignez votre domicile dans « Mon profil » pour préparer sa carte en un clic.';
     },
     async import(file) {
       const st = $('#pkStatus');
@@ -593,28 +501,27 @@
 
   function panelHTML() {
     return `
-    <details open><summary>Fonds & couches</summary>
-      <p class="small">Utilisez le sélecteur de couches sur la carte. Le <b>relief Europe intégré</b> et le <b>fond vectoriel</b> fonctionnent sans aucune connexion.</p>
+    <details open><summary>Carte & couches</summary>
+      <p class="small">Carte topographique dessinée sur l'appareil : routes, chemins, forêts, courbes de niveau et ombrage du relief. Sans connexion, elle s'affiche dans vos <b>packs hors ligne</b> et dans les zones déjà consultées ; ailleurs, un relief Europe intégré sert de repère. Le sélecteur sur la carte affiche ou masque les points.</p>${Topo.configured('osm') ? '' : '<p class="small danger">Fond OpenStreetMap non configuré : seuls le relief et les courbes de niveau s\'affichent (voir docs/TUILES.md).</p>'}
       <label>Rayon autour des sites nucléaires : <input id="nucKm" type="number" min="1" max="300" value="${nucRadiusKm()}" style="width:5em"> km</label>
       <p class="small muted">En France, le rayon des Plans particuliers d'intervention (PPI) des centrales est de 20 km (voir la Notice).</p>
     </details>
     <details open class="packbox"><summary>📥 Cartes hors ligne (sans Internet)</summary>
-      <p class="small">Téléchargez <b>avant</b> une crise les cartes de vos zones (domicile, travail, famille, itinéraires). Elles restent sur l'appareil et s'affichent ensuite <b>sans connexion</b>. En France, la carte IGN officielle (routes, chemins, courbes de niveau, lieux-dits) ; ailleurs en Europe, le relief.</p>
+      <p class="small">Téléchargez <b>avant</b> une crise les cartes de vos zones (domicile, travail, famille, itinéraires). Elles restent sur l'appareil et s'affichent ensuite <b>sans connexion</b>, avec tout le détail (jusqu'aux sentiers), partout en Europe.</p>
       <div class="small" id="packCover"></div>
       <label>Zone <select id="pkZone"><option value="home">Autour de mon domicile (profil)</option><option value="gps">Autour de ma position GPS</option><option value="view">Zone affichée à l'écran</option></select></label>
       <label>Rayon <select id="pkKm">${[5, 10, 20, 30, 50, 100, 200, 300, 500, 750, 1000].map(k => `<option value="${k}" ${k === 20 ? 'selected' : ''}>${k.toLocaleString('fr-FR')}</option>`).join('')}</select> km</label>
-      <label>Détail max <select id="pkZ">${[[12, '12 – vue d\'ensemble'], [13, '13 – routes, villages'], [14, '14 – chemins (≈ 1:25 000)'], [15, '15 – rando détaillée'], [16, '16 – très détaillé']].map(([z, t]) => `<option value="${z}" ${z === 15 ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
-      ${Object.entries(TSRC).map(([k, t]) => `<label class="chk"><input type="checkbox" name="pksrc" value="${k}" ${k !== 'dem' ? 'checked' : ''}>${t.label}</label>`).join('')}
       <div id="pkEst" class="small"></div>
       <button id="btnPack" class="btn">Télécharger ce pack</button> <button id="btnPackStop" class="btn ghost">Stop</button>
       <div id="pkStatus" class="small"></div>
       <ul id="packList" class="zones"></ul>
       <label class="btn ghost file">Importer un pack (.kspack)<input id="pkImport" type="file" accept=".kspack" hidden></label>
-      <p class="small muted">Sources : IGN – Géoplateforme (Licence Ouverte Etalab 2.0) ; Terrain Tiles (AWS Open Data). Le SCAN 25 IGN (carte « TOP 25 » numérique) n'est pas téléchargeable hors ligne (droits de diffusion, selon l'IGN) ; le Plan IGN l'est librement. Exportez un pack pour le copier sur une clé USB ou un autre appareil.</p>
+      <p class="small muted">${Topo.ATTR.osm}. ${Topo.ATTR.mdem}. Exportez un pack pour le copier sur une clé USB ou un autre appareil.</p>
     </details>
-    <details><summary>Points OSM hors ligne (zone affichée)</summary>
-      <p class="small">Récupère depuis OpenStreetMap (API Overpass) les points utiles de la zone visible et les enregistre sur l'appareil.</p>
-      ${Object.entries(OSM_CATS).map(([k, c]) => `<label class="chk"><input type="checkbox" name="osmcat" value="${k}" ${k !== 'ravito' ? 'checked' : ''}><i style="background:${c.color}"></i>${c.label}</label>`).join('')}
+    <details><summary>Points utiles hors ligne (zone affichée)</summary>
+      <p class="small">Récupère depuis OpenStreetMap (API Overpass) les points utiles de la zone visible : eau, santé, secours, abris, communication, transports, énergie, argent liquide, ravitaillement, dangers. Ils sont enregistrés sur l'appareil. Une zone téléchargée avant le 2 octobre 2026 gagne beaucoup de types de points à être téléchargée de nouveau.</p>
+      ${Object.entries(OSM_CATS).map(([k, c]) => `<label class="chk"><input type="checkbox" name="osmcat" value="${k}" ${c.on ? 'checked' : ''}><i style="background:${c.color}"></i>${c.label}</label>`).join('')}
+      <details class="small"><summary>Ce que contient chaque catégorie</summary>${Object.entries(OSM_CATS).map(([k, c]) => `<p><b>${esc(c.short)}</b> : ${esc([...new Set(OsmPoints.TYPES.filter(t => t[0] === k).map(t => t[2]))].join(', '))}.</p>`).join('')}</details>
       <button id="btnOsm" class="btn">Télécharger les points</button>
       <div id="osmStatus" class="small"></div>
       <ul id="osmZones" class="zones"></ul>
@@ -632,15 +539,10 @@
       <div id="measureOut" class="small"></div>
       <div id="clickInfo" class="small">Cliquez sur la carte pour obtenir coordonnées et altitude.</div>
     </details>
-    <details><summary>Carte détaillée hors ligne (fichier PMTiles)</summary>
-      <p class="small">Pour une carte routière détaillée de toute l'Europe sans connexion, chargez un extrait <b>.pmtiles</b> (voir la Notice, section Carte). Le fichier reste sur votre appareil.</p>
-      <label class="btn ghost file">Choisir un fichier .pmtiles<input id="pmFile" type="file" accept=".pmtiles" hidden></label>
-      <div id="pmStatus" class="small"></div>
-    </details>
     <details><summary>Stockage & sources</summary>
       <div id="storageInfo" class="small"></div>
-      <button id="btnClearOtm" class="btn ghost">Vider le cache OpenTopoMap</button> <button id="btnClearDem" class="btn ghost">Vider le cache relief</button>
-      <p class="small muted">${ATTR_NE}. ${ATTR_DEM}. Nucléaire & barrages : Wikidata (CC0), extraction du 30/09/2026 — statuts parfois non renseignés. Centrales : WRI Global Power Plant Database v1.3.0 (CC BY 4.0, données 2021). Points OSM : © contributeurs OpenStreetMap (ODbL). OpenTopoMap : CC-BY-SA.</p>
+      <button id="btnClearOtm" class="btn ghost">Vider le cache de navigation (packs conservés)</button>
+      <p class="small muted">${Topo.ATTR.osm}. ${Topo.ATTR.mdem}. ${ATTR_RELIEF}. Nucléaire & barrages : Wikidata (CC0), extraction du 30/09/2026 — statuts parfois non renseignés. Centrales : WRI Global Power Plant Database v1.3.0 (CC BY 4.0, données 2021). Points OSM : © contributeurs OpenStreetMap (ODbL).</p>
     </details>`;
   }
 
@@ -650,8 +552,7 @@
     L.control.zoom({ position: 'bottomright' }).addTo(map);
     // The map follows the viewport, including mobile rotation and split-screen resizing.
     if (window.ResizeObserver) new ResizeObserver(() => map.invalidateSize({ pan: false })).observe($('#map'));
-    map.createPane('basevec').style.zIndex = 250;
-    map.createPane('vec').style.zIndex = 390;
+    map.createPane('fallback').style.zIndex = 150; // sous le fond topographique
     L.control.scale({ imperial: false }).addTo(map);
     // Flèche du nord, toujours affichée : la carte (projection Web Mercator) n'est jamais tournée, le haut est donc le nord géographique.
     const North = L.Control.extend({
@@ -666,37 +567,25 @@
     });
     new North({ position: 'bottomleft' }).addTo(map);
 
-    const reliefImg = L.imageOverlay('data/relief_europe.jpg', RELIEF_BOUNDS, { attribution: ATTR_DEM, interactive: false });
-    const reliefBase = L.layerGroup([reliefImg]);
-    const vectorBase = L.layerGroup([buildCountries()]);
-    const relief = new ReliefLayer({ maxNativeZoom: 13, maxZoom: 17, attribution: ATTR_DEM });
-    const otm = new CachedTiles(OTM, { prefix: 'otm', maxZoom: 17, attribution: 'Carte : © <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA), données © contributeurs OpenStreetMap' });
-    const ignPlan = new CachedTiles(TSRC.ign_plan.tpl, { prefix: 'ign_plan', maxZoom: 18, maxNativeZoom: 18, attribution: ATTR_IGN });
-    const ignShad = new CachedTiles(TSRC.ign_shad.tpl, { prefix: 'ign_shad', maxZoom: 18, maxNativeZoom: 15, opacity: 0.45, className: 'blend-multiply' });
-    const ignTopo = L.layerGroup([ignPlan, ignShad]);
-    layers.bases = { 'IGN topographique – France (packs hors ligne)': ignTopo, 'Relief Europe intégré (hors ligne)': reliefBase, 'Europe vectorielle simple (hors ligne)': vectorBase, 'Relief MNT détaillé (zones téléchargées)': relief, 'OpenTopoMap (en ligne)': otm };
+    // Fond topographique vectoriel ; l'image du relief intégrée reste visible là où aucune tuile n'est disponible hors ligne.
+    L.imageOverlay('data/relief_europe.jpg', RELIEF_BOUNDS, { pane: 'fallback', attribution: ATTR_RELIEF, interactive: false }).addTo(map);
+    Topo.layer((k, c) => getTileBlob(k, c, true)).addTo(map);
 
-    const net = buildBase().addTo(map);
     nucLayer = buildNuclear();
     for (const k in OSM_CATS) osmGroups[k] = L.layerGroup();
     myLayer = L.layerGroup().addTo(map);
     const overlays = {
-      'Fleuves, lacs, routes, frontières, villes': net,
       '☢ Sites nucléaires + rayon': nucLayer.addTo(map),
       'Grands barrages (≥ 50 m)': buildDams(),
       '⚡ Centrales électriques ≥ 50 MW': buildPlants(),
       'Mes points': myLayer,
     };
-    for (const [k, c] of Object.entries(OSM_CATS)) overlays[`<i class="dot" style="background:${c.color}"></i>OSM : ${c.label.split(' (')[0]}`] = osmGroups[k].addTo(map);
-    const start = (App.state.map && App.state.map.base) || 'Relief Europe intégré (hors ligne)';
-    (layers.bases[start] || reliefBase).addTo(map);
-    ctrl = L.control.layers(layers.bases, overlays, { collapsed: true, position: 'topleft' }).addTo(map);
-    map.on('baselayerchange', e => { App.state.map = Object.assign(App.state.map || {}, { base: e.name }); App.save(); });
+    for (const [k, c] of Object.entries(OSM_CATS)) overlays[`<i class="dot" style="background:${c.color}"></i>Points : ${c.short}`] = osmGroups[k].addTo(map);
+    ctrl = L.control.layers(null, overlays, { collapsed: true, position: 'topleft' }).addTo(map);
 
     $('#mapPanel').innerHTML = panelHTML();
     $('#nucKm').onchange = e => { App.state.map = Object.assign(App.state.map || {}, { nucKm: +e.target.value }); App.save(); const on = map.hasLayer(nucLayer); map.removeLayer(nucLayer); ctrl.removeLayer(nucLayer); nucLayer = buildNuclear(); ctrl.addOverlay(nucLayer, '☢ Sites nucléaires + rayon'); if (on) nucLayer.addTo(map); };
-    ['pkZone', 'pkKm', 'pkZ'].forEach(id => $('#' + id).onchange = packUI.estimate);
-    document.querySelectorAll('[name=pksrc]').forEach(i => i.onchange = packUI.estimate);
+    ['pkZone', 'pkKm'].forEach(id => $('#' + id).onchange = packUI.estimate);
     map.on('moveend', () => $('#pkZone').value === 'view' && packUI.estimate()); packUI.estimate(); packUI.list();
     $('#btnPack').onclick = packUI.download; $('#btnPackStop').onclick = () => { packAbort = true; };
     $('#pkImport').onchange = e => e.target.files[0] && packUI.import(e.target.files[0]);
@@ -704,7 +593,6 @@
     $('#btnAdd').onclick = () => { addMode = !addMode; $('#btnAdd').classList.toggle('on', addMode); $('#btnAdd').textContent = addMode ? 'Cliquez sur la carte…' : 'Ajouter un point'; };
     $('#btnExpGeo').onclick = exportGeoJSON; $('#btnExpGpx').onclick = exportGPX;
     $('#impGeo').onchange = e => e.target.files[0] && importGeo(e.target.files[0]);
-    $('#pmFile').onchange = e => e.target.files[0] && loadPmtiles(e.target.files[0]);
     $('#btnMeasure').onclick = toggleMeasure;
     $('#btnLocate').onclick = () => {
       getGPS().then(p => {
@@ -714,8 +602,7 @@
         map.setView(ll, Math.max(map.getZoom(), 12));
       }).catch(err => UI.notice('Position indisponible : ' + err.message));
     };
-    $('#btnClearOtm').onclick = async () => { if (await UI.confirm('Vider le cache OpenTopoMap ?', 'Vider')) { await idb.deletePrefix('tiles', 'otm/'); storageInfo(); } };
-    $('#btnClearDem').onclick = async () => { if (await UI.confirm('Vider le cache relief ?', 'Vider')) { await idb.deletePrefix('tiles', 'dem/'); storageInfo(); } };
+    $('#btnClearOtm').onclick = async () => { if (await UI.confirm('Vider les tuiles gardées en naviguant ? Vos packs hors ligne sont conservés.', 'Vider')) { $('#storageInfo').textContent = 'Nettoyage…'; await clearBrowseCache(); storageInfo(); } };
     $('#mapPanel').addEventListener('click', e => {
       const g = e.target.dataset.goto; if (g) { const p = myPoints().find(x => x.id === g); map.setView([p.lat, p.lon], 14); }
     });
@@ -739,7 +626,7 @@
       const { lat, lng } = e.latlng, el = $('#clickInfo');
       el.innerHTML = `${lat.toFixed(5)}, ${lng.toFixed(5)}<br>${dms(lat, 'N', 'S')} ${dms(lng, 'E', 'O')}<br>Altitude : calcul…`;
       const h = await elevationAt(e.latlng);
-      el.innerHTML = el.innerHTML.replace('Altitude : calcul…', h ? `Altitude ≈ ${h.h} m <span class="muted">(MNT, zoom ${h.z}${h.z < 10 ? ', précision grossière' : ''})</span>` : 'Altitude : indisponible hors ligne pour cette zone (téléchargez le relief).');
+      el.innerHTML = el.innerHTML.replace('Altitude : calcul…', h ? `Altitude ≈ ${h.h} m <span class="muted">(MNT, zoom ${h.z}${h.z < 10 ? ', précision grossière' : ''})</span>` : 'Altitude : indisponible hors ligne ici (téléchargez un pack de la zone).');
     });
     renderMine(); renderOsm(); storageInfo();
   }

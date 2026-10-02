@@ -4,3 +4,6 @@ www/
 .tmp/
 .preview-*/
 ui-test-results.json
+proto/topo-vectoriel/data/
+dist-site/
+.wrangler/

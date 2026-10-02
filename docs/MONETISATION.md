@@ -19,7 +19,7 @@ Principe retenu : **tout ce qui sert à réagir en urgence reste gratuit**. Prem
 |---|---|---|
 | Instant T : actions par situation, numéros, position GPS | ✓ | ✓ |
 | Carte Europe intégrée (relief, fond, nucléaire, barrages, centrales) | ✓ | ✓ |
-| Cartes hors ligne IGN / relief | 1 pack, 1 000 km, détail 14 | illimitées, 1 000 km, détail 16, export/import `.kspack` |
+| Cartes topographiques hors ligne (tout le détail) | 1 pack, jusqu'à 1 000 km | illimitées, export/import `.kspack` |
 | Points utiles hors ligne (OSM) | 1 zone | illimités |
 | Profil : foyer, domicile, objectifs | ✓ | ✓ |
 | Profil complet : santé, logement, environnement, compétences | — | ✓ |

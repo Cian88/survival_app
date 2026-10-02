@@ -1,0 +1,97 @@
+<!-- {"title": "Politique de confidentialité — Holdout", "description": "Quelles données Holdout traite, pourquoi, combien de temps, et comment exercer vos droits.", "out": "confidentialite/index.html"} -->
+<section class="doc"><div class="wrap">
+<h1>Politique de confidentialité</h1>
+<p class="updated">En vigueur au 2 octobre 2026.</p>
+
+<p>Holdout est une application de préparation aux crises qui fonctionne sur votre appareil, même sans Internet. Cette page explique quelles données personnelles sont traitées lorsque vous utilisez l'application (sur le web à l'adresse <a href="/app/">hold-out.app/app</a> ou sur iPhone) et le site hold-out.app, et quels sont vos droits.</p>
+
+<nav class="toc" aria-label="Sommaire"><ol>
+  <li><a href="#responsable">Responsable du traitement</a></li>
+  <li><a href="#appareil">Ce qui reste sur votre appareil</a></li>
+  <li><a href="#compte">Votre compte</a></li>
+  <li><a href="#chiffrement">Sauvegarde chiffrée de bout en bout</a></li>
+  <li><a href="#services">Services en ligne utilisés par l'application</a></li>
+  <li><a href="#destinataires">Destinataires et transferts</a></li>
+  <li><a href="#durees">Durées de conservation</a></li>
+  <li><a href="#droits">Vos droits</a></li>
+  <li><a href="#cookies">Cookies et stockage local</a></li>
+  <li><a href="#securite">Sécurité</a></li>
+  <li><a href="#mineurs">Mineurs</a></li>
+  <li><a href="#changements">Modifications</a></li>
+</ol></nav>
+
+<h2 id="responsable">1. Responsable du traitement</h2>
+<p>Holdout est édité par un particulier (voir les <a href="/mentions-legales/">mentions légales</a>), responsable du traitement des données décrites ici. Pour toute question ou demande : <a href="mailto:contact@hold-out.app">contact@hold-out.app</a>.</p>
+
+<h2 id="appareil">2. Ce qui reste sur votre appareil</h2>
+<p>Les informations que vous saisissez dans Holdout sont enregistrées <b>sur votre appareil</b> (stockage du navigateur ou de l'application) : profil du foyer (dont, si vous les renseignez, des informations de santé comme un traitement chronique ou un appareil médical), position de votre domicile, inventaire, sacs, plan familial, contacts, points sur la carte, cartes et points téléchargés.</p>
+<p>Votre <b>position GPS</b> est obtenue et utilisée sur l'appareil (Instant T, carte), avec votre autorisation. Elle n'est envoyée à aucun serveur, sauf si vous l'enregistrez comme domicile ou comme point : elle fait alors partie de vos données, sauvegardées chiffrées (section 4).</p>
+
+<h2 id="compte">3. Votre compte</h2>
+<p>Un compte est nécessaire pour utiliser Holdout. Il sert à sauvegarder et synchroniser vos données entre vos appareils, et à retrouver Premium sur chacun d'eux. Il peut être créé et ouvert sans réseau ; les données ci-dessous sont transmises au serveur dès que la connexion le permet.</p>
+<table>
+  <thead><tr><th>Donnée</th><th>Pourquoi</th><th>Base légale</th></tr></thead>
+  <tbody>
+    <tr><td>Adresse e-mail, confirmation de l'adresse, date de création</td><td>Identifier le compte, confirmer l'adresse, permettre la réinitialisation du mot de passe</td><td>Exécution du contrat (conditions d'utilisation)</td></tr>
+    <tr><td>Empreinte de connexion</td><td>Vous authentifier. <b>Votre mot de passe ne quitte jamais votre appareil</b> : seule une clé qui en est dérivée sur l'appareil est transmise, et le serveur n'en conserve qu'une empreinte</td><td>Exécution du contrat</td></tr>
+    <tr><td>Identifiant Google ou Apple et adresse associée (si vous choisissez ces connexions)</td><td>Vous authentifier avec ce compte</td><td>Exécution du contrat</td></tr>
+    <tr><td>Sessions : identifiant de session (conservé sous forme d'empreinte), type d'appareil (ex. « App iOS », « Web · Win32 »), dates de connexion et de dernière utilisation</td><td>Garder vos appareils connectés, fermer les sessions au changement de mot de passe</td><td>Exécution du contrat</td></tr>
+    <tr><td>Licences Premium : identifiant, formule, date d'expiration, origine (clé, achat)</td><td>Retrouver Premium sur vos appareils</td><td>Exécution du contrat</td></tr>
+    <tr><td>Adresse IP, temporairement, associée aux tentatives de connexion, d'inscription et de réinitialisation</td><td>Limiter les tentatives abusives et protéger les comptes</td><td>Intérêt légitime (sécurité du service)</td></tr>
+  </tbody>
+</table>
+
+<h2 id="chiffrement">4. Sauvegarde chiffrée de bout en bout</h2>
+<p>Vos données d'application (section 2, hors cartes et points téléchargés) sont <b>chiffrées sur votre appareil</b> avant d'être envoyées au serveur. La clé de chiffrement est protégée par votre mot de passe (ou, avec Google ou Apple, par votre phrase de chiffrement) et par votre code de secours ; ni l'un ni l'autre n'est transmis. <b>Holdout ne peut pas lire cette sauvegarde</b>, ni la déchiffrer pour vous : si vous perdez à la fois votre mot de passe (ou votre phrase) et votre code de secours, elle ne peut pas être récupérée.</p>
+<p>Le serveur conserve la sauvegarde chiffrée, ses copies de clé chiffrées et un numéro de version, pour synchroniser vos appareils.</p>
+
+<h2 id="services">5. Services en ligne utilisés par l'application</h2>
+<p>Lorsque vous êtes connecté à Internet, l'application contacte les services suivants. Comme toute connexion, ces échanges transmettent votre adresse IP à ces services.</p>
+<ul>
+  <li><b>Serveur de comptes</b> (api.hold-out.app) : compte, sauvegarde chiffrée, licences.</li>
+  <li><b>Fichiers de carte</b> (cartes.hold-out.app) : l'application lit les morceaux de carte de la zone affichée ou téléchargée. Ces demandes indiquent donc la zone consultée ; elles ne sont associées ni à votre compte ni à votre identité.</li>
+  <li><b>Points utiles OpenStreetMap</b> : lorsque vous téléchargez les points d'une zone (eau, santé, abris…), l'application interroge l'un des serveurs publics « Overpass » suivants, en leur indiquant la zone : overpass-api.de (Allemagne), overpass.kumi.systems, overpass.private.coffee. Ces serveurs sont exploités par des tiers.</li>
+  <li><b>Google</b> (si la connexion Google est proposée) : l'écran de connexion charge le bouton de Google depuis accounts.google.com ; la connexion elle-même relève de la <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">politique de confidentialité de Google</a>.</li>
+  <li><b>Apple</b> : si vous choisissez « Continuer avec Apple », la connexion relève de la <a href="https://www.apple.com/fr/legal/privacy/" target="_blank" rel="noopener">politique de confidentialité d'Apple</a>. Apple peut vous proposer de masquer votre adresse e-mail.</li>
+  <li><b>App Store</b> (iPhone) : les achats sont traités par Apple. Lorsqu'un achat est fait, son identifiant de transaction est transmis au serveur de comptes pour le rattacher à votre compte.</li>
+</ul>
+<p>Holdout n'utilise <b>aucun outil de publicité ni de mesure d'audience</b>, et ne vend ni ne cède aucune donnée.</p>
+
+<h2 id="destinataires">6. Destinataires et transferts</h2>
+<p>Les données du compte ne sont accessibles qu'à l'éditeur, pour faire fonctionner le service. Elles sont hébergées par <b>Cloudflare, Inc.</b> (sous-traitant), dans une base de données et un stockage situés en Europe de l'Ouest ; le réseau de Cloudflare, qui achemine les échanges, est mondial. Les e-mails de service (confirmation d'adresse, mot de passe oublié) sont envoyés par l'intermédiaire de Cloudflare.</p>
+<p>Cloudflare, Google et Apple sont des sociétés établies aux États-Unis. Les transferts éventuels vers ce pays sont encadrés par leur adhésion au cadre de protection des données UE–États-Unis (Data Privacy Framework) et par les clauses contractuelles types de la Commission européenne.</p>
+
+<h2 id="durees">7. Durées de conservation</h2>
+<table>
+  <thead><tr><th>Données</th><th>Durée</th></tr></thead>
+  <tbody>
+    <tr><td>Compte, sauvegarde chiffrée, licences</td><td>Jusqu'à la suppression du compte (dans l'application, ou sur demande)</td></tr>
+    <tr><td>Sessions</td><td>Jusqu'à la déconnexion, au changement de mot de passe ou à la suppression du compte ; au plus 400 jours sans utilisation</td></tr>
+    <tr><td>Liens envoyés par e-mail</td><td>1 heure (nouveau mot de passe) ou 7 jours (confirmation d'adresse), puis supprimés</td></tr>
+    <tr><td>Adresses IP des tentatives de connexion</td><td>Le temps de la limitation (de 15 minutes à 1 heure), puis supprimées</td></tr>
+    <tr><td>Journaux techniques de l'hébergeur (date, adresse demandée, adresse IP)</td><td>Quelques jours</td></tr>
+    <tr><td>Données sur votre appareil</td><td>Sous votre contrôle : elles restent jusqu'à ce que vous les effaciez ou désinstalliez l'application</td></tr>
+  </tbody>
+</table>
+
+<h2 id="droits">8. Vos droits</h2>
+<p>Vous disposez des droits d'accès, de rectification, d'effacement, de limitation, d'opposition et de portabilité sur vos données.</p>
+<ul>
+  <li><b>Supprimer votre compte</b> : application → Mon profil → Mon compte → « Supprimer mon compte ». Le compte, la sauvegarde chiffrée, les sessions et les licences rattachées sont effacés immédiatement du serveur. Vous pouvez aussi en faire la demande à <a href="mailto:contact@hold-out.app">contact@hold-out.app</a> depuis l'adresse du compte.</li>
+  <li><b>Récupérer vos données</b> : application → Notice → « Exporter mes données » (fichier JSON lisible).</li>
+  <li><b>Toute autre demande</b> : <a href="mailto:contact@hold-out.app">contact@hold-out.app</a>. Une réponse vous est apportée dans un délai d'un mois.</li>
+</ul>
+<p>Si vous estimez que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la <a href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener">CNIL</a>.</p>
+
+<h2 id="cookies">9. Cookies et stockage local</h2>
+<p>Holdout ne dépose <b>aucun cookie de suivi</b>. L'application utilise le stockage local de l'appareil (stockage du navigateur, base locale, préférences de l'application iPhone) uniquement pour fonctionner : vos données, vos cartes, votre session. Ce stockage, strictement nécessaire au service que vous demandez, ne requiert pas de consentement.</p>
+
+<h2 id="securite">10. Sécurité</h2>
+<p>Échanges chiffrés (HTTPS) ; mot de passe jamais transmis ; empreintes de connexion salées ; données d'application chiffrées de bout en bout (AES-256-GCM, clé dérivée de votre secret par PBKDF2-SHA256, 600 000 itérations) ; sessions révocables ; tentatives limitées. Le code source du chiffrement est consultable dans l'application.</p>
+
+<h2 id="mineurs">11. Mineurs</h2>
+<p>Holdout s'adresse aux adultes et aux familles. Un mineur de moins de 15 ans ne peut créer de compte qu'avec l'accord d'un titulaire de l'autorité parentale.</p>
+
+<h2 id="changements">12. Modifications</h2>
+<p>Cette politique peut évoluer avec l'application. La date en haut de la page indique sa dernière mise à jour ; en cas de changement important, vous en serez informé dans l'application.</p>
+</div></section>

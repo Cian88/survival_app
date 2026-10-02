@@ -6,13 +6,13 @@
   const C = window.KS_CONFIG || {};
   const h = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const KEY = 'survie.licence';
-  const LIMITS = { packs: 1, packKm: 1000, packZoom: 14, osmZones: 1, bags: 1, inventory: 15 };
+  const LIMITS = { packs: 1, packKm: 1000, osmZones: 1, bags: 1, inventory: 15 };
   const FREE_CALCS = ['eau', 'poids', 'marche'];
   const PLAN_NAME = { monthly: 'Mensuel (ancienne offre)', annual: 'Annuel', lifetime: 'À vie', admin: 'Administrateur (toutes les fonctions)' };
   const FEATURES = [
     ['Instant T : actions par situation, numéros d\'urgence, position GPS', true, true],
-    ['Carte Europe intégrée (relief, fond, nucléaire, barrages, centrales)', true, true],
-    ['Cartes hors ligne IGN / relief', `1 pack, ${LIMITS.packKm.toLocaleString('fr-FR')} km, détail ${LIMITS.packZoom}`, 'Illimitées, 1 000 km, détail 16, export/import'],
+    ['Carte topographique (courbes de niveau, relief), nucléaire, barrages, centrales', true, true],
+    ['Cartes topographiques hors ligne (tout le détail)', `1 pack, jusqu'à ${LIMITS.packKm.toLocaleString('fr-FR')} km`, 'Illimitées, export/import'],
     ['Points utiles hors ligne (eau, santé, abris, dangers)', '1 zone', 'Illimités'],
     ['Profil : foyer et domicile', true, true],
     ['Profil complet : santé, logement, environnement, compétences', false, true],
@@ -71,7 +71,9 @@
     return state;
   }
   async function buy(plan) {
-    await Native.Purchases.purchaseProduct({ productIdentifier: IAP[plan], productType: plan === 'lifetime' ? 'inapp' : 'subs' });
+    const t = await Native.Purchases.purchaseProduct({ productIdentifier: IAP[plan], productType: plan === 'lifetime' ? 'inapp' : 'subs' });
+    // L'achat est vérifié auprès d'Apple par le serveur, puis rattaché au compte : Premium sur les autres appareils aussi.
+    if (window.Account && t && t.transactionId) Account.reportAppStore(t.transactionId);
     return loadIAP();
   }
 
@@ -81,9 +83,11 @@
     try { const r = await verify(tok); return r.expired ? null : { active: true, lic: r.payload, token: tok, inGrace: r.inGrace, reason: '' }; } catch (e) { return null; }
   }
   async function load() {
-    if (NATIVE) { // iOS : achats intégrés ; clé administrateur seulement si devAdmin (builds de développement)
+    if (NATIVE) { // iOS : achats intégrés, ou licence rattachée au compte (achat sur le site, règle App Store 3.1.3 b) ; clé administrateur seulement si devAdmin
       if (C.devAdmin) { const l = await loadLicence(); if (l) { state = l; return state; } }
-      return loadIAP();
+      await loadIAP();
+      if (!state.active) { const l = await loadLicence(); if (l && l.lic.plan !== 'admin') state = l; }
+      return state;
     }
     let tok = null; try { tok = localStorage.getItem(KEY); } catch (e) { }
     if (!tok) { state = { active: false, lic: null, reason: 'aucune licence' }; return state; }
@@ -93,10 +97,11 @@
     } catch (e) { state = { active: false, lic: null, reason: e.message }; }
     return state;
   }
-  async function activate(tok) {
+  async function activate(tok, opts = {}) {
     const r = await verify(tok);
     if (r.expired) throw new Error('cette licence a expiré');
     try { localStorage.setItem(KEY, tok.trim()); } catch (e) { throw new Error('stockage local indisponible'); }
+    if (!opts.fromAccount && window.Account) Account.reportLicence(tok.trim()); // retrouvée ensuite sur les autres appareils
     await load(); return state;
   }
   function remove() { try { localStorage.removeItem(KEY); } catch (e) { } state = { active: false, lic: null, reason: 'aucune licence' }; }

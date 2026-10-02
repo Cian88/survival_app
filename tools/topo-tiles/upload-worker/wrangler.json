@@ -1,0 +1,12 @@
+{
+  "name": "holdout-cartes-upload",
+  "main": "index.js",
+  "compatibility_date": "2026-09-01",
+  "workers_dev": true,
+  "r2_buckets": [
+    {
+      "binding": "CARTES",
+      "bucket_name": "holdout-cartes"
+    }
+  ]
+}

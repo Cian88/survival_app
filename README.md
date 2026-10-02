@@ -6,7 +6,7 @@ Application **locale, personnelle et hors ligne**, construite autour de la survi
 - un **profil** (foyer, santé, logement, domicile, environnement) qui personnalise tout le reste ;
 - un **état des lieux matériel** : besoins calculés pour vous, comparés à ce que vous possédez, manques vitaux en premier ;
 - un écran **Instant T** : position GPS sans Internet, autonomie réelle, actions par situation, ressources et dangers les plus proches, cap vers le domicile ou le point de rendez-vous ;
-- des **cartes topographiques hors ligne**, dont la carte **IGN officielle** (Plan IGN et estompage, Licence Ouverte Etalab 2.0) téléchargeable par zone, exportable et importable.
+- une **carte topographique vectorielle** (sentiers, courbes de niveau, ombrage du relief), dessinée sur l'appareil, téléchargeable par zone pour un usage hors ligne, exportable et importable.
 
 **Version gratuite et Premium** : l'essentiel pour réagir (Instant T, carte intégrée, 1 pack de carte, 1 sac…) est gratuit. Premium (29,90 €/an ou 59,90 € à vie) débloque la personnalisation complète. Les licences sont signées et vérifiées hors ligne. Voir [`docs/MONETISATION.md`](docs/MONETISATION.md).
 
@@ -16,7 +16,7 @@ Elle permet aussi de préparer :
 - une **liste de matériel** avec liens, prix indicatifs et **récapitulatif budgétaire** ;
 - une **carte topographique de l'Europe utilisable sans Internet**, avec les points importants : énergie, eau, santé, secours, dangers (nucléaire, barrages, industrie).
 
-Tout fonctionne dans le navigateur (HTML/JS, sans serveur ni compte). Les données restent sur l'appareil.
+Tout fonctionne dans le navigateur (HTML/JS), **hors ligne**. Un **compte** est demandé au premier lancement : il peut se créer et s'ouvrir sans réseau. Il sauvegarde et synchronise les données **chiffrées de bout en bout** (le serveur ne peut pas les lire) et retrouve Premium sur tous les appareils. Connexion par e-mail, Google ou Apple. Voir [`docs/COMPTES.md`](docs/COMPTES.md).
 
 L’interface utilise une navigation latérale sur ordinateur et une barre inférieure sur mobile, avec des thèmes clair et sombre. La carte occupe tout l’écran : le bouton de retour retrouve l’écran précédent, et « Options » ouvre les téléchargements, points et outils dans un panneau escamotable. La touche Échap ferme ce panneau, puis permet de quitter la carte.
 
@@ -46,6 +46,8 @@ Vous pouvez aussi ouvrir `index.html` directement. Pour un usage hors ligne comp
 - [`docs/SOURCES.md`](docs/SOURCES.md) : sources, licences et méthode
 - [`docs/MONETISATION.md`](docs/MONETISATION.md) : offres, gratuit / Premium, licences, mise en vente
 - [`docs/IOS.md`](docs/IOS.md) : application iOS (compilation, achats intégrés, App Store)
+- [`docs/TUILES.md`](docs/TUILES.md) : carte topographique (données, hébergement sur `cartes.hold-out.app`, licences)
+- [`docs/COMPTES.md`](docs/COMPTES.md) : comptes, chiffrement de bout en bout, serveur `api.hold-out.app`, configuration restante
 
 ## Logique des quantités
 Seuls les **consommables** (eau, nourriture, pastilles, combustible, piles, hygiène, médicaments) varient avec la durée d'autonomie. Les **équipements durables** (filtre, réchaud, panneaux solaires, station électrique, outils, vêtements lavables) gardent la même quantité : un filtre sert 1 jour comme 3 mois. L'eau **stockée** à la maison est plafonnée à 14 jours ; au-delà, l'app demande une source renouvelable et un traitement.
@@ -58,8 +60,12 @@ js/profile.js       profil personnel
 js/needs.js         état des lieux matériel (besoins calculés selon le profil)
 js/now.js           écran Instant T
 js/premium.js       offres, licence vérifiée hors ligne, verrous Premium
+js/account.js       compte (connexion hors ligne, synchronisation chiffrée, licences du compte)
+js/vault-crypto.js  chiffrement de bout en bout (clés, code de secours, fusion)
+server/             serveur de comptes holdout-api (Cloudflare Worker + D1)
 js/config.js        prix, liens de paiement, clé publique des licences
-js/map.js           carte hors ligne (IGN, relief, OSM, PMTiles, packs .kspack, proximité)
+js/map.js           carte hors ligne (packs .kspack, points OSM, outils, proximité)
+js/topo.js          fond topographique vectoriel (MapLibre, PMTiles, courbes de niveau)
 js/knowledge.js     contenus sourcés (piliers, scénarios, infos clés)
 js/gear.js          catalogue du matériel
 js/aps.js           synthèse de la chaîne APS
@@ -67,8 +73,9 @@ js/field.js         savoir de terrain (praticiens, forums, crises)
 js/env.js           variantes du sac par environnement
 js/calc.js          calculateurs
 js/bags.js          types de sac (évacuation / survie) et consommables selon la durée
-data/               relief Europe, fond vectoriel, points nucléaire/barrages/centrales
-lib/                Leaflet 1.9.4, pmtiles, protomaps-leaflet (copies locales)
+data/               relief Europe, points nucléaire/barrages/centrales
+lib/                Leaflet 1.9.4, MapLibre et bibliothèques de la carte (copies locales)
+assets/map/         polices et icônes de la carte
 tools/              données, licences (license.mjs), service de délivrance (licence-worker.js)
 sw.js               service worker (cache hors ligne, version web)
 js/native.js        pont iOS (GPS, fichiers, préférences, achats StoreKit)
@@ -77,4 +84,4 @@ capacitor.config.json, package.json   configuration iOS et dépendances
 ```
 
 ## Licences des données
-Natural Earth (domaine public), Terrain Tiles AWS/Mapzen (attribution : EU-DEM Copernicus, SRTM/GMTED USGS, ETOPO1 NOAA…), Wikidata (CC0), WRI Global Power Plant Database (CC BY 4.0), OpenStreetMap (ODbL), OpenTopoMap (CC-BY-SA), IGN – Géoplateforme (Licence Ouverte Etalab 2.0). Détails dans `docs/SOURCES.md`.
+OpenStreetMap via Protomaps (ODbL), Mapterhorn (IGN, CNIG, Copernicus…), Terrain Tiles AWS/Mapzen (attribution : EU-DEM Copernicus, SRTM/GMTED USGS, ETOPO1 NOAA…), Wikidata (CC0), WRI Global Power Plant Database (CC BY 4.0), OpenStreetMap (ODbL). Détails dans `docs/SOURCES.md`.
