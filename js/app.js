@@ -172,6 +172,8 @@
   function buyCell(it, tier) {
     const k = shopKey(it), o = k && Shop.offer(k, it.tier || tier);
     if (!o || o.none) return '';
+    // Ligne d'avant les gammes : son nom cite le modèle de référence du catalogue, le lien cherche ce modèle.
+    if (!it.shop && it.gearId && GEAR_BY_ID[it.gearId] && GEAR_BY_ID[it.gearId].model) return ` <a class="buy small" href="${h(Shop.searchUrl(GEAR_BY_ID[it.gearId].model))}" target="_blank" rel="noopener sponsored">Amazon</a>`;
     return ` <a class="buy small" href="${h(o.url)}" target="_blank" rel="noopener sponsored" title="${h(o.model)}">Amazon</a>`;
   }
   /* Applique la gamme à des lignes : celles d'avant les gammes reçoivent leur clé, les lignes modifiées à la main restent telles quelles. */
