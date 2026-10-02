@@ -551,7 +551,7 @@
         if (!Premium.isPremium()) {
           const L = Premium.LIMITS;
           if ((await listPacks()).length >= L.packs) return Premium.upsell(`La version gratuite comprend ${L.packs} pack de carte hors ligne. Premium : packs illimités (domicile, travail, famille, itinéraires).`);
-          if (+$('#pkKm').value > L.packKm || +$('#pkZ').value > L.packZoom) return Premium.upsell(`En gratuit, un pack couvre jusqu'à ${L.packKm} km et le détail ${L.packZoom}. Premium : jusqu'à 50 km et le détail 16.`);
+          if (+$('#pkKm').value > L.packKm || +$('#pkZ').value > L.packZoom) return Premium.upsell(`En gratuit, un pack couvre jusqu'à ${L.packKm} km et le détail ${L.packZoom}. Premium : jusqu'à 1 000 km et le détail 16.`);
         }
         const bbox = await packUI.bbox(), srcs = packUI.srcs();
         if (!srcs.length) return st.textContent = 'Choisissez au moins une source.';
@@ -602,7 +602,7 @@
       <p class="small">Téléchargez <b>avant</b> une crise les cartes de vos zones (domicile, travail, famille, itinéraires). Elles restent sur l'appareil et s'affichent ensuite <b>sans connexion</b>. En France, la carte IGN officielle (routes, chemins, courbes de niveau, lieux-dits) ; ailleurs en Europe, le relief.</p>
       <div class="small" id="packCover"></div>
       <label>Zone <select id="pkZone"><option value="home">Autour de mon domicile (profil)</option><option value="gps">Autour de ma position GPS</option><option value="view">Zone affichée à l'écran</option></select></label>
-      <label>Rayon <select id="pkKm">${[5, 10, 20, 30, 50].map(k => `<option ${k === 20 ? 'selected' : ''}>${k}</option>`).join('')}</select> km</label>
+      <label>Rayon <select id="pkKm">${[5, 10, 20, 30, 50, 100, 200, 300, 500, 750, 1000].map(k => `<option value="${k}" ${k === 20 ? 'selected' : ''}>${k.toLocaleString('fr-FR')}</option>`).join('')}</select> km</label>
       <label>Détail max <select id="pkZ">${[[12, '12 – vue d\'ensemble'], [13, '13 – routes, villages'], [14, '14 – chemins (≈ 1:25 000)'], [15, '15 – rando détaillée'], [16, '16 – très détaillé']].map(([z, t]) => `<option value="${z}" ${z === 15 ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
       ${Object.entries(TSRC).map(([k, t]) => `<label class="chk"><input type="checkbox" name="pksrc" value="${k}" ${k !== 'dem' ? 'checked' : ''}>${t.label}</label>`).join('')}
       <div id="pkEst" class="small"></div>

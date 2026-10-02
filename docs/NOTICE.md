@@ -47,7 +47,7 @@ L'application tourne autour de **votre** situation : votre foyer, votre logement
 1. Renseignez votre domicile dans **Mon profil**.
 2. Ouvrez **Carte hors ligne → 📥 Cartes hors ligne**, puis choisissez :
    - **Zone** : autour du domicile, autour de votre position GPS, ou la zone affichée.
-   - **Rayon** : de 5 à 50 km.
+   - **Rayon** : de 5 à 1 000 km, autour du domicile ou de la position GPS. Les rayons de 100, 200, 300, 500 et 750 km sont également disponibles. Le rayon maximal est accessible en gratuit comme en Premium.
    - **Détail max** : le zoom 14 correspond environ à l'échelle 1:25 000, le zoom 15 au détail randonnée.
 3. Choisissez les sources :
    - **IGN Plan topographique** (France) : carte officielle de l'IGN, avec routes, chemins, courbes de niveau et lieux-dits.

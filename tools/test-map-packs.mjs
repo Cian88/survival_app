@@ -5,7 +5,7 @@ import { Blob } from 'node:buffer';
 import { TextEncoder, TextDecoder } from 'node:util';
 import vm from 'node:vm';
 const source = await readFile(new URL('../js/map.js', import.meta.url), 'utf8');
-const exposed = source.replace('  window.SurvivalMap = {', '  window.PackTests = { packEstimate, packTasks, downloadPack, deletePack, exportPack, importPack, getTileBlob, abort() { packAbort = true; } };\n  window.SurvivalMap = {');
+const exposed = source.replace('  window.SurvivalMap = {', '  window.PackTests = { boxAround, distKm, packEstimate, packTasks, downloadPack, deletePack, exportPack, importPack, getTileBlob, abort() { packAbort = true; } };\n  window.SurvivalMap = {');
 function harness({ failStorage = false, online = true } = {}) {
   const data = { tiles: new Map(), packs: new Map(), osm: new Map() };
   const stats = { fetches: 0, active: 0, maxActive: 0 };
@@ -58,6 +58,15 @@ const lazy = sizes.api.packTasks([-85, -180, 85, 180], 6, 16, ['ign_plan', 'dem'
 assert.equal(typeof lazy.next, 'function');
 assert.equal(lazy.next().done, false);
 console.log('PASS: arithmetic estimates, source zoom limits and lazy generation');
+
+const wideBox = sizes.api.boxAround(46.6, 2.5, 1000);
+assert.ok(Math.abs((wideBox[0] + wideBox[2]) / 2 - 46.6) < 0.00001);
+assert.ok(Math.abs((wideBox[1] + wideBox[3]) / 2 - 2.5) < 0.00001);
+for (const lat of [wideBox[0], wideBox[2]]) assert.ok(Math.abs(sizes.api.distKm(46.6, 2.5, lat, 2.5) - 1000) < 2);
+for (const lon of [wideBox[1], wideBox[3]]) assert.ok(Math.abs(sizes.api.distKm(46.6, 2.5, 46.6, lon) - 1000) < 15);
+const wideEstimate = sizes.api.packEstimate(wideBox, 6, 16, ['ign_plan', 'ign_shad', 'dem']);
+assert.ok(wideEstimate.n > 1e7 && Number.isFinite(wideEstimate.mb));
+console.log('PASS: 1,000 km coverage and large-pack estimates without tile allocation');
 
 const interrupted = harness();
 const partial = await interrupted.api.downloadPack(meta, done => { if (done >= 20) interrupted.api.abort(); });
