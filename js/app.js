@@ -383,22 +383,31 @@
         <li><b>Instant T</b> : le jour où ça arrive. Localisez-vous, choisissez la situation, puis suivez les actions. L'écran montre votre matériel disponible, les ressources et dangers les plus proches (distance et cap), le chemin vers le domicile ou le point de rendez-vous, et les numéros utiles.</li>
         <li><b>Sacs</b>, <b>Stock maison</b>, <b>Matériel & budget</b> : le détail de ce que vous possédez et de ce que vous prévoyez d'acheter.</li>
         <li><b>Terrain</b> et <b>Calculateurs</b> : le savoir des praticiens et des crises réelles, et les outils de dimensionnement.</li>
-        <li><b>Sauvegarde</b> : exportez régulièrement vos données (bouton ci-dessous) sur une clé USB. Vider les données du navigateur efface l'application locale.</li>
+        <li><b>Sauvegarde</b> : exportez régulièrement vos données depuis <b>Paramètres → Sauvegardes</b> sur une clé USB. Vider les données du navigateur efface l'application locale.</li>
         <li><b>Imprimer</b> (version locale, Ctrl+P / Cmd+P) : imprimez plan familial, contacts et listes ; le papier fonctionne sans batterie.</li>
       </ol>
     </div>
-    <div class="card"><h2>Données & réglages</h2>
-      <button class="btn" data-act="export">Exporter mes données (JSON)</button>
-      <label class="btn ghost file">Importer une sauvegarde<input type="file" accept=".json" data-act="import" hidden></label>
-      <select data-act="theme" aria-label="Thème d'affichage"><option value="" ${!S.theme ? 'selected' : ''}>Suivre le système</option><option value="light" ${S.theme === 'light' ? 'selected' : ''}>Clair · Expédition</option><option value="dark" ${S.theme === 'dark' ? 'selected' : ''}>Sombre · Signal</option></select>
-      <button class="btn ghost danger" data-act="reset">Tout effacer</button>
-    </div>
+    <div class="card"><h2>Personnaliser l'application</h2><p class="muted">Choisissez votre apparence et gérez vos sauvegardes dans les paramètres.</p><button class="btn ghost" data-go="settings">${UI.icon('settings')} Ouvrir les paramètres</button></div>
     <div class="card"><h2>Sources</h2><ul>${Object.values(SOURCES).map(s => `<li><a href="${s.u}" target="_blank" rel="noopener">${h(s.t)}</a></li>`).join('')}</ul>
       <p class="small">Cartographie : OpenStreetMap via Protomaps (ODbL) ; Mapterhorn (IGN, CNIG, Copernicus…) ; Terrain Tiles AWS/Mapzen (EU-DEM Copernicus, SRTM…) ; Wikidata (CC0) ; WRI Global Power Plant Database (CC BY 4.0). Bibliothèques : Leaflet (BSD-2), MapLibre GL, pmtiles, Protomaps basemaps, maplibre-contour (BSD-3), maplibre-gl-leaflet (ISC) ; polices Noto Sans (OFL). Détails : <code>docs/SOURCES.md</code>.</p></div>`;
   }
 
+  function renderSettings() {
+    $('#tab-settings').innerHTML = `<div class="settings-layout">
+      <div class="card"><h2 id="appearanceTitle">Apparence</h2><p class="muted">Choisissez le mode qui vous convient. Votre préférence est conservée.</p>
+        <div class="theme-picker" role="group" aria-labelledby="appearanceTitle">
+          ${[['light', 'sun', 'Clair', 'Expédition'], ['dark', 'moon', 'Sombre', 'Signal'], ['', 'system', 'Auto', 'Système']].map(([value, icon, label, detail]) => `<button type="button" class="theme-option" data-act="theme" data-theme="${value}" aria-pressed="false" aria-label="${value ? label : 'Automatique'}">${UI.icon(icon)}<strong>${label}</strong><span>${detail}</span></button>`).join('')}
+        </div><p id="themeStatus" class="small muted theme-status" role="status"></p>
+      </div>
+      <div class="card"><h2>Sauvegardes</h2><p class="muted">Gardez une copie de vos données ou retrouvez une sauvegarde existante.</p>
+        <div class="settings-actions"><button class="btn" data-act="export">Exporter mes données</button><label class="btn ghost file settings-import">Importer une sauvegarde<input type="file" accept=".json" data-act="import" aria-label="Importer une sauvegarde JSON"></label></div>
+        <div class="settings-reset"><h3>Données locales</h3><p class="small muted">Efface les données de cet appareil. Les cartes téléchargées restent en cache.</p><button class="btn ghost danger" data-act="reset">Tout effacer</button></div>
+      </div></div>`;
+    applyTheme();
+  }
+
   /* ---------- Rendu & événements ---------- */
-  const RENDER = { premium: () => Premium.render($('#tab-premium')), now: () => Now.render($('#tab-now'), S), audit: renderAudit, profile: renderProfile, home: renderHome, bag: renderBag, gear: renderGear, calc: () => Calc.render($('#tab-calc')), field: () => Field.render($('#tab-field')), plan: renderPlan, notice: renderNotice };
+  const RENDER = { premium: () => Premium.render($('#tab-premium')), now: () => Now.render($('#tab-now'), S), audit: renderAudit, profile: renderProfile, home: renderHome, bag: renderBag, gear: renderGear, calc: () => Calc.render($('#tab-calc')), field: () => Field.render($('#tab-field')), plan: renderPlan, notice: renderNotice, settings: renderSettings };
   let current = 'now';
   let beforeMap = 'now';
   const PAGES = {
@@ -412,6 +421,7 @@
     gear: ['S’ÉQUIPER AVEC MÉTHODE', 'Chaque équipement a sa place.', 'Planifiez vos achats et gardez une vue claire sur votre budget.'],
     plan: ['ANTICIPER ENSEMBLE', 'Un plan pour garder le cap.', 'Contacts, points de rendez-vous et scénarios pour votre foyer.'],
     notice: ['BIEN UTILISER HOLDOUT', 'Vos repères, pas à pas.', 'Fonctionnement, sources et limites de votre outil de préparation.'],
+    settings: ['VOS PRÉFÉRENCES', 'Votre espace, à votre façon.', 'Apparence et sauvegardes : les réglages utiles, au même endroit.'],
     premium: ['ALLER PLUS LOIN', 'Votre préparation, sans limites.', 'Découvrez les outils de personnalisation et les offres Holdout.'],
   };
   document.querySelectorAll('[data-icon]').forEach(b => {
@@ -469,7 +479,7 @@
   let closeMoreSheet = () => {};
   function moreSheet() {
     if (document.querySelector('.sheet-wrap')) return;
-    const items = [['bag', '🎒', 'Sacs'], ['home', '🏠', 'Stock maison'], ['field', '📚', 'Terrain'], ['calc', '🧮', 'Calculateurs'], ['gear', '🛒', 'Matériel & budget'], ['plan', '👪', 'Plan & scénarios'], ['notice', 'ℹ️', 'Notice'], ['premium', '★', 'Premium']];
+    const items = [['bag', '🎒', 'Sacs'], ['home', '🏠', 'Stock maison'], ['field', '📚', 'Terrain'], ['calc', '🧮', 'Calculateurs'], ['gear', '🛒', 'Matériel & budget'], ['plan', '👪', 'Plan & scénarios'], ['notice', 'ℹ️', 'Notice'], ['settings', '', 'Paramètres'], ['premium', '★', 'Premium']];
     const w = document.createElement('div'); w.className = 'sheet-wrap';
     w.innerHTML = `<div class="sheet" role="dialog" aria-modal="true" aria-label="Tous les outils"><div class="sheet-heading"><h2>Tous vos outils</h2><button class="map-control icon-only" data-sheet-close aria-label="Fermer le menu">${UI.icon('close')}</button></div>${items.map(([t, i, n]) => `<button data-tab="${t}">${UI.icon(t)}<span>${n}</span></button>`).join('')}</div>`;
     document.body.appendChild(w);
@@ -487,6 +497,9 @@
     document.documentElement.dataset.theme = theme;
     const themeColor = document.querySelector('meta[name="theme-color"]');
     if (themeColor) themeColor.content = getComputedStyle(document.documentElement).getPropertyValue('--nav').trim();
+    document.querySelectorAll('.theme-option').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.theme === (S.theme || ''))));
+    const status = $('#themeStatus');
+    if (status) status.textContent = `${S.theme ? 'Mode' : 'Automatique · mode'} ${theme === 'dark' ? 'sombre · Signal' : 'clair · Expédition'}.`;
   }
   systemTheme.addEventListener('change', () => { if (!S.theme) applyTheme(); });
 
@@ -508,7 +521,6 @@
     if (d.hh) { S.homePlan.find(x => x.key === d.hh).have = t.checked; return commit(); }
     if (d.hq) { const it = S.homePlan.find(x => x.key === d.hq); it.qty = +t.value; it.auto = false; return commit(); }
     if (d.note) { S.notes[d.note] = t.value; return App.save(); }
-    if (d.act === 'theme') { S.theme = t.value || null; applyTheme(); return App.save(); }
     if (d.act === 'import' && t.files[0]) {
       const r = new FileReader();
       r.onload = () => { try { const o = JSON.parse(r.result); if (!o.profile) throw 0; UI.confirm('Remplacer toutes les données actuelles par cette sauvegarde ?', 'Remplacer').then(ok => { if (ok) { Store.save(o); location.reload(); } }); } catch (err) { UI.notice('Fichier de sauvegarde invalide.'); } };
@@ -540,6 +552,7 @@
     if (d.hdel) { S.homePlan = S.homePlan.filter(x => x.key !== d.hdel); return commit(); }
     if (d.ctdel) { S.contacts = S.contacts.filter(x => x.id !== d.ctdel); return commit(); }
     switch (d.act) {
+      case 'theme': S.theme = d.theme || null; applyTheme(); return App.save();
       case 'bagnew': if (S.bags.length >= Premium.LIMITS.bags && !Premium.gate('La version gratuite comprend un sac. Premium permet un sac par personne.')) return;
         { const ty = d.type || 'evac', T = Bags.TYPES[ty], K = +S.profile.kcal || 2100, est = Bags.estimate(ty, T.def, GEAR_BY_ID, K);
           UI.choose('Quel budget pour ce ' + T.name.toLowerCase() + ' ?', `Pour chaque objet, l'app propose un modèle selon votre budget, avec son lien Amazon. Estimation pour un sac pré-rempli de ${Bags.dLabel(T.def)} (1 personne, prix indicatifs) ; vous pourrez changer de budget, retirer ce que vous avez déjà ou modifier chaque ligne.`,

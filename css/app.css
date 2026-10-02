@@ -3,7 +3,7 @@
   color-scheme: light;
   --bg: #f2f1e8; --panel: #fffef8; --ink: #25392e; --muted: #606c62; --line: #dedfd0;
   --accent: #345844; --accent-ink: #fffef8; --warn: #83521f; --bad: #a1412e; --good: #345844;
-  --chip: #e8eddf; --shadow: none; --nav: #263c30; --radius: 8px; --control-radius: 5px;
+  --chip: #e8eddf; --shadow: none; --nav: #263c30; --radius: 20px; --control-radius: 12px;
   --nav-text: #e4ebdc; --nav-muted: #b4c1ae; --nav-active: #ffffff13; --nav-active-ink: #fffef8; --nav-marker: #b4c99c;
   --hero-bg: var(--bg); --hero-ink: var(--ink); --hero-muted: var(--muted); --hero-line: var(--line); --hero-edge: transparent;
   --title-font: Georgia, "Times New Roman", serif; --title-weight: 500; --kpi-font: inherit; --emblem-radius: 50%;
@@ -16,11 +16,11 @@
   color-scheme: dark;
   --bg: #10191e; --panel: #172329; --ink: #e9f0f2; --muted: #a8b8be; --line: #324047;
   --accent: #e8ba5a; --accent-ink: #152025; --warn: #ebc16e; --bad: #f2917e; --good: #9ac3b1;
-  --chip: #322f25; --nav: #0c1418; --radius: 3px; --control-radius: 2px;
+  --chip: #322f25; --nav: #0c1418; --radius: 20px; --control-radius: 12px;
   --nav-text: #d1dee1; --nav-muted: #a8b8be; --nav-active: var(--chip); --nav-active-ink: var(--accent); --nav-marker: var(--accent);
   --hero-bg: var(--panel); --hero-edge: var(--accent);
   --title-font: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif; --title-weight: 600;
-  --kpi-font: Consolas, "Cascadia Mono", ui-monospace, monospace; --emblem-radius: 0;
+  --kpi-font: Consolas, "Cascadia Mono", ui-monospace, monospace; --emblem-radius: 20px;
   --priority-high-bg: #382a26; --priority-high-ink: #f2917e; --priority-mid-bg: #352d22; --priority-mid-ink: #ebc16e;
   --priority-low-bg: #243137; --priority-low-ink: #b4c9d1; --status-ink: #152025; --bad-ink: #152025;
   --map-preview-filter: brightness(.38) saturate(.55); --map-pin: #e8ba5a;
@@ -31,11 +31,11 @@
     color-scheme: dark;
     --bg: #10191e; --panel: #172329; --ink: #e9f0f2; --muted: #a8b8be; --line: #324047;
     --accent: #e8ba5a; --accent-ink: #152025; --warn: #ebc16e; --bad: #f2917e; --good: #9ac3b1;
-    --chip: #322f25; --nav: #0c1418; --radius: 3px; --control-radius: 2px;
+    --chip: #322f25; --nav: #0c1418; --radius: 20px; --control-radius: 12px;
     --nav-text: #d1dee1; --nav-muted: #a8b8be; --nav-active: var(--chip); --nav-active-ink: var(--accent); --nav-marker: var(--accent);
     --hero-bg: var(--panel); --hero-edge: var(--accent);
     --title-font: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif; --title-weight: 600;
-    --kpi-font: Consolas, "Cascadia Mono", ui-monospace, monospace; --emblem-radius: 0;
+    --kpi-font: Consolas, "Cascadia Mono", ui-monospace, monospace; --emblem-radius: 20px;
     --priority-high-bg: #382a26; --priority-high-ink: #f2917e; --priority-mid-bg: #352d22; --priority-mid-ink: #ebc16e;
     --priority-low-bg: #243137; --priority-low-ink: #b4c9d1; --status-ink: #152025; --bad-ink: #152025;
     --map-preview-filter: brightness(.38) saturate(.55); --map-pin: #e8ba5a;
@@ -177,7 +177,7 @@ tr.st-na td { opacity: .5; } table.audit td:first-child { width: 30px; }
 fieldset.plain { border: 0; padding: 0; margin: 0; min-width: 0; } fieldset.plain[disabled] { opacity: .55; }
 .bagicon { font-size: 26px; } .bagcard.bag-survie { border-top: 3px solid var(--warn); } .bagcard.bag-evac { border-top: 3px solid var(--accent); }
 /* Dashboard */
-.now-hero { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 20px; background: var(--hero-bg); border: var(--hero-border-width) solid var(--hero-line); border-left-width: var(--hero-edge-width); border-left-color: var(--hero-edge); padding: var(--hero-padding); }
+.now-hero { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 20px; background: var(--hero-bg); border: var(--hero-border-width) solid var(--hero-line); border-left-width: var(--hero-edge-width); border-left-color: var(--hero-edge); border-radius: var(--radius); padding: var(--hero-padding); }
 .now-hero h1 { color: var(--hero-ink); font-family: var(--title-font); font-weight: var(--title-weight); font-size: clamp(var(--hero-title-size-mobile), 3vw, var(--hero-title-size)); line-height: 1.15; margin-bottom: 7px; }
 .now-hero p { color: var(--hero-muted); font-size: 12px; margin-bottom: 0; }
 .hero-symbol { position: relative; width: 76px; height: 76px; color: var(--accent); border: 1px solid var(--hero-line); background: var(--panel); border-radius: var(--emblem-radius); display: grid; place-items: center; }
@@ -468,6 +468,22 @@ h1, h2, h3 { text-wrap: balance; }
 .sheet > button { min-width: 0; text-wrap: balance; }
 
 /* One shape vocabulary across both directions, including secondary screens. */
+.settings-layout { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.settings-layout > .card { margin-bottom: 0; }
+.theme-picker { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; padding: 6px; background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); }
+.theme-option { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-width: 0; min-height: 92px; padding: 12px 6px; background: transparent; border: 1px solid transparent; border-radius: var(--control-radius); color: var(--muted); }
+.theme-option strong { font-size: 13px; color: var(--ink); white-space: nowrap; }
+.theme-option span { font-size: 11px; }
+.theme-option:hover { background: var(--chip); }
+.theme-option[aria-pressed="true"] { background: var(--panel); color: var(--accent); border-color: var(--accent); box-shadow: 0 2px 8px #00000008; }
+.theme-option[aria-pressed="true"] strong { color: var(--accent); }
+.theme-status { margin: 14px 0 0; }
+.settings-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.settings-import { position: relative; }
+.settings-import input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.settings-import:focus-within { outline: 3px solid var(--accent); outline-offset: 4px; }
+.settings-reset { border-top: 1px solid var(--line); padding-top: 18px; margin-top: 20px; }
+@media (max-width: 900px) { .settings-layout { grid-template-columns: minmax(0, 1fr); } }
 .btn, input:not([type=radio]):not([type=checkbox]), select, textarea,
 .envchip, .sit, .callbtn, .chip, .stchip, .planbadge, .plan .badge,
 .auth-tabs, .auth-tabs button, .auth-error, .auth-code, .preview-label,
@@ -484,7 +500,7 @@ h1, h2, h3 { text-wrap: balance; }
 .leaflet-control-attribution a { color: var(--accent); }
 .leaflet-popup-content-wrapper { border: 1px solid var(--line); border-radius: var(--radius); }
 .leaflet-tooltip.place-label { background: var(--panel); color: var(--ink); }
-input[type=checkbox] { appearance: none; position: relative; border: 1.5px solid var(--muted); border-radius: min(3px, var(--control-radius)); padding: 0; background: var(--panel); cursor: pointer; }
+input[type=checkbox] { appearance: none; position: relative; border: 1.5px solid var(--muted); border-radius: 5px; padding: 0; background: var(--panel); cursor: pointer; }
 input[type=checkbox]:checked, input[type=checkbox]:indeterminate { background: var(--accent); border-color: var(--accent); }
 input[type=checkbox]:checked::after { content: ''; position: absolute; width: 45%; height: 25%; left: 25%; top: 28%; border-left: 2px solid var(--accent-ink); border-bottom: 2px solid var(--accent-ink); transform: rotate(-45deg); }
 input[type=checkbox]:indeterminate::after { content: ''; position: absolute; width: 55%; left: 22%; top: 45%; border-top: 2px solid var(--accent-ink); }

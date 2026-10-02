@@ -98,7 +98,7 @@ Une **clé administrateur** (licence `KS1.` de formule `admin`, sans expiration)
 
 ### Copies de sécurité
 
-- **Notice & infos → Exporter mes données (JSON)** : sauvegarde complète (profil, inventaire, sacs, plan, contacts, points). Gardez-en une copie sur une clé USB.
+- **Paramètres → Sauvegardes → Exporter mes données** : sauvegarde complète en JSON (profil, inventaire, sacs, plan, contacts, points). Gardez-en une copie sur une clé USB. Sur mobile, ouvrez les paramètres depuis « Plus ».
 - Si vous effacez les données du navigateur (cookies et données de site), vous perdez les données locales **et** les cartes téléchargées.
 - Imprimez le plan familial et les contacts, car le papier fonctionne sans batterie.
 
