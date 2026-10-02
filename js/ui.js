@@ -181,8 +181,22 @@
   UI.stackTables = stackTables;
   // Les écrans sont reconstruits à chaque modification : on repasse sur les nouveaux tableaux.
   const main = document.getElementById('main');
+  /* Panneaux dépliables (<details>) : un écran reconstruit repartirait de son HTML (un panneau écrit « open » se
+     rouvrirait à chaque case cochée). On mémorise l'état choisi par l'utilisateur et on le rétablit avant l'affichage.
+     Clé : écran, sac ou pilier, classe et titre du panneau (sans les compteurs, qui changent). */
+  const detailsState = new Map();
+  const detailsKey = d => {
+    const s = d.querySelector(':scope > summary'), host = d.closest('[data-bag], [data-pillar]'), tab = d.closest('.tab');
+    return [tab && tab.id, host && (host.dataset.bag || host.dataset.pillar), d.className, s ? s.textContent.replace(/[\d/%]+/g, '').replace(/\s+/g, ' ').trim().slice(0, 80) : ''].join('|');
+  };
+  document.addEventListener('toggle', e => { const d = e.target; if (d.tagName === 'DETAILS' && d.isConnected) detailsState.set(detailsKey(d), d.open); }, true);
+  function restoreDetails(root) {
+    if (!detailsState.size) return;
+    for (const d of root.querySelectorAll('details')) { const v = detailsState.get(detailsKey(d)); if (v != null && d.open !== v) d.open = v; }
+  }
   let pending = false;
   if (main) new MutationObserver(() => {
+    restoreDetails(main);
     if (pending) return; pending = true;
     requestAnimationFrame(() => { pending = false; stackTables(main); });
   }).observe(main, { childList: true, subtree: true });
