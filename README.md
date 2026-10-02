@@ -26,7 +26,7 @@ Le dépôt contient un projet **iOS natif** (Capacitor 8, dossier `ios/`) : GPS 
 ## Webapp
 Version web installable (PWA) et utilisable hors ligne.
 - **Assembler** : `npm run build:webapp` produit `www/`, à héberger sur n'importe quel hébergement statique en HTTPS.
-- **Publier** : le workflow `.github/workflows/webapp.yml` publie sur GitHub Pages à chaque push sur `main`. Il faut choisir Settings › Pages › Source : GitHub Actions ; un dépôt privé demande GitHub Pro, Team ou Enterprise. Alternative : `netlify.toml`.
+- **Publier** : le workflow `.github/workflows/deploy.yml` publie sur Cloudflare à chaque push sur `main` : le site et l'application sur https://hold-out.app (application sous `/app/`), et le serveur de comptes sur https://api.hold-out.app quand `server/` change. Tests rapides d'abord ; secrets du dépôt : `CLOUDFLARE_API_TOKEN` (secret) et `CLOUDFLARE_ACCOUNT_ID` (variable). À la main : `npm run deploy:site`.
 - **Tester en local** : `npm run serve`.
 
 ## Démarrer (web)
