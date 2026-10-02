@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Holdout</title>
 <meta name="description" content="Outil local et hors ligne : écosystème de survie domestique, sac d'évacuation, matériel et budget, carte topographique Europe.">
-<meta name="theme-color" content="#182c26">
+<meta name="theme-color" content="#263c30">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/favicon-64.png" type="image/png" sizes="64x64">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -41,25 +41,25 @@
 
 <main id="main" tabindex="-1">
   <div class="page-intro" id="pageIntro"><p class="eyebrow" id="pageEyebrow"></p><h1 id="pageTitle"></h1><p id="pageDescription" class="muted"></p></div>
-  <section id="tab-now" class="tab on"></section>
-  <section id="tab-audit" class="tab"></section>
-  <section id="tab-profile" class="tab"></section>
-  <section id="tab-home" class="tab"></section>
-  <section id="tab-bag" class="tab"></section>
-  <section id="tab-gear" class="tab"></section>
-  <section id="tab-field" class="tab"></section>
-  <section id="tab-calc" class="tab"></section>
-  <section id="tab-map" class="tab">
+  <section id="tab-now" class="tab on" tabindex="-1"></section>
+  <section id="tab-audit" class="tab" tabindex="-1" hidden></section>
+  <section id="tab-profile" class="tab" tabindex="-1" hidden></section>
+  <section id="tab-home" class="tab" tabindex="-1" hidden></section>
+  <section id="tab-bag" class="tab" tabindex="-1" hidden></section>
+  <section id="tab-gear" class="tab" tabindex="-1" hidden></section>
+  <section id="tab-field" class="tab" tabindex="-1" hidden></section>
+  <section id="tab-calc" class="tab" tabindex="-1" hidden></section>
+  <section id="tab-map" class="tab" tabindex="-1" hidden>
     <div class="maplayout">
       <div id="map" aria-label="Carte interactive de l’Europe"></div>
-      <div class="map-topbar"><button id="mapBack" class="map-control" data-icon="back" aria-label="Quitter la carte plein écran"><span class="nav-icon"></span><span>Mon espace</span></button><div class="map-title"><span class="status-dot"></span><b>Carte terrain</b><span class="map-offline-label">Topo · packs hors ligne</span></div><div class="map-actions"><button id="mapLocate" class="map-control icon-only" data-icon="locate" aria-label="Me localiser sur la carte" title="Me localiser"><span class="nav-icon"></span></button><button id="mapPanelToggle" class="map-control" data-icon="layers" aria-controls="mapDrawer" aria-expanded="false"><span class="nav-icon"></span><span>Options</span></button></div></div>
+      <div class="map-topbar"><button id="mapBack" class="map-control" data-icon="back" aria-label="Quitter la carte plein écran"><span class="nav-icon"></span><span>Mon espace</span></button><div class="map-title"><span class="status-dot"></span><b>Carte terrain</b><span class="map-offline-label">Topo · packs hors ligne</span></div><div class="map-actions"><button id="mapLocate" class="map-control icon-only" data-icon="locate" aria-label="Me localiser sur la carte" title="Me localiser"><span class="nav-icon"></span></button><button id="mapPanelToggle" class="map-control" data-icon="layers" aria-label="Options de la carte" aria-controls="mapDrawer" aria-expanded="false"><span class="nav-icon"></span><span>Options</span></button></div></div>
       <aside id="mapDrawer" class="map-drawer" aria-label="Options de la carte" hidden><div class="drawer-heading"><div><p class="eyebrow">VOTRE TERRAIN</p><h2>Préparer ma carte</h2></div><button id="mapPanelClose" class="map-control icon-only" data-icon="close" aria-label="Fermer les options"><span class="nav-icon"></span></button></div><div id="mapPanel" class="mappanel"></div></aside>
       <div class="map-hint">Explorez votre terrain <span>·</span> Cliquez pour les coordonnées et l’altitude</div>
     </div>
   </section>
-  <section id="tab-plan" class="tab"></section>
-  <section id="tab-notice" class="tab"></section>
-  <section id="tab-premium" class="tab"></section>
+  <section id="tab-plan" class="tab" tabindex="-1" hidden></section>
+  <section id="tab-notice" class="tab" tabindex="-1" hidden></section>
+  <section id="tab-premium" class="tab" tabindex="-1" hidden></section>
 </main>
 
 <nav id="bottombar" aria-label="Navigation mobile"><button data-tab="now" data-icon="now" class="on"><span class="nav-icon"></span><span>Instant T</span></button><button data-tab="audit" data-icon="audit"><span class="nav-icon"></span><span>Bilan</span></button><button data-tab="map" data-icon="map"><span class="nav-icon"></span><span>Carte</span><span class="nav-tag">OFFLINE</span></button><button data-tab="profile" data-icon="profile"><span class="nav-icon"></span><span>Profil</span></button><button data-more data-icon="more" aria-label="Tous les outils"><span class="nav-icon"></span><span>Plus</span></button></nav>

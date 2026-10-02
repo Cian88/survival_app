@@ -98,12 +98,13 @@
     const el = $('#tab-audit');
     Needs.render(el, S);
     el.insertAdjacentHTML('beforeend', alertsHTML());
-    if (!ctxLoaded) { ctxLoaded = true; Needs.refreshCtx(S).then(() => { if (current === 'audit') renderAudit(); ctxLoaded = false; }); }
+    if (!ctxLoaded) { ctxLoaded = true; Needs.refreshCtx(S).then(() => { if (current === 'audit') UI.preserveFocus(el, renderAudit); ctxLoaded = false; }); }
   }
 
   /* ---------- Écosystème maison ---------- */
   const INV_CATS = ['eau', 'nourriture', 'energie', 'sante', 'hygiene', 'comm', 'docs', 'securite', 'autre'];
   const CAT_LABEL = { eau: 'Eau', nourriture: 'Nourriture', energie: 'Énergie/chaleur/lumière', sante: 'Santé', hygiene: 'Hygiène', comm: 'Communication', docs: 'Documents/argent', securite: 'Sécurité/outils', autre: 'Autre' };
+  const openPillars = new Set(PILLARS.length ? [PILLARS[0].id] : []);
   function renderHome() {
     const n = needs(), s = stock(), P = S.profile;
     const inv = [...S.inventory].sort((a, b) => (a.expiry || '9999').localeCompare(b.expiry || '9999'));
@@ -126,13 +127,13 @@
       <h2>Inventaire du stock</h2>
       <p class="small muted">Saisissez vos réserves. Pour la nourriture, reportez les kcal indiquées sur l'emballage (par unité). Les alertes de péremption apparaissent 60 jours avant.</p>
       <form id="invForm" class="row">
-        <input name="name" placeholder="Article (ex. Pack eau 6×1,5 L)" required style="flex:1 1 220px">
-        <select name="cat">${INV_CATS.map(c => `<option value="${c}">${CAT_LABEL[c]}</option>`).join('')}</select>
+        <input name="name" aria-label="Nom de l'article" placeholder="Article (ex. Pack eau 6×1,5 L)" required style="flex:1 1 220px">
+        <select name="cat" aria-label="Catégorie de l'article">${INV_CATS.map(c => `<option value="${c}">${CAT_LABEL[c]}</option>`).join('')}</select>
         <label>Qté <input name="qty" type="number" min="0" step="any" value="1"></label>
         <label>L/unité <input name="litres" type="number" min="0" step="any" placeholder="0"></label>
         <label>kcal/unité <input name="kcal" type="number" min="0" step="any" placeholder="0"></label>
         <label>Péremption <input name="expiry" type="date"></label>
-        <input name="where" placeholder="Emplacement" style="width:9em">
+        <input name="where" aria-label="Emplacement de l'article" placeholder="Emplacement" style="width:9em">
         <button class="btn">Ajouter</button>
       </form>
       <div class="row small">Raccourcis eau : <button class="link" data-quick="9">Pack 6 × 1,5 L (9 L)</button> <button class="link" data-quick="5">Bidon 5 L</button> <button class="link" data-quick="20">Jerrican 20 L</button></div>
@@ -140,19 +141,23 @@
         <tr><th>Article</th><th>Catégorie</th><th class="num">Qté</th><th class="num">Eau</th><th class="num">kcal</th><th>Péremption</th><th class="hide-sm">Emplacement</th><th></th></tr>
         ${inv.map(it => { const late = it.expiry && new Date(it.expiry) < new Date(), soon = it.expiry && !late && new Date(it.expiry) < Date.now() + 60 * 864e5; return `<tr>
           <td>${h(it.name)}</td><td>${h(CAT_LABEL[it.cat] || it.cat)}</td>
-          <td class="num"><input type="number" min="0" step="any" value="${it.qty}" data-invqty="${it.id}" style="width:5em"></td>
+          <td class="num"><input type="number" min="0" step="any" value="${it.qty}" data-invqty="${it.id}" aria-label="Quantité : ${h(it.name)}" style="width:5em"></td>
           <td class="num">${it.litres ? (it.qty * it.litres).toFixed(1) + ' L' : ''}</td><td class="num">${it.kcal ? Math.round(it.qty * it.kcal).toLocaleString('fr-FR') : ''}</td>
           <td class="${late ? 'danger' : soon ? '' : ''}">${it.expiry ? (late ? '⚠ ' : soon ? '⏳ ' : '') + it.expiry : ''}</td><td class="hide-sm">${h(it.where || '')}</td>
-          <td><button class="link danger" data-invdel="${it.id}">suppr.</button></td></tr>`; }).join('') || '<tr><td colspan="8" class="muted">Inventaire vide.</td></tr>'}
+          <td><button class="link danger" data-invdel="${it.id}" aria-label="Supprimer : ${h(it.name)}">suppr.</button></td></tr>`; }).join('') || '<tr><td colspan="8" class="muted">Inventaire vide.</td></tr>'}
       </table></div>
       <button class="btn ghost" data-act="invcsv">Exporter l'inventaire (CSV)</button>
     </div>
     <h2>Les 9 piliers de l'écosystème</h2>
-    <div class="grid">${PILLARS.map(p => { const x = pillarScore(p); return `<div class="card">
-      <h3>${p.icon} ${h(p.name)} <span class="chip">${x.c}/${x.n}</span></h3>${bar(x.pct)}
+    <div class="grid pillars-grid">${PILLARS.map(p => { const x = pillarScore(p); return `<details class="card pillar-card" data-pillar="${p.id}" ${openPillars.has(p.id) ? 'open' : ''}>
+      <summary data-pillar-summary="${p.id}"><h3>${p.icon} ${h(p.name)} <span class="chip">${x.c}/${x.n}</span></h3></summary><div class="pillar-content">${bar(x.pct)}
       <p class="small">${h(p.why)}</p>
       <ul class="check">${p.items.map((t, i) => `<li><label><input type="checkbox" data-check="${p.id}:${i}" ${S.checks[p.id + ':' + i] ? 'checked' : ''}> <span>${h(t)}</span></label></li>`).join('')}</ul>
-      <p class="src">Sources : ${srcLinks(p.src)}</p></div>`; }).join('')}</div>`;
+      <p class="src">Sources : ${srcLinks(p.src)}</p></div></details>`; }).join('')}</div>`;
+    $('#tab-home').querySelectorAll('[data-pillar]').forEach(details => details.addEventListener('toggle', () => {
+      if (!details.isConnected) return;
+      if (details.open) openPillars.add(details.dataset.pillar); else openPillars.delete(details.dataset.pillar);
+    }));
   }
 
   /* ---------- Sac d'évacuation ---------- */
@@ -235,7 +240,7 @@
       <div class="row"><button class="btn" data-act="bagnew" data-type="evac">+ Sac d'évacuation</button><button class="btn" data-act="bagnew" data-type="survie">+ Sac de survie</button></div>
     </div>
     ${S.bags.map(b => { b.type = b.type || 'evac'; const T = Bags.TYPES[b.type]; b.days = b.days || T.def; const t = bagTotals(b); return `<div class="card bagcard bag-${b.type}" data-bag="${b.id}">
-      <div class="row"><span class="bagicon">${T.icon}</span><input value="${h(b.name)}" data-bagname="${b.id}" style="font-weight:600;flex:1 1 200px"> <button class="link danger" data-bagdel="${b.id}">supprimer le sac</button></div>
+      <div class="row"><span class="bagicon">${T.icon}</span><input value="${h(b.name)}" aria-label="Nom du sac" data-bagname="${b.id}" style="font-weight:600;flex:1 1 200px"> <button class="link danger" data-bagdel="${b.id}">supprimer le sac</button></div>
       <div class="row">
         <label>Type <select data-bagtype="${b.id}">${Object.entries(Bags.TYPES).map(([k, x]) => `<option value="${k}" ${b.type === k ? 'selected' : ''}>${x.name}</option>`).join('')}</select></label>
         <label>Autonomie <select data-bagdays="${b.id}">${T.durations.map(d => `<option value="${d}" ${+b.days === d ? 'selected' : ''}>${Bags.dLabel(d)}</option>`).join('')}</select></label>
@@ -246,15 +251,15 @@
       <div class="alert small">Pour ${Bags.dLabel(+b.days)} : ${b.type === 'evac' ? `${Math.min(+b.days, 3)} L d'eau portée + traitement de ${3 * b.days} L` : `traitement de ${4 * b.days} L d'eau`} · ${(K * b.days).toLocaleString('fr-FR')} kcal de nourriture (${K} kcal/jour, réglable dans le profil).</div>
       ${envSelector(b)}
       ${envPanel(b)}
-      <div class="row"><select data-bagadd="${b.id}" style="flex:1 1 260px"><option value="">+ Ajouter depuis le catalogue…</option>${gearOptions(true)}</select>
+      <div class="row"><select aria-label="Ajouter un objet à ${h(b.name)}" data-bagadd="${b.id}" style="flex:1 1 260px"><option value="">+ Ajouter depuis le catalogue…</option>${gearOptions(true)}</select>
         <button class="btn ghost" data-bagprefill="${b.id}">Pré-remplir : ${T.name.toLowerCase()} ${Bags.dLabel(+b.days)}</button>
         <button class="btn ghost" data-bagcustom="${b.id}">+ Objet personnalisé</button></div>
       <div class="tablewrap"><table><tr><th>✓</th><th>Objet</th><th class="num">Qté</th><th class="num">Poids u. (g)</th><th class="num">Prix u. (€)</th><th></th></tr>
-      ${b.items.map(it => { const note = it.auto ? Bags.ruleNote(b, it) : ''; return `<tr><td><input type="checkbox" data-bh="${b.id}|${it.key}" ${it.have ? 'checked' : ''}></td><td>${h(it.name)}${it.have ? '' : buyCell(it, bagTier(b))}<div class="small muted">${h(it.category || '')}${it.auto ? ` · <span class="chip auto" title="${h(note || '')}">consommable · ${Bags.dLabel(+b.days)}</span>${note ? ` <span class="small">${h(note)}</span>` : ''}` : it.kind === 'durable' ? ' · <span class="chip" title="Même quantité quelle que soit la durée">durable</span>' : ''}</div></td>
-        <td class="num"><input type="number" min="0" value="${it.qty}" data-bf="${b.id}|${it.key}|qty" style="width:4em">${it.unit ? `<div class="small muted">${h(it.unit)}</div>` : ''}</td>
-        <td class="num"><input type="number" min="0" value="${it.weight_g || 0}" data-bf="${b.id}|${it.key}|weight_g" style="width:5.5em"></td>
-        <td class="num"><input type="number" min="0" step="0.01" value="${it.price || 0}" data-bf="${b.id}|${it.key}|price" style="width:6em"></td>
-        <td><button class="link danger" data-bdel="${b.id}|${it.key}">✕</button></td></tr>`; }).join('') || `<tr><td colspan="6" class="muted">Sac vide : utilisez « Pré-remplir ».</td></tr>`}
+      ${b.items.map(it => { const note = it.auto ? Bags.ruleNote(b, it) : ''; return `<tr><td><input type="checkbox" aria-label="Acquis : ${h(it.name)}" data-bh="${b.id}|${it.key}" ${it.have ? 'checked' : ''}></td><td>${h(it.name)}${it.have ? '' : buyCell(it, bagTier(b))}<div class="small muted">${h(it.category || '')}${it.auto ? ` · <span class="chip auto" title="${h(note || '')}">consommable · ${Bags.dLabel(+b.days)}</span>${note ? ` <span class="small">${h(note)}</span>` : ''}` : it.kind === 'durable' ? ' · <span class="chip" title="Même quantité quelle que soit la durée">durable</span>' : ''}</div></td>
+        <td class="num"><input type="number" min="0" value="${it.qty}" aria-label="Quantité : ${h(it.name)}" data-bf="${b.id}|${it.key}|qty" style="width:4em">${it.unit ? `<div class="small muted">${h(it.unit)}</div>` : ''}</td>
+        <td class="num"><input type="number" min="0" value="${it.weight_g || 0}" aria-label="Poids unitaire en grammes : ${h(it.name)}" data-bf="${b.id}|${it.key}|weight_g" style="width:5.5em"></td>
+        <td class="num"><input type="number" min="0" step="0.01" value="${it.price || 0}" aria-label="Prix unitaire en euros : ${h(it.name)}" data-bf="${b.id}|${it.key}|price" style="width:6em"></td>
+        <td><button class="link danger" aria-label="Supprimer : ${h(it.name)}" data-bdel="${b.id}|${it.key}">✕</button></td></tr>`; }).join('') || `<tr><td colspan="6" class="muted">Sac vide : utilisez « Pré-remplir ».</td></tr>`}
       </table></div>
       <p class="small muted">${h(Shop.priceNote())} Un prix ou un poids modifié à la main est conservé quand vous changez de budget. ${h(Shop.disclosure())}</p></div>`; }).join('')}
     ${renderEnvCompare()}
@@ -301,17 +306,17 @@
       <div class="tablewrap"><table><tr><th>Catégorie</th><th class="num">Prévu</th><th class="num">Acquis</th></tr>${Object.entries(b.byCat).sort((a, c) => c[1].total - a[1].total).map(([c, v]) => `<tr><td>${h(c)}</td><td class="num">${eur(v.total)}</td><td class="num">${eur(v.spent)}</td></tr>`).join('') || '<tr><td colspan="3" class="muted">Ajoutez des objets à un sac ou à la maison.</td></tr>'}</table></div>
       <h3>Achats pour la maison</h3>
       <p class="small muted">Gamme de la maison : celle choisie ci-dessus (modifiable aussi dans Mon profil).</p>
-      <div class="tablewrap"><table><tr><th>✓</th><th>Objet</th><th class="num">Qté</th><th class="num">Prix u.</th><th></th></tr>${S.homePlan.map(it => `<tr><td><input type="checkbox" data-hh="${it.key}" ${it.have ? 'checked' : ''}></td><td>${h(it.name)}${it.have ? '' : buyCell(it, tier)}<div class="small muted">${h(it.category)}${it.auto && Bags.HOME_RULES[it.gearId] ? ` · <span class="chip auto">auto · ${S.profile.days} j</span> ${h(Bags.HOME_RULES[it.gearId].note)}` : ''}</div></td><td class="num"><input type="number" min="0" value="${it.qty}" data-hq="${it.key}" style="width:4em"></td><td class="num">${eur(it.price)}</td><td><button class="link danger" data-hdel="${it.key}">✕</button></td></tr>`).join('') || '<tr><td colspan="5" class="muted">Rien pour l\'instant — bouton « + Maison » dans le catalogue.</td></tr>'}</table></div>
+      <div class="tablewrap"><table><tr><th>✓</th><th>Objet</th><th class="num">Qté</th><th class="num">Prix u.</th><th></th></tr>${S.homePlan.map(it => `<tr><td><input type="checkbox" aria-label="Acquis : ${h(it.name)}" data-hh="${it.key}" ${it.have ? 'checked' : ''}></td><td>${h(it.name)}${it.have ? '' : buyCell(it, tier)}<div class="small muted">${h(it.category)}${it.auto && Bags.HOME_RULES[it.gearId] ? ` · <span class="chip auto">auto · ${S.profile.days} j</span> ${h(Bags.HOME_RULES[it.gearId].note)}` : ''}</div></td><td class="num"><input type="number" min="0" value="${it.qty}" aria-label="Quantité : ${h(it.name)}" data-hq="${it.key}" style="width:4em"></td><td class="num">${eur(it.price)}</td><td><button class="link danger" aria-label="Supprimer : ${h(it.name)}" data-hdel="${it.key}">✕</button></td></tr>`).join('') || '<tr><td colspan="5" class="muted">Rien pour l\'instant — bouton « + Maison » dans le catalogue.</td></tr>'}</table></div>
       <button class="btn ghost" data-act="homeessential">Pré-remplir maison : essentiels</button> <button class="btn ghost" data-act="plancsv">Exporter le plan (CSV)</button> <button class="btn ghost" data-act="catcsv">Exporter le catalogue (CSV)</button>
     </div>
     <div class="card"><h2>Catalogue du matériel (${GEAR.length} références)</h2>
       <p class="small">Pour chaque objet, trois modèles selon le budget. La colonne surlignée est votre gamme ; « + Sac » ajoute le modèle de la gamme du sac choisi.</p>
       <div class="row">
-        <input id="gq" placeholder="Rechercher…" value="${h(gf.q)}" style="flex:1 1 200px">
-        <select id="gcat"><option value="">Toutes catégories</option>${cats.map(c => `<option ${gf.cat === c ? 'selected' : ''}>${h(c)}</option>`).join('')}</select>
-        <select id="gscope"><option value="">Sac + maison</option><option value="sac" ${gf.scope === 'sac' ? 'selected' : ''}>Sac</option><option value="maison" ${gf.scope === 'maison' ? 'selected' : ''}>Maison</option></select>
-        <select id="gprio"><option value="">Toutes priorités</option>${['essentiel', 'recommandé', 'optionnel'].map(p => `<option ${gf.prio === p ? 'selected' : ''}>${p}</option>`).join('')}</select>
-        <select id="gbag">${S.bags.map(b => `<option value="${b.id}">→ ${h(b.name)}</option>`).join('')}</select>
+        <input id="gq" aria-label="Rechercher dans le catalogue" placeholder="Rechercher…" value="${h(gf.q)}" style="flex:1 1 200px">
+        <select id="gcat" aria-label="Filtrer par catégorie"><option value="">Toutes catégories</option>${cats.map(c => `<option ${gf.cat === c ? 'selected' : ''}>${h(c)}</option>`).join('')}</select>
+        <select id="gscope" aria-label="Filtrer par usage"><option value="">Sac + maison</option><option value="sac" ${gf.scope === 'sac' ? 'selected' : ''}>Sac</option><option value="maison" ${gf.scope === 'maison' ? 'selected' : ''}>Maison</option></select>
+        <select id="gprio" aria-label="Filtrer par priorité"><option value="">Toutes priorités</option>${['essentiel', 'recommandé', 'optionnel'].map(p => `<option ${gf.prio === p ? 'selected' : ''}>${p}</option>`).join('')}</select>
+        <select id="gbag" aria-label="Sac de destination">${S.bags.map(b => `<option value="${b.id}">→ ${h(b.name)}</option>`).join('')}</select>
       </div>
       <div class="tablewrap"><table class="gear-tiers"><tr><th>Objet</th><th>Priorité</th>${Shop.TIERS.map(t => `<th>${t.short} ${h(t.label)}</th>`).join('')}<th></th></tr>
       ${list.map(g => { const none = (Shop.offer(g.id, tier) || {}).none; return `<tr><td><b>${h(g.name)}</b><div class="small muted">${h(g.category)} · ${h(g.scope)}${g.qty > 1 ? ' · qté suggérée ' + g.qty : ''}</div>${g.tip ? `<div class="small">${h(g.tip)}</div>` : ''}</td>
@@ -321,7 +326,7 @@
       </table></div>
       <p class="small muted">${h(Shop.disclosure())} ${h(Shop.priceNote())} Aucune marque n'est imposée : les modèles cités sont des exemples, vérifiez la fiche (taille, compatibilité) avant d'acheter.</p>
     </div>`;
-    const upd = () => { gf = { q: $('#gq').value, cat: $('#gcat').value, scope: $('#gscope').value, prio: $('#gprio').value }; const pos = $('#gq').selectionStart; renderGear(); const q = $('#gq'); q.focus(); q.setSelectionRange(pos, pos); };
+    const upd = () => { gf = { q: $('#gq').value, cat: $('#gcat').value, scope: $('#gscope').value, prio: $('#gprio').value }; UI.preserveFocus($('#tab-gear'), renderGear); };
     $('#gq').oninput = upd; ['gcat', 'gscope', 'gprio'].forEach(id => $('#' + id).onchange = upd);
   }
 
@@ -332,8 +337,8 @@
     <div class="grid">
       <div class="card"><h2>Contacts d'urgence</h2>
         <p class="small muted">Recopiez aussi cette liste sur papier (BBK, MSB) : sans réseau ni batterie, le téléphone ne sert plus.</p>
-        <form id="ctForm" class="row"><input name="name" placeholder="Nom" required><input name="phone" placeholder="Téléphone"><input name="role" placeholder="Rôle (voisin, médecin…)"><button class="btn">Ajouter</button></form>
-        <table>${S.contacts.map(c => `<tr><td>${h(c.name)}</td><td>${h(c.phone)}</td><td class="small muted">${h(c.role)}</td><td><button class="link danger" data-ctdel="${c.id}">✕</button></td></tr>`).join('') || '<tr><td class="muted">Aucun contact.</td></tr>'}</table>
+        <form id="ctForm" class="row"><input name="name" aria-label="Nom du contact" placeholder="Nom" required><input name="phone" type="tel" aria-label="Téléphone du contact" placeholder="Téléphone"><input name="role" aria-label="Rôle du contact" placeholder="Rôle (voisin, médecin…)"><button class="btn">Ajouter</button></form>
+        <div class="tablewrap"><table><tr><th>Nom</th><th>Téléphone</th><th>Rôle</th><th>Actions</th></tr>${S.contacts.map(c => `<tr><td>${h(c.name)}</td><td>${h(c.phone)}</td><td class="small muted">${h(c.role)}</td><td><button class="link danger" data-ctdel="${c.id}" aria-label="Supprimer le contact : ${h(c.name)}">✕</button></td></tr>`).join('') || '<tr><td colspan="4" class="muted">Aucun contact.</td></tr>'}</table></div>
       </div>
       <div class="card"><h2>Vérification du kit</h2>
         <p>Dernière vérification : <b>${S.lastCheck ? new Date(S.lastCheck).toLocaleDateString('fr-FR') : 'jamais'}</b><br>Prochaine : <b>${nc ? nc.toLocaleDateString('fr-FR') : '—'}</b></p>
@@ -343,12 +348,12 @@
       </div>
     </div>
     <div class="card"><h2>Plan familial</h2>
-      <label style="display:block">Points de rendez-vous (1 proche du domicile, 1 hors du quartier, 1 hors de la ville) — placez-les aussi sur la carte :</label>
-      <textarea data-note="rdv">${h(S.notes.rdv)}</textarea>
-      <label style="display:block">Qui fait quoi (enfants, personnes âgées ou isolées, animaux, voisins) :</label>
-      <textarea data-note="famille">${h(S.notes.famille)}</textarea>
-      <label style="display:block">PIMS — Plan individuel de mise en sûreté (risques de l'adresse via Géorisques, pièce refuge, coupures eau/gaz/électricité) :</label>
-      <textarea data-note="pims">${h(S.notes.pims)}</textarea>
+      <label for="plan-rdv" style="display:block">Points de rendez-vous (1 proche du domicile, 1 hors du quartier, 1 hors de la ville) — placez-les aussi sur la carte :</label>
+      <textarea id="plan-rdv" data-note="rdv">${h(S.notes.rdv)}</textarea>
+      <label for="plan-famille" style="display:block">Qui fait quoi (enfants, personnes âgées ou isolées, animaux, voisins) :</label>
+      <textarea id="plan-famille" data-note="famille">${h(S.notes.famille)}</textarea>
+      <label for="plan-pims" style="display:block">PIMS — Plan individuel de mise en sûreté (risques de l'adresse via Géorisques, pièce refuge, coupures eau/gaz/électricité) :</label>
+      <textarea id="plan-pims" data-note="pims">${h(S.notes.pims)}</textarea>
       <p class="src">${srcLinks(['sgdsn', 'georisques'])}</p>
     </div>
     <h2>Réflexes par scénario</h2>
@@ -385,7 +390,7 @@
     <div class="card"><h2>Données & réglages</h2>
       <button class="btn" data-act="export">Exporter mes données (JSON)</button>
       <label class="btn ghost file">Importer une sauvegarde<input type="file" accept=".json" data-act="import" hidden></label>
-      <select data-act="theme"><option value="">Thème : système</option><option value="light" ${S.theme === 'light' ? 'selected' : ''}>Clair</option><option value="dark" ${S.theme === 'dark' ? 'selected' : ''}>Sombre</option></select>
+      <select data-act="theme" aria-label="Thème d'affichage"><option value="" ${!S.theme ? 'selected' : ''}>Suivre le système</option><option value="light" ${S.theme === 'light' ? 'selected' : ''}>Clair · Expédition</option><option value="dark" ${S.theme === 'dark' ? 'selected' : ''}>Sombre · Signal</option></select>
       <button class="btn ghost danger" data-act="reset">Tout effacer</button>
     </div>
     <div class="card"><h2>Sources</h2><ul>${Object.values(SOURCES).map(s => `<li><a href="${s.u}" target="_blank" rel="noopener">${h(s.t)}</a></li>`).join('')}</ul>
@@ -424,6 +429,7 @@
     if (tab === 'map' && current !== 'map') beforeMap = current;
     current = tab;
     document.body.classList.toggle('map-mode', tab === 'map');
+    $('#pageIntro').hidden = tab === 'now' || tab === 'map';
     document.querySelectorAll('#tabs button, #bottombar button[data-tab]').forEach(b => {
       b.classList.toggle('on', b.dataset.tab === tab);
       if (b.dataset.tab === tab) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
@@ -436,12 +442,12 @@
     document.title = (tab === 'map' ? 'Carte terrain' : $('#currentPage').textContent) + ' · Holdout';
     const more = document.querySelector('#bottombar [data-more]'); if (more) more.classList.toggle('on', !['now', 'audit', 'map', 'profile'].includes(tab));
     window.scrollTo(0, 0);
-    document.querySelectorAll('.tab').forEach(s => s.classList.toggle('on', s.id === 'tab-' + tab));
+    document.querySelectorAll('.tab').forEach(s => { const selected = s.id === 'tab-' + tab; s.classList.toggle('on', selected); s.hidden = !selected; });
     if (tab === 'map') { SurvivalMap.show(); $('#mapBack').focus(); } else RENDER[tab]();
     if (tab !== 'map') $('#main').focus({ preventScroll: true });
     try { localStorage.setItem('survie.tab', tab); } catch (e) { }
   }
-  function commit() { App.save(); if (RENDER[current]) RENDER[current](); }
+  function commit() { App.save(); if (RENDER[current]) UI.preserveFocus($('#tab-' + current), RENDER[current]); }
   App.go = show;
   function mapOptions(open, restoreFocus = true) {
     $('#mapDrawer').hidden = !open;
@@ -456,29 +462,33 @@
   document.addEventListener('keydown', e => {
     if (e.key !== 'Escape' || document.querySelector('.modal-wrap')) return;
     const sheet = document.querySelector('.sheet-wrap');
-    if (sheet) { sheet.remove(); $('#bottombar [data-more]').focus(); return; }
+    if (sheet) { closeMoreSheet(); return; }
     if (current === 'map') { if (!$('#mapDrawer').hidden) mapOptions(false); else $('#mapBack').click(); }
   });
   App.rescaleHome = rescaleHome;
+  let closeMoreSheet = () => {};
   function moreSheet() {
+    if (document.querySelector('.sheet-wrap')) return;
     const items = [['bag', '🎒', 'Sacs'], ['home', '🏠', 'Stock maison'], ['field', '📚', 'Terrain'], ['calc', '🧮', 'Calculateurs'], ['gear', '🛒', 'Matériel & budget'], ['plan', '👪', 'Plan & scénarios'], ['notice', 'ℹ️', 'Notice'], ['premium', '★', 'Premium']];
     const w = document.createElement('div'); w.className = 'sheet-wrap';
     w.innerHTML = `<div class="sheet" role="dialog" aria-modal="true" aria-label="Tous les outils"><div class="sheet-heading"><h2>Tous vos outils</h2><button class="map-control icon-only" data-sheet-close aria-label="Fermer le menu">${UI.icon('close')}</button></div>${items.map(([t, i, n]) => `<button data-tab="${t}">${UI.icon(t)}<span>${n}</span></button>`).join('')}</div>`;
-    w.addEventListener('click', e => { if (e.target === w) w.remove(); });
-    w.querySelector('[data-sheet-close]').onclick = () => { w.remove(); $('#bottombar [data-more]').focus(); };
-    w.addEventListener('keydown', e => {
-      if (e.key !== 'Tab') return;
-      const buttons = [...w.querySelectorAll('button')], first = buttons[0], last = buttons[buttons.length - 1];
-      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-    });
     document.body.appendChild(w);
+    closeMoreSheet = UI.dialogSession(w);
+    w.addEventListener('click', e => { if (e.target === w) closeMoreSheet(); });
+    w.querySelector('[data-sheet-close]').onclick = closeMoreSheet;
     w.querySelector('button').focus();
   }
-  App.refresh = () => { badge(); if (RENDER[current]) RENDER[current](); };
+  App.refresh = () => { applyTheme(); badge(); if (RENDER[current]) UI.preserveFocus($('#tab-' + current), RENDER[current]); };
   function badge() { const b = $('#planBadge'); if (b) { b.textContent = Premium.isPremium() ? (Premium.state.lic && Premium.state.lic.plan === 'admin' ? '★ Admin' : '★ Premium') : 'Gratuit'; b.className = 'planbadge ' + (Premium.isPremium() ? 'pro' : ''); } }
   function toCsv(rows) { return '﻿' + rows.map(r => r.map(v => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`).join(';')).join('\n'); }
-  function applyTheme() { if (S.theme) document.documentElement.dataset.theme = S.theme; else delete document.documentElement.dataset.theme; }
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
+  function applyTheme() {
+    const theme = S.theme === 'light' || S.theme === 'dark' ? S.theme : (systemTheme.matches ? 'dark' : 'light');
+    document.documentElement.dataset.theme = theme;
+    const themeColor = document.querySelector('meta[name="theme-color"]');
+    if (themeColor) themeColor.content = getComputedStyle(document.documentElement).getPropertyValue('--nav').trim();
+  }
+  systemTheme.addEventListener('change', () => { if (!S.theme) applyTheme(); });
 
   document.addEventListener('change', e => {
     const t = e.target, d = t.dataset;
@@ -509,7 +519,7 @@
     const t = e.target.closest('button, [data-tab], [data-go]'); if (!t) return;
     const d = t.dataset;
     if (d.more !== undefined) return moreSheet();
-    if (d.tab) { const sh = document.querySelector('.sheet-wrap'); if (sh) sh.remove(); return show(d.tab); }
+    if (d.tab) { const sh = document.querySelector('.sheet-wrap'); if (sh) closeMoreSheet(); return show(d.tab); }
     if (d.go) { e.preventDefault(); return show(d.go); }
     if (d.audreset) { if (S.audit[d.audreset]) delete S.audit[d.audreset].have; return commit(); }
     if (d.audna) { S.audit[d.audna] = Object.assign(S.audit[d.audna] || {}, { na: !(S.audit[d.audna] || {}).na }); return commit(); }

@@ -182,7 +182,7 @@
       ${configured ? '' : '<p class="small muted">Les liens de paiement ne sont pas encore configurés (js/config.js → checkout).</p>'}</div>
     <div class="card"><h3>J'ai une clé de licence</h3>
       <p class="small">Après le paiement, vous recevez une clé qui commence par « KS1. ». Collez-la ici : elle est vérifiée <b>sur l'appareil, sans Internet</b>, et reste valable hors ligne jusqu'à son échéance.</p>
-      <textarea id="licIn" placeholder="KS1.…" style="min-height:70px"></textarea>
+      <label for="licIn">Clé de licence</label><textarea id="licIn" placeholder="KS1.…" style="min-height:70px"></textarea>
       <div class="row"><button class="btn" data-lic="activate">Activer</button>${state.lic ? '<button class="btn ghost danger" data-lic="remove">Retirer la licence de cet appareil</button>' : ''}${state.lic && state.lic.sid && C.renewUrl ? '<button class="btn ghost" data-lic="renew">Renouveler en ligne</button>' : ''}</div>
       <div id="licMsg" class="small"></div>
     </div>

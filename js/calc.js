@@ -41,7 +41,7 @@
     { id: 'chlore', title: 'Désinfection au chlore (eau de Javel)', html: `
       <label>Concentration indiquée sur l'étiquette (% chlore actif) <input id="c_c_pct" type="number" min="0.1" step="0.1" value="2.6"></label>
       <label>Volume d'eau (L) <input id="c_c_v" type="number" min="0.1" step="0.1" value="10"></label>
-      <label><input id="c_c_t" type="checkbox"> Eau trouble</label>`,
+      <label class="chk"><input id="c_c_t" type="checkbox"> <span>Eau trouble</span></label>`,
       calc: v => {
         const drop = 0.05; // mL par goutte, approximation
         const perL = mgL => mgL / (v.c_c_pct * 10 * drop);

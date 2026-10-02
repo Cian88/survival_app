@@ -78,7 +78,7 @@
     const W = where(S), sit = cur && SIT[cur];
     const cash = byId.ar_cash;
     el.innerHTML = `
-    <div class="card now-hero"><div><div class="hero-date">${new Date().toLocaleString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}</div><h2>Prêt à faire face.</h2><p>Faites le point aujourd’hui. Gagnez en autonomie pour demain.</p></div><div class="hero-symbol">${UI.icon('compass')}</div></div>
+    <div class="card now-hero"><div><div class="hero-date">${new Date().toLocaleString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}</div><h1>Prêt à faire face.</h1><p>Faites le point aujourd’hui. Gagnez en autonomie pour demain.</p></div><div class="hero-symbol">${UI.icon('compass')}</div></div>
     <div class="now-metrics">
       <div class="card metric"><div class="metric-top">Autonomie en eau ${UI.icon('water')}</div><div class="kpi ${dW < 3 ? 'bad-t' : ''}">${fr(dW)} <small>jours</small></div><div class="small muted">${fr(st.w, 0)} L · ${n} personne(s)</div><div class="bar ${dW < 3 ? 'bad' : ''}"><i style="width:${Math.max(0, Math.min(100, dW / Math.max(1, +S.profile.days || 14) * 100))}%"></i></div></div>
       <div class="card metric"><div class="metric-top">Autonomie alimentaire ${UI.icon('food')}</div><div class="kpi ${dK < 3 ? 'bad-t' : ''}">${fr(dK)} <small>jours</small></div><div class="small muted">${fr(st.k, 0)} kcal en réserve</div><div class="bar ${dK < 3 ? 'bad' : ''}"><i style="width:${Math.max(0, Math.min(100, dK / Math.max(1, +S.profile.days || 14) * 100))}%"></i></div></div>

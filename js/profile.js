@@ -5,7 +5,7 @@
   function render(el, S) {
     const P = S.profile, H = P.health = P.health || {}, K = P.skills = P.skills || {}, hm = P.home || {};
     const envs = window.ENV_VARIANTS || [];
-    const chip = (axis, key) => envs.filter(e => e.axis === axis).map(e => `<button type="button" class="envchip ${(P[key] || []).includes(e.id) ? 'on' : ''}" data-penv="${key}|${e.id}">${h(e.short || e.name)}</button>`).join('');
+    const chip = (axis, key) => envs.filter(e => e.axis === axis).map(e => `<button type="button" class="envchip ${(P[key] || []).includes(e.id) ? 'on' : ''}" aria-pressed="${(P[key] || []).includes(e.id)}" data-penv="${key}|${e.id}">${h(e.short || e.name)}</button>`).join('');
     const nuc = window.Needs ? Needs.evaluate(S).nuc : null;
     const pro = window.Premium && Premium.isPremium(), lock = t => pro ? '' : Premium.lockNote(t), dis = pro ? '' : 'disabled';
     el.innerHTML = `
@@ -19,7 +19,7 @@
         <label>Animaux <input type="number" min="0" data-pp="pets" value="${P.pets || 0}"></label>
         <h3>Santé (cochez si au moins une personne est concernée)</h3>
         ${lock('Les besoins liés à la santé (traitements, appareil médical, lunettes, mobilité) sont calculés en Premium.')}
-        ${[['chronic', 'Traitement chronique'], ['device', 'Appareil médical électrique (oxygène, respirateur…)'], ['glasses', 'Lunettes / lentilles'], ['mobility', 'Mobilité réduite']].map(([k, t]) => `<label class="chk"><input type="checkbox" data-ph="${k}" ${H[k] ? 'checked' : ''} ${dis}> ${t}</label>`).join('')}
+        ${[['chronic', 'Traitement chronique'], ['device', 'Appareil médical électrique (oxygène, respirateur…)'], ['glasses', 'Lunettes / lentilles'], ['mobility', 'Mobilité réduite']].map(([k, t]) => `<label class="chk"><input type="checkbox" data-ph="${k}" ${H[k] ? 'checked' : ''} ${dis}> <span>${t}</span></label>`).join('')}
       </div>
       <div class="card"><h3>Domicile</h3>
         ${lock('Le logement (étage, chauffage, cuisson, puits, véhicule) affine votre état des lieux en Premium. La position du domicile reste gratuite.')}
@@ -29,7 +29,7 @@
         <label>Chauffage <select data-pp="heating">${[['electrique', 'Électrique'], ['pac', 'Pompe à chaleur'], ['gaz', 'Gaz'], ['fioul', 'Fioul'], ['bois', 'Bois / poêle'], ['collectif', 'Collectif']].map(([v, t]) => opt(v, P.heating || 'electrique', t)).join('')}</select></label>
         <label>Cuisson <select data-pp="cooking">${[['electrique', 'Électrique'], ['gaz', 'Gaz'], ['mixte', 'Mixte']].map(([v, t]) => opt(v, P.cooking || 'electrique', t)).join('')}</select></label>
         <label>Eau <select data-pp="water">${opt('reseau', P.water || 'reseau', 'Réseau public')}${opt('puits', P.water, 'Puits / forage (pompe)')}</select></label>
-        <label class="chk"><input type="checkbox" data-pp="vehicle" ${P.vehicle ? 'checked' : ''}> Véhicule disponible</label>
+        <label class="chk"><input type="checkbox" data-pp="vehicle" ${P.vehicle ? 'checked' : ''}> <span>Véhicule disponible</span></label>
         </fieldset>
         <h3>Position du domicile</h3>
         <div class="row"><label>Latitude <input id="pLat" type="number" step="any" value="${hm.lat ?? ''}" style="width:9em"></label><label>Longitude <input id="pLon" type="number" step="any" value="${hm.lon ?? ''}" style="width:9em"></label></div>
@@ -51,7 +51,7 @@
       </div>
       <div class="card"><h3>Compétences</h3>
         ${lock('Le suivi des compétences fait partie de Premium.')}
-        ${[['psc1', 'Premiers secours (PSC1 / Gestes qui sauvent / Stop the Bleed)'], ['carte', 'Lire une carte, utiliser une boussole'], ['eau', 'Rendre l\'eau potable'], ['feu', 'Faire du feu en sécurité'], ['radio', 'Radio (PMR446, radioamateur)'], ['meca', 'Réparations de base (électricité, plomberie, mécanique)']].map(([k, t]) => `<label class="chk"><input type="checkbox" data-pk="${k}" ${K[k] ? 'checked' : ''} ${dis}> ${t}</label>`).join('')}
+        ${[['psc1', 'Premiers secours (PSC1 / Gestes qui sauvent / Stop the Bleed)'], ['carte', 'Lire une carte, utiliser une boussole'], ['eau', 'Rendre l\'eau potable'], ['feu', 'Faire du feu en sécurité'], ['radio', 'Radio (PMR446, radioamateur)'], ['meca', 'Réparations de base (électricité, plomberie, mécanique)']].map(([k, t]) => `<label class="chk"><input type="checkbox" data-pk="${k}" ${K[k] ? 'checked' : ''} ${dis}> <span>${t}</span></label>`).join('')}
         <p class="small muted">Les praticiens sont unanimes : les compétences passent avant le matériel.</p>
       </div>
     </div>`;

@@ -2,18 +2,61 @@
    bloqués dans certains contextes comme les Artifacts Claude). */
 (function () {
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  let dialogId = 0;
+  // Keep keyboard navigation inside a dialog, then return to the initiating control.
+  function dialogSession(wrap) {
+    const previous = document.activeElement;
+    const background = [...document.body.children].filter(el => el !== wrap && el.tagName !== 'SCRIPT' && !el.inert);
+    background.forEach(el => { el.inert = true; });
+    const trap = e => {
+      if (e.key !== 'Tab') return;
+      const controls = [...wrap.querySelectorAll('button, input, select, textarea, a[href], [tabindex]')]
+        .filter(el => !el.disabled && el.tabIndex >= 0 && el.getClientRects().length);
+      if (!controls.length) { e.preventDefault(); return; }
+      const first = controls[0], last = controls[controls.length - 1];
+      if (e.shiftKey && (document.activeElement === first || !wrap.contains(document.activeElement))) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && (document.activeElement === last || !wrap.contains(document.activeElement))) { e.preventDefault(); first.focus(); }
+    };
+    wrap.addEventListener('keydown', trap);
+    let closed = false;
+    return () => {
+      if (closed) return;
+      closed = true;
+      wrap.removeEventListener('keydown', trap);
+      wrap.remove();
+      background.forEach(el => { el.inert = false; });
+      if (previous && previous.isConnected && !previous.closest('[inert]')) previous.focus({ preventScroll: true });
+    };
+  }
   function open(html, onReady) {
     const wrap = document.createElement('div');
     wrap.className = 'modal-wrap';
     wrap.innerHTML = `<div class="modal" role="dialog" aria-modal="true">${html}</div>`;
     document.body.appendChild(wrap);
-    const close = () => wrap.remove();
+    const dialog = wrap.firstElementChild, heading = dialog.querySelector('h3, h2, p');
+    if (heading) { heading.id = 'uiDialogTitle' + (++dialogId); dialog.setAttribute('aria-labelledby', heading.id); }
+    const close = dialogSession(wrap);
+    // Escape belongs to this dialog; it must not also exit the map beneath it.
+    wrap.addEventListener('keydown', e => { if (e.key === 'Escape') e.stopPropagation(); });
     onReady(wrap, close);
     const first = wrap.querySelector('input, textarea, button.btn');
     if (first) first.focus();
     return wrap;
   }
   const UI = {
+    dialogSession,
+    preserveFocus(root, render) {
+      const active = document.activeElement;
+      const restore = root && active && root.contains(active);
+      const attributes = restore ? [...active.attributes].filter(a => a.name === 'id' || a.name === 'name' || a.name.startsWith('data-')) : [];
+      const start = restore ? active.selectionStart : null, end = restore ? active.selectionEnd : null;
+      render();
+      if (!restore || active.isConnected) return;
+      const next = attributes.length && [...root.querySelectorAll(active.tagName)].find(el => attributes.every(a => el.getAttribute(a.name) === a.value));
+      if (!next) { root.focus({ preventScroll: true }); return; }
+      next.focus({ preventScroll: true });
+      if (start != null && typeof next.setSelectionRange === 'function') next.setSelectionRange(start, end);
+    },
     icon(name, cls = '') {
       const paths = {
         compass: '<circle cx="12" cy="12" r="9"/><path d="m16 8-3 5-5 3 3-5Z"/>',
@@ -55,7 +98,7 @@
         <form>
           <h3>${esc(title)}</h3>
           ${fields.map((f, i) => `<label class="field" for="uiF${i}">${esc(f.label)}</label>
-            <input id="uiF${i}" name="${esc(f.name)}" type="${f.type || 'text'}" value="${esc(f.value || '')}" ${f.required ? 'required' : ''}>`).join('')}
+            <input id="uiF${i}" name="${esc(f.name)}" type="${f.type || 'text'}" value="${esc(f.value ?? '')}" ${f.required ? 'required' : ''}>`).join('')}
           <div class="row end"><button type="button" class="btn ghost" data-x>Annuler</button><button class="btn">${esc(okLabel)}</button></div>
         </form>`, (w, close) => {
         w.querySelector('[data-x]').onclick = () => { close(); resolve(null); };
@@ -87,14 +130,16 @@
     notice(msg) {
       return new Promise(resolve => open(`<p>${esc(msg)}</p><div class="row end"><button class="btn" data-ok>OK</button></div>`, (w, close) => {
         w.querySelector('[data-ok]').onclick = () => { close(); resolve(); };
+        w.addEventListener('keydown', e => { if (e.key === 'Escape') { close(); resolve(); } });
       }));
     },
     /* Affiche un contenu à copier quand le téléchargement direct est bloqué */
     showText(title, text) {
       open(`<h3>${esc(title)}</h3><p class="small muted">Si le téléchargement n'a pas démarré (certains contextes le bloquent), copiez le contenu ci-dessous dans un fichier.</p>
-        <textarea readonly id="uiText" style="min-height:220px">${esc(text)}</textarea>
+        <textarea readonly id="uiText" aria-label="${esc(title)}" style="min-height:220px">${esc(text)}</textarea>
         <div class="row end"><button class="btn ghost" data-copy>Copier</button><button class="btn" data-ok>Fermer</button></div>`, (w, close) => {
         w.querySelector('[data-ok]').onclick = close;
+        w.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
         w.querySelector('[data-copy]').onclick = e => {
           const ta = w.querySelector('textarea');
           const done = () => { e.target.textContent = 'Copié'; };
@@ -113,6 +158,7 @@
       if (!head) continue;
       const labels = []; for (const c of head.cells) for (let i = 0; i < (c.colSpan || 1); i++) labels.push(c.textContent.trim());
       head.classList.add('stack-head');
+      for (const c of head.cells) c.scope = 'col';
       for (const r of t.rows) {
         if (r === head) continue;
         if (r.cells.length === 1 && r.cells[0].colSpan > 1) { r.cells[0].classList.add('td-full'); continue; }

@@ -204,8 +204,8 @@
       <td><b>${h(nd.label)}</b> <span class="chip crit${nd.crit}">${CRIT[nd.crit]}</span><div class="small muted">${h(nd.why)} ${nd.src.map(s => `<a class="src" href="${h(s.u)}" target="_blank" rel="noopener">[${h(s.t)}]</a>`).join(' ')}</div>${buy(nd) ? `<div>${buy(nd)}</div>` : ''}</td>
       <td class="num">${nd.need == null ? '' : `${fr(nd.need, 0)} ${h(nd.unit)}`}</td>
       <td class="num">${nd.need == null
-        ? `<label class="small"><input type="checkbox" data-aud="${nd.id}" ${nd.have ? 'checked' : ''} ${nd.auto && !nd.manual ? 'data-auto="1"' : ''}> oui</label>`
-        : `<input type="number" min="0" step="any" value="${Math.round(nd.have * 10) / 10}" data-audq="${nd.id}" style="width:6em">`}
+        ? `<label class="small chk"><input type="checkbox" aria-label="Disponible : ${h(nd.label)}" data-aud="${nd.id}" ${nd.have ? 'checked' : ''} ${nd.auto && !nd.manual ? 'data-auto="1"' : ''}> <span>oui</span></label>`
+        : `<input type="number" min="0" step="any" aria-label="Quantité disponible : ${h(nd.label)} (${h(nd.unit)})" value="${Math.round(nd.have * 10) / 10}" data-audq="${nd.id}" style="width:6em">`}
         ${nd.auto && !nd.manual ? '<div class="small muted">calculé</div>' : nd.lines && !nd.manual ? '<div class="small muted">d\'après vos sacs/achats</div>' : nd.manual ? `<button class="link small" data-audreset="${nd.id}">auto</button>` : ''}</td>
       <td><button class="link small" data-audna="${nd.id}">${nd.na ? 'réactiver' : 'sans objet'}</button></td></tr>`;
     el.innerHTML = `
@@ -221,7 +221,7 @@
       ${R.nuc ? `<p class="small">☢ Site nucléaire le plus proche du domicile : <b>${h(R.nuc.p.name)}</b> à ${fr(R.nuc.d, 0)} km${R.nuc.d <= 20 ? ' — <b>dans le rayon PPI de 20 km</b>' : ''}.</p>` : ''}
     </div>
     ${missV.length ? `<div class="card alertcard"><h3>Manques vitaux à combler d'abord</h3><ul>${missV.map(x => `<li><b>${h(x.label)}</b>${x.need != null ? ` — ${fr(x.have, 0)} / ${fr(x.need, 0)} ${h(x.unit)}` : ''} ${buy(x)}</li>`).join('')}</ul></div>` : '<div class="card"><p>✅ Tous vos besoins vitaux sont couverts.</p></div>'}
-    ${!(window.Premium && Premium.isPremium()) ? '' : `<div class="card"><div class="row"><label><input type="checkbox" id="audGaps" ${onlyGaps ? 'checked' : ''}> Afficher seulement les manques</label>
+    ${!(window.Premium && Premium.isPremium()) ? '' : `<div class="card"><div class="row"><label class="chk"><input type="checkbox" id="audGaps" ${onlyGaps ? 'checked' : ''}> <span>Afficher seulement les manques</span></label>
       <button class="btn ghost" data-act="audcsv">Liste de courses des manques (CSV)</button></div></div>`}
     ${!(window.Premium && Premium.isPremium()) ? `<div class="card">${Premium.lockNote('Le détail des ' + R.list.length + ' besoins calculés pour vous (quantités, statut, justification, sources, liens d\'achat) et la liste de courses font partie de Premium.')}</div>` : FN.map(([id, ic, name]) => {
       const rows = R.list.filter(x => x.fn === id && (!onlyGaps || x.status === 'miss' || x.status === 'part'));
@@ -229,7 +229,7 @@
       const all = R.list.filter(x => x.fn === id && !x.na), ok = all.filter(x => x.status === 'ok').length;
       return `<div class="card"><h3>${ic} ${name} <span class="chip">${ok}/${all.length}</span></h3><div class="tablewrap"><table class="audit"><tr><th></th><th>Besoin</th><th class="num">Nécessaire</th><th class="num">J'ai</th><th></th></tr>${rows.map(row).join('')}</table></div></div>`;
     }).join('')}`;
-    const ag = el.querySelector('#audGaps'); if (ag) ag.onchange = e => { onlyGaps = e.target.checked; render(el, S); };
+    const ag = el.querySelector('#audGaps'); if (ag) ag.onchange = e => { onlyGaps = e.target.checked; UI.preserveFocus(el, () => render(el, S)); };
   }
   function gapsCsv(S) {
     const R = evaluate(S, ctxCache), G = window.GEAR_BY_ID || {};
