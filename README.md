@@ -39,7 +39,8 @@ Vous pouvez aussi ouvrir `index.html` directement. Pour un usage hors ligne comp
 
 ## Documentation
 - [`docs/NOTICE.md`](docs/NOTICE.md) : notice d'utilisation et informations importantes
-- [`docs/MATERIEL.md`](docs/MATERIEL.md) : liste du matériel, liens et récapitulatif budgétaire
+- [`docs/MATERIEL.md`](docs/MATERIEL.md) : matériel conseillé en 3 gammes de budget, liens Amazon.fr et récapitulatif budgétaire (généré par `node tools/build-materiel.mjs`)
+- [`docs/AMAZON.md`](docs/AMAZON.md) : liens Amazon, programme Partenaires et prix officiels (mise en service)
 - [`docs/TERRAIN.md`](docs/TERRAIN.md) : praticiens, forums, crises réelles, sujets techniques
 - [`docs/ENVIRONNEMENTS.md`](docs/ENVIRONNEMENTS.md) : variantes du sac (ville, campagne, montagne, forêt, littoral × chaud, froid, humide)
 - [`docs/APS.md`](docs/APS.md) : analyse de la chaîne *Apprendre Préparer (Sur)vivre*

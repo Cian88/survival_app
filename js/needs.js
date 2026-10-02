@@ -194,9 +194,11 @@
     const R = evaluate(S, ctxCache), G = window.GEAR_BY_ID || {};
     const st = stock(S), n = Math.max(1, (+S.profile.adults || 0) + (+S.profile.children || 0));
     const dW = st.w / (n * (+S.profile.waterL || 4)), dK = st.k / (n * (+S.profile.kcal || 2100));
-    const buy = nd => { const g = nd.gear && G[nd.gear]; return g ? `<a href="${h(g.url)}" target="_blank" rel="noopener" class="small">${h(g.model || g.name)} · ${g.price_eur ? eur(g.price_eur) : ''}</a>` : ''; };
+    const tier = S.profile.tier, offer = g => window.Shop && Shop.offer(g.id, tier);
+    const price = g => { const o = offer(g); return o && !o.none ? o.price : g.price_eur || 0; };
+    const buy = nd => { const g = nd.gear && G[nd.gear], o = g && offer(g); if (!g) return ''; if (!o) return `<span class="small">${h(g.model || g.name)}</span>`; if (o.none) return ''; return `<a href="${h(o.url)}" target="_blank" rel="noopener sponsored" class="small buy">${h(o.model)} · ≈ ${eur(o.price)}</a>`; };
     const missV = R.gaps.filter(x => x.crit === 1);
-    const cost = R.gaps.reduce((a, x) => { const g = x.gear && G[x.gear]; if (!g) return a; return a + (x.need == null ? (x.have ? 0 : 1) : Math.max(0, Math.ceil((x.need - x.have) / (x.per || 1)))) * (g.price_eur || 0); }, 0);
+    const cost = R.gaps.reduce((a, x) => { const g = x.gear && G[x.gear]; if (!g) return a; return a + (x.need == null ? (x.have ? 0 : 1) : Math.max(0, Math.ceil((x.need - x.have) / (x.per || 1)))) * price(g); }, 0);
     const row = nd => `<tr class="st-${nd.status}">
       <td><span class="stchip ${ST[nd.status][1]}" title="${nd.status}">${ST[nd.status][0]}</span></td>
       <td><b>${h(nd.label)}</b> <span class="chip crit${nd.crit}">${CRIT[nd.crit]}</span><div class="small muted">${h(nd.why)} ${nd.src.map(s => `<a class="src" href="${h(s.u)}" target="_blank" rel="noopener">[${h(s.t)}]</a>`).join(' ')}</div>${buy(nd) ? `<div>${buy(nd)}</div>` : ''}</td>
@@ -231,8 +233,11 @@
   }
   function gapsCsv(S) {
     const R = evaluate(S, ctxCache), G = window.GEAR_BY_ID || {};
-    const rows = [['Priorité', 'Fonction', 'Besoin', 'Nécessaire', 'J\'ai', 'Unité', 'Modèle de référence', 'Prix unitaire (€)', 'Lien']];
-    R.gaps.sort((a, b) => a.crit - b.crit).forEach(x => { const g = x.gear && G[x.gear]; rows.push([CRIT[x.crit], (FN.find(f => f[0] === x.fn) || [])[2], x.label, x.need == null ? 'oui' : x.need, x.need == null ? (x.have ? 'oui' : 'non') : x.have, x.unit, g ? g.model : '', g ? g.price_eur : '', g ? g.url : '']); });
+    const rows = [['Priorité', 'Fonction', 'Besoin', 'Nécessaire', 'J\'ai', 'Unité', 'Modèle conseillé', 'Prix indicatif (€)', 'Lien Amazon']];
+    R.gaps.sort((a, b) => a.crit - b.crit).forEach(x => {
+      const g = x.gear && G[x.gear], o = g && window.Shop && Shop.offer(g.id, S.profile.tier), ok = o && !o.none;
+      rows.push([CRIT[x.crit], (FN.find(f => f[0] === x.fn) || [])[2], x.label, x.need == null ? 'oui' : x.need, x.need == null ? (x.have ? 'oui' : 'non') : x.have, x.unit, ok ? o.model : g ? g.model : '', ok ? o.price : g ? g.price_eur : '', ok ? o.url : '']);
+    });
     return '﻿' + rows.map(r => r.map(v => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`).join(';')).join('\n');
   }
   window.Needs = { computeNeeds, evaluate, render, refreshCtx, gapsCsv, stock, ownedFromLines, FN };

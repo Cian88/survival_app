@@ -1,308 +1,292 @@
-# Liste du matériel, liens et récapitulatif budgétaire
+# Matériel conseillé : 3 gammes de budget, liens Amazon.fr
 
-_Prix relevés le **2026-09-30** : 83 références, 80 prix relevés sur la page liée, 3 estimations (Eau en bouteille (stock), Conserves (plats, légumineuses, poisson, légumes), GPS de randonnée). Prix TTC en euros. Aucun lien n'est affilié. Les prix et les stocks changent : vérifiez avant d'acheter. Les modèles cités sont des exemples de référence et ne sont pas imposés._
+_83 objets au catalogue, chacun en 3 gammes (petit budget, budget moyen, gros budget), plus 54 ajouts selon l'environnement. Prix **indicatifs du marché estimés le 02/10/2026** (TTC) : le prix réel s'affiche sur Amazon. Les liens sont des recherches Amazon.fr ciblées (marque + modèle), sans affiliation pour l'instant (voir [AMAZON.md](AMAZON.md)). Fichier généré par `node tools/build-materiel.mjs` : ne pas le modifier à la main._
 
-## Récapitulatif budgétaire (prix × quantité suggérée)
+## Récapitulatif budgétaire (prix indicatif × quantité suggérée)
 
-Les paliers sont **cumulatifs**. « Sac » = objets à usage sac ou mixte (un exemplaire). « Maison » = objets à usage maison ou mixte. « Maison seule » exclut les objets mixtes déjà comptés dans le sac.
+Paliers **cumulatifs**. « Sac » = objets à usage sac ou mixte (un exemplaire, 1 personne). « Maison » = objets à usage maison ou mixte.
 
-| Palier | Sac d'évacuation (1 personne) | Maison (avec objets mixtes) | Maison seule | Tout le catalogue |
-|---|---:|---:|---:|---:|
-| Essentiel | 926,62 € | 475,18 € | 193,36 € | 1 119,98 € |
-| + Recommandé | 1 641,80 € | 1 490,75 € | 807,52 € | 2 449,32 € |
-| + Optionnel (tout) | 2 163,61 € | 2 308,86 € | 1 515,68 € | 3 679,29 € |
+| Palier | Sac — petit budget | Sac — budget moyen | Sac — gros budget | Maison — petit budget | Maison — budget moyen | Maison — gros budget |
+|---|---:|---:|---:|---:|---:|---:|
+| Essentiel | 503,00 € | 933,50 € | 1 644,00 € | 323,50 € | 557,00 € | 880,50 € |
+| + Recommandé | 902,50 € | 1 703,00 € | 3 097,00 € | 936,50 € | 1 575,50 € | 2 495,00 € |
+| + Optionnel (tout) | 1 208,50 € | 2 157,00 € | 3 789,00 € | 1 423,50 € | 2 346,50 € | 4 585,00 € |
 
-**Lecture rapide pour un foyer de N personnes** : environ `N × sac` + `maison seule`. Certains objets du sac peuvent être mutualisés (réchaud, filtre, radio, station électrique), ce qui réduit le total.
-
-**Poids du sac** (essentiel + recommandé, poids connus seulement) : **≈ 12,1 kg**. C'est une borne basse, car 17 objets n'ont pas de poids publié. Aucune norme officielle ne fixe le poids d'un sac d'évacuation : chargez-le et testez-le sur une vraie marche.
-
-Dans l'application, l'onglet **Matériel & budget** refait ces calculs selon **vos** choix (plan d'achat, objets déjà possédés, budget cible) et permet d'exporter le plan en CSV.
-
-### Par catégorie (tout le catalogue)
-
-| Catégorie | Nb | Essentiel | Tout |
-|---|---:|---:|---:|
-| Sac | 3 | 234,85 € | 278,65 € |
-| Eau | 10 | 149,29 € | 266,64 € |
-| Nourriture | 5 | 109,03 € | 312,99 € |
-| Cuisson | 8 | 17,53 € | 164,75 € |
-| Abri/chaleur | 5 | 15,90 € | 205,88 € |
-| Vêtements | 7 | 117,76 € | 144,52 € |
-| Lumière | 5 | 34,40 € | 104,14 € |
-| Énergie | 4 | 80,66 € | 862,61 € |
-| Communication | 5 | 54,15 € | 196,68 € |
-| Navigation | 3 | 76,50 € | 225,50 € |
-| Outils | 8 | 37,80 € | 237,05 € |
-| Santé | 7 | 53,73 € | 144,60 € |
-| Hygiène | 6 | 20,73 € | 147,07 € |
-| Documents/argent | 2 | 21,95 € | 206,91 € |
-| Sécurité | 3 | 95,70 € | 95,70 € |
-| Stockage maison | 2 | 0,00 € | 85,60 € |
+Dans l'application, la gamme se choisit à la création de chaque sac (et pour la maison dans Mon profil ou Matériel & budget) ; elle reste modifiable. Le petit budget couvre les mêmes besoins, avec du matériel en général plus lourd ou moins durable.
 
 ## Liste détaillée
 
 ### Sac
 
-| Objet | Modèle de référence | Qté | Poids | Prix unitaire | Priorité | Usage | Lien |
-|---|---|---:|---:|---:|---|---|---|
-| Sac à dos 45-55 L | Osprey Exos 48 Homme | 1 | 1255 g | 219,95 € | essentiel | sac | [lyophilise.fr](https://www.lyophilise.fr/14738-2885-sac-a-dos-de-randonnee-osprey-exos-48-homme-gris.html) |
-| Housse de pluie sac à dos | Highlander Large Waterproof Rucksack Cover | 1 | 110 g | 14,90 € | essentiel | sac | [rayonrando.com](https://www.rayonrando.com/fr/protections-sacs-a-dos/3316-housse-de-pluie-large-waterproof-rucksack-cover-camouflage.html) |
-| Sac étanche intérieur (sac de compression/rangement) | Osprey UL Dry Sack 12 | 2 | — | 21,90 € | recommandé | sac | [rayonrando.com](https://www.rayonrando.com/fr/sacs-de-rangement-etanches/4906-sac-de-rangement-etanche-ul-dry-sack-12.html) |
-
-- **Sac à dos 45-55 L** : Poids 1255-1294 g selon taille. Entrée de gamme : Wilsa Trekker 55, 94,95 €, 2140 g (relevé) https://www.rayonrando.com/fr/sacs-a-dos-de-randonnee-50-55-l/2775-sac-a-dos-trekker-55.html . Alternative Decathlon Forclaz MT500 Air 50+10 L ≈114,99 € (estimation : extrait moteur de recherche, page decathlon.fr bloquée 403) https://www.decathlon.fr/search?Ntt=sac+trekking+50+L
-- **Housse de pluie sac à dos** : Recommandé : Osprey Ultralight Raincover à partir de 42,95 € (112-125 g) https://www.lyophilise.fr/11289-200-housse-de-pluie-osprey-ultralight.html
-- **Sac étanche intérieur (sac de compression/rangement)** : Protège couchage et vêtements de rechange. Poids non indiqué sur la liste.
+| Objet | Qté | Priorité | Usage | € Petit budget | €€ Budget moyen | €€€ Gros budget |
+|---|---:|---|---|---|---|---|
+| Sac à dos 45-55 L<br>*Essayez-le chargé : réglez le dos à votre taille.* | 1 | essentiel | sac | [Mardingtop sac à dos randonnée 50 L](https://www.amazon.fr/s?k=mardingtop%20sac%20%C3%A0%20dos%20randonn%C3%A9e%2050l) · ≈ 42,00 € · 1500 g | [Osprey Rook 50 homme](https://www.amazon.fr/s?k=osprey%20rook%2050%20sac%20%C3%A0%20dos%20homme) · ≈ 160,00 € | [Osprey Exos 48 Homme](https://www.amazon.fr/s?k=osprey%20exos%2048%20homme%20sac%20%C3%A0%20dos) · ≈ 215,00 € · 1255 g |
+| Housse de pluie sac à dos | 1 | essentiel | sac | [Mardingtop housse de pluie 40-60 L](https://www.amazon.fr/s?k=mardingtop%20housse%20de%20pluie%20sac%20%C3%A0%20dos%2040-60l) · ≈ 9,00 € | [Highlander Large Waterproof Rucksack Cover](https://www.amazon.fr/s?k=highlander%20large%20rucksack%20cover%20housse%20pluie) · ≈ 15,00 € · 110 g | [Osprey Ultralight Raincover L](https://www.amazon.fr/s?k=osprey%20ultralight%20raincover%20housse%20pluie%20l) · ≈ 38,00 € · 120 g |
+| Sac étanche intérieur (sac de compression/rangement)<br>*Protège couchage et vêtements de rechange.* | 2 | recommandé | sac | [Lixada sac étanche 10 L](https://www.amazon.fr/s?k=lixada%20sac%20%C3%A9tanche%2010l%20dry%20bag) · ≈ 10,00 € | [Sea to Summit Lightweight Dry Sack 13 L](https://www.amazon.fr/s?k=sea%20to%20summit%20lightweight%20dry%20sack%2013l) · ≈ 18,00 € | [Osprey UL Dry Sack 12 L](https://www.amazon.fr/s?k=osprey%20ultralight%20dry%20sack%2012l) · ≈ 22,00 € |
 
 ### Eau
 
-| Objet | Modèle de référence | Qté | Poids | Prix unitaire | Priorité | Usage | Lien |
-|---|---|---:|---:|---:|---|---|---|
-| Gourde rigide 1 L | Nalgene Ultralite HDPE 1 L (grande ouverture) | 2 | 108 g | 12,95 € | essentiel | sac | [lyophilise.fr](https://www.lyophilise.fr/11598-bouteille-grande-ouverture-nalgene-ul-hdpe-1-l.html) |
-| Filtre à eau | Sawyer Squeeze SP129 (0,1 µm) | 1 | — | 64,99 € | essentiel | les deux | [knivesandtools.fr](https://www.knivesandtools.fr/fr/pt/-sawyer-squeeze-sp129-filtre-a-eau.htm) |
-| Gourde filtrante (alternative au Sawyer) | Katadyn BeFree AC 0,7 L | 1 | 95 g | 49,95 € | optionnel | sac | [lyophilise.fr](https://www.lyophilise.fr/16008-27813-bouteille-filtrante-katadyn-befree-ac-07-l.html) |
-| Pastilles de désinfection | Aquatabs (NaDCC) – boîte de 50 comprimés (1 cp/L) | 1 | — | 5,90 € | essentiel | les deux | [materiel-aventure.fr](https://www.materiel-aventure.fr/traitement-eau/5120-tablettes-de-purification-de-l-eau-aquatabs-en-boite-de-50-comprimes-5099668005019.html) |
-| Poche à eau souple (réserve pliable / eau sale pour filtre) | Sawyer poches souples 2 L x 2 | 1 | 56 g | 14,95 € | recommandé | sac | [lyophilise.fr](https://www.lyophilise.fr/8731-poches-a-eau-souple-sawyer-2-l-x-2.html) |
-| Eau potable longue conservation (sachet) | Eau potable en sachet 5 ans – 500 ml | 4 | 500 g | 2,90 € | recommandé | sac | [lyophilise.fr](https://www.lyophilise.fr/4800-eau-potable-en-sachet-5-ans-500-ml.html) |
-| Jerrican alimentaire 20 L | Diall 20 L blanc (alimentaire) | 3 | — | 16,50 € | essentiel | maison | [castorama.fr](https://www.castorama.fr/jerrican-alimentaire-diall-20-l-blanc/3454975928390_CAFR.prd) |
-| Bidon de stockage avec robinet | Diall jerrican alimentaire 35 L avec robinet | 1 | — | 21,90 € | recommandé | maison | [castorama.fr](https://www.castorama.fr/jerrican-alimentaire-35-l-diall-avec-robinet/3454975928451_CAFR.prd) |
-| Eau en bouteille (stock) | 6 L par personne pour 72 h (SGDSN) — ex. pack 6 × 1 L | 1 | — | 3,00 € *(estim.)* | essentiel | maison | [auchan.fr](https://www.auchan.fr/cristaline-eau-de-source-plate-bouteilles/pr-C1206322) |
-| Conservateur pour eau stockée | Micropur Classic MC 1000F – 100 ml pour 1000 L | 1 | 147 g | 18,95 € | optionnel | maison | [lyophilise.fr](https://www.lyophilise.fr/7359-micropur-classic-mc-1000f-100-ml-pour-1000-l.html) |
-
-- **Gourde rigide 1 L** : Grande ouverture compatible filtres/pastilles.
-- **Filtre à eau** : Aussi 64,95 € chez allspares.fr https://www.allspares.fr/filtre-a-eau-sawyer-squeeze-sp129-sp129 . Entrée de gamme : Sawyer Mini à partir de 37,90 € (85 g) https://www.lyophilise.fr/9363-29287-filtre-a-eau-sawyer-mini.html . Ne filtre pas les virus ni les produits chimiques : combiner avec pastilles si doute.
-- **Gourde filtrante (alternative au Sawyer)** : Alternative : LifeStraw Peak Collapsible Squeeze 1 L, 48,95 € (110 g) https://www.lyophilise.fr/8137-97-filtre-a-eau-lifestraw-peak-series-collapsible-squeeze.html
-- **Pastilles de désinfection** : Aussi 6,00 € chez dan-military.fr. Alternative : Micropur Forte MF 1T 100 cp, 22,95 € (en rupture le 30/09) https://www.lyophilise.fr/4010-micropur-forte-mf-1t-100-comprimes-1-comp-1-l.html . Attention : Micropur CLASSIC (argent) = conservation, pas désinfection virale.
-- **Poche à eau souple (réserve pliable / eau sale pour filtre)** : Filetage compatible Sawyer Squeeze/Mini.
-- **Eau potable longue conservation (sachet)** : Poids = 500 g par sachet. Délai annoncé 1 à 3 semaines. Pack 24 x 125 ml (3 L) : 19,90 € https://www.lyophilise.fr/4287-eau-potable-en-sachet-5-ans-24-x-125-ml-3-l.html
-- **Jerrican alimentaire 20 L** : Vendu par Castorama. Version 15 L avec robinet : 12,50 €.
-- **Bidon de stockage avec robinet** : Note clients moyenne 3,08/5 (23 avis) sur la page : vérifier l'étanchéité du robinet.
-- **Eau en bouteille (stock)** : Prix estimé pour 6 L (≈ 0,25-0,50 €/L en grande surface, non relevé). Multiplier par le nombre de personnes et par la durée visée (voir le calculateur de l'onglet Écosystème).
-- **Conservateur pour eau stockée** : Ions d'argent : empêche la recontamination de l'eau déjà potable stockée ; ne désinfecte pas une eau douteuse.
+| Objet | Qté | Priorité | Usage | € Petit budget | €€ Budget moyen | €€€ Gros budget |
+|---|---:|---|---|---|---|---|
+| Gourde rigide 1 L<br>*Grande ouverture compatible filtres/pastilles.* | 2 | essentiel | sac | [Nalgene Everyday 1 L Tritan (grande ouverture)](https://www.amazon.fr/s?k=nalgene%20everyday%20gourde%201l%20grande%20ouverture) · ≈ 11,00 € · 177 g | [Nalgene Ultralite HDPE 1 L (grande ouverture)](https://www.amazon.fr/s?k=nalgene%20ultralite%20hdpe%20gourde%201l%20grande%20ouverture) · ≈ 13,00 € · 108 g | [Klean Kanteen Classic inox 1 L (grande ouverture)](https://www.amazon.fr/s?k=klean%20kanteen%20classic%20inox%201l%20grande%20ouverture) · ≈ 32,00 € |
+| Filtre à eau<br>*Ne filtre pas les virus ni les produits chimiques : combiner avec pastilles si doute.* | 1 | essentiel | les deux | [Sawyer Mini (0,1 µm)](https://www.amazon.fr/s?k=sawyer%20mini%20filtre%20eau%200%2C1%20micron) · ≈ 27,00 € · 85 g | [Sawyer Squeeze SP129 (0,1 µm)](https://www.amazon.fr/s?k=sawyer%20squeeze%20sp129%20filtre%20eau) · ≈ 60,50 € | [Katadyn Hiker Pro (pompe 0,2 µm)](https://www.amazon.fr/s?k=katadyn%20hiker%20pro%20filtre%20eau%20pompe) · ≈ 90,00 € · 310 g |
+| Gourde filtrante (alternative au Sawyer) | 1 | optionnel | sac | [LifeStraw Go 650 ml (0,2 µm)](https://www.amazon.fr/s?k=lifestraw%20go%20gourde%20filtrante%20650%20ml) · ≈ 35,00 € | [Katadyn BeFree AC 1 L (0,1 µm)](https://www.amazon.fr/s?k=katadyn%20befree%20ac%201l%20gourde%20filtrante) · ≈ 50,00 € | [Grayl UltraPress 710 ml purificateur](https://www.amazon.fr/s?k=grayl%20ultrapress%20purificateur%20eau%20710%20ml) · ≈ 110,00 € |
+| Pastilles de désinfection<br>*Attention : Micropur CLASSIC (argent) = conservation, pas désinfection virale.* | 1 | essentiel | les deux | [Aquatabs NaDCC 50 comprimés (1 cp/L)](https://www.amazon.fr/s?k=aquatabs%2050%20comprim%C3%A9s%20d%C3%A9sinfection%20eau) · ≈ 6,00 € | [Katadyn Micropur Forte MF 1T 30 comprimés](https://www.amazon.fr/s?k=katadyn%20micropur%20forte%20mf%201t%2030%20comprim%C3%A9s) · ≈ 11,00 € | [Katadyn Micropur Forte MF 1T 100 comprimés](https://www.amazon.fr/s?k=katadyn%20micropur%20forte%20mf%201t%20100%20comprim%C3%A9s) · ≈ 23,00 € |
+| Poche à eau souple (réserve pliable / eau sale pour filtre)<br>*Choisir un filetage compatible avec son filtre (28 mm pour Sawyer).* | 1 | recommandé | sac | [Sawyer poches souples 1 L x 2](https://www.amazon.fr/s?k=sawyer%20poche%20souple%201%20litre%20squeeze%20lot%202) · ≈ 10,00 € | [Sawyer poches souples 2 L x 2](https://www.amazon.fr/s?k=sawyer%20poches%20souples%202%20l%20lot%20de%202) · ≈ 15,00 € · 56 g | [Cnoc Vecto 2 L (filetage 28 mm)](https://www.amazon.fr/s?k=cnoc%20vecto%202l%20poche%20eau%2028mm) · ≈ 32,00 € |
+| Eau potable longue conservation (sachet)<br>*Environ 500 g par sachet.* | 4 | recommandé | sac | [Sachet d'eau potable 500 ml (conservation 5 ans)](https://www.amazon.fr/s?k=sachet%20eau%20potable%20500%20ml%205%20ans) · ≈ 2,50 € | [Canette d'eau potable 500 ml longue conservation](https://www.amazon.fr/s?k=eau%20potable%20canette%20longue%20conservation) · ≈ 3,50 € | [Blue Can eau d'urgence 330 ml (conservation 50 ans)](https://www.amazon.fr/s?k=blue%20can%20eau%20urgence) · ≈ 4,50 € |
+| Jerrican alimentaire 20 L | 3 | essentiel | maison | [Jerrican alimentaire 20 L plastique](https://www.amazon.fr/s?k=jerrican%20alimentaire%2020%20l%20plastique%20eau) · ≈ 14,00 € | [Hünersdorff jerrican eau 20 L](https://www.amazon.fr/s?k=h%C3%BCnersdorff%20jerrican%20eau%2020%20l%20alimentaire) · ≈ 26,00 € | [Hünersdorff Profi jerrican 20 L bouchon DIN 61](https://www.amazon.fr/s?k=h%C3%BCnersdorff%20profi%20kanister%2020%20l%20eau) · ≈ 36,00 € |
+| Bidon de stockage avec robinet | 1 | recommandé | maison | [Bidon eau 20 L avec robinet](https://www.amazon.fr/s?k=bidon%20eau%2020%20l%20robinet%20alimentaire) · ≈ 15,00 € | [Reliance Aqua-Tainer 28 L avec robinet](https://www.amazon.fr/s?k=reliance%20aqua-tainer%2028%20l%20bidon%20robinet) · ≈ 35,00 € | [Hünersdorff bidon 20 L avec robinet](https://www.amazon.fr/s?k=h%C3%BCnersdorff%20kanister%2020%20l%20mit%20hahn) · ≈ 45,00 € |
+| Eau en bouteille (stock)<br>*Multiplier par le nombre de personnes et par la durée visée (voir le calculateur de l'onglet Écosystème).* | 1 | essentiel | maison | [Cristaline eau de source 6 x 1,5 L](https://www.amazon.fr/s?k=cristaline%20eau%20source%20pack%206%20x%201%2C5%20l) · ≈ 3,50 € | [Volvic eau minérale 6 x 1,5 L](https://www.amazon.fr/s?k=volvic%20eau%20min%C3%A9rale%20pack%206%20x%201%2C5%20l) · ≈ 6,00 € | [Evian eau minérale 6 x 1,5 L](https://www.amazon.fr/s?k=evian%20eau%20min%C3%A9rale%20pack%206%20x%201%2C5%20l) · ≈ 7,50 € |
+| Conservateur pour eau stockée<br>*Ions d'argent : empêche la recontamination de l'eau déjà potable stockée ; ne désinfecte pas une eau douteuse.* | 1 | optionnel | maison | [Katadyn Micropur Classic MC 1T 20 comprimés](https://www.amazon.fr/s?k=katadyn%20micropur%20classic%20mc%201t%2020%20comprim%C3%A9s) · ≈ 8,00 € | [Katadyn Micropur Classic MC 1000F 100 ml](https://www.amazon.fr/s?k=katadyn%20micropur%20classic%20mc%201000f%20100%20ml) · ≈ 19,00 € · 147 g | [Katadyn Micropur Classic MC 10000F](https://www.amazon.fr/s?k=katadyn%20micropur%20classic%20mc%2010000f) · ≈ 60,00 € |
 
 ### Nourriture
 
-| Objet | Modèle de référence | Qté | Poids | Prix unitaire | Priorité | Usage | Lien |
-|---|---|---:|---:|---:|---|---|---|
-| Repas lyophilisés | Sélection 10 repas lyophilisés – Lyophilise & Co | 1 | 960 g | 59,08 € | essentiel | sac | [lyophilise.fr](https://www.lyophilise.fr/16293-selection-10-repas-lyophilises-lyophilise-co.html) |
-| Ration de survie compacte | NRG-5 ration de secours 500 g (20 ans) | 1 | 500 g | 9,95 € | essentiel | les deux | [lyophilise.fr](https://www.lyophilise.fr/4235-ration-de-secours-nrg-5-20-ans.html) |
-| Barres énergétiques / barre-repas | Barre-repas O.K.R Pomme-cranberries 100 g | 3 | 100 g | 4,67 € | recommandé | sac | [lyophilise.fr](https://www.lyophilise.fr/8438-barre-repas-okr-pomme-cranberries.html) |
-| Stock lyophilisé 7 jours (seau) | Pack 7 jours en seau Tango (8 ans) | 1 | 2445 g | 189,95 € | recommandé | maison | [lyophilise.fr](https://www.lyophilise.fr/14885-pack-7-jours-en-seau-tango-repas-lyophilises-8-ans.html) |
-| Conserves (plats, légumineuses, poisson, légumes) | Conserves du commerce 400 g | 20 | — | 2,00 € *(estim.)* | essentiel | maison | [auchan.fr](https://www.auchan.fr/recherche?text=conserve) |
-
-- **Repas lyophilisés** : 960 g net, ~4790 kcal au total. Pour 72 h compter 6 repas + petits-déj./encas. Variante 'Petit prix' 10 repas : 65,66 €.
-- **Ration de survie compacte** : Prix barré 11,05 €, remise -10 % affichée le 30/09. Entrée de gamme : Ration de survie 5 ans 500 g, 6,95 € https://www.lyophilise.fr/4799-ration-de-survie-5-ans.html
-- **Barres énergétiques / barre-repas** : 387 kcal par barre.
-- **Stock lyophilisé 7 jours (seau)** : Poids net 2445 g. Pour 1 mois : Pack Survie 1 mois 489,95 € https://www.lyophilise.fr/7511-pack-survie-1-mois-repas-rations-compactes-filtre-a-eau-stockage-15-ans.html
-- **Conserves (plats, légumineuses, poisson, légumes)** : Prix unitaire estimé ≈ 1-3 €/boîte (non relevé : sites de grande distribution inaccessibles ou prix liés au magasin) ; 20 boîtes ≈ 40 €. Rotation FIFO, prévoir un ouvre-boîte manuel. Reportez les kcal de l'étiquette dans l'inventaire.
+| Objet | Qté | Priorité | Usage | € Petit budget | €€ Budget moyen | €€€ Gros budget |
+|---|---:|---|---|---|---|---|
+| Repas lyophilisés<br>*Pour 72 h, comptez 6 repas plus petits-déjeuners et en-cas.* | 1 | essentiel | sac | [Trek'n Eat repas lyophilisés (lot de 10)](https://www.amazon.fr/s?k=trek%20n%20eat%20repas%20lyophilis%C3%A9) · ≈ 55,00 € | [Mountain House repas lyophilisés (lot de 10)](https://www.amazon.fr/s?k=mountain%20house%20repas%20lyophilis%C3%A9) · ≈ 80,00 € | [Real Turmat repas lyophilisés (lot de 10)](https://www.amazon.fr/s?k=real%20turmat%20repas%20lyophilis%C3%A9) · ≈ 100,00 € |
+| Ration de survie compacte | 1 | essentiel | les deux | [Seven Oceans ration de survie 500 g](https://www.amazon.fr/s?k=seven%20oceans%20ration%20de%20survie%20500%20g) · ≈ 7,00 € · 500 g | [NRG-5 ration de secours 500 g 20 ans](https://www.amazon.fr/s?k=nrg-5%20ration%20de%20secours%20500%20g) · ≈ 10,00 € · 500 g | [Datrex ration d'urgence 2400 kcal](https://www.amazon.fr/s?k=datrex%20ration%20urgence%202400%20kcal) · ≈ 13,00 € · 500 g |
+| Barres énergétiques / barre-repas | 3 | recommandé | sac | [Barres énergétiques Clif Bar assortiment](https://www.amazon.fr/s?k=clif%20bar%20barre%20%C3%A9nerg%C3%A9tique) · ≈ 2,00 € · 68 g | [Barre-repas O.K.R pomme cranberries 100 g](https://www.amazon.fr/s?k=okr%20barre%20repas%20pomme%20cranberries%20100g) · ≈ 4,50 € · 100 g | [Baouw barre-repas 100 g](https://www.amazon.fr/s?k=baouw%20barre%20repas%20100%20g) · ≈ 5,50 € · 100 g |
+| Stock lyophilisé 7 jours (seau) | 1 | recommandé | maison | [Rations de survie compactes pour 7 jours (7 × NRG-5 500 g)](https://www.amazon.fr/s?k=nrg%205%20ration%20de%20survie) · ≈ 70,00 € | [Seau de repas lyophilisés 7 jours (longue conservation)](https://www.amazon.fr/s?k=seau%20repas%20lyophilis%C3%A9s%207%20jours) · ≈ 150,00 € | [Mountain House seau 7 jours](https://www.amazon.fr/s?k=mountain%20house%20seau%20lyophilis%C3%A9%20jours) · ≈ 260,00 € |
+| Conserves (plats, légumineuses, poisson, légumes)<br>*Rotation FIFO, prévoir un ouvre-boîte manuel. Reportez les kcal de l'étiquette dans l'inventaire.* | 20 | essentiel | maison | [Conserves marque distributeur 400 g plats cuisinés](https://www.amazon.fr/s?k=conserve%20plat%20cuisin%C3%A9%20400%20g) · ≈ 1,50 € | [Conserves Bonduelle Cassegrain 400 g légumineuses](https://www.amazon.fr/s?k=cassoulet%20haricots%20conserve%20400%20g) · ≈ 2,00 € | [William Saurin plat cuisiné 400 g](https://www.amazon.fr/s?k=william%20saurin%20plat%20cuisin%C3%A9%20400%20g) · ≈ 3,00 € |
 
 ### Cuisson
 
-| Objet | Modèle de référence | Qté | Poids | Prix unitaire | Priorité | Usage | Lien |
-|---|---|---:|---:|---:|---|---|---|
-| Réchaud à gaz ultraléger | MSR PocketRocket 2 | 1 | 73 g | 42,50 € | recommandé | sac | [lyophilise.fr](https://www.lyophilise.fr/6606-rechaud-a-gaz-msr-pocketrocket-2.html) |
-| Réchaud à combustible solide (secours, stockage long) | Esbit réchaud de poche + 12 x 14 g | 1 | 360 g | 20,95 € | optionnel | les deux | [lyophilise.fr](https://www.lyophilise.fr/6833-rechaud-de-poche-esbit-et-12-x-14-g-combustibles-solides.html) |
-| Cartouche de gaz (vissable EN417) | Optimus Energy 230 g | 2 | 380 g | 6,75 € | recommandé | les deux | [lyophilise.fr](https://www.lyophilise.fr/4400-cartouche-de-gaz-optimus-energy-230-g.html) |
-| Popote | Toaks titane 0,75 L | 1 | 103 g | 27,86 € | recommandé | sac | [lyophilise.fr](https://www.lyophilise.fr/9003-popote-en-titane-toaks-075-l.html) |
-| Réchaud maison (coupure de gaz/électricité) | Réchaud portable 1300 W + 4 cartouches (vendeur marketplace Castorama) | 1 | — | 37,91 € | recommandé | maison | [castorama.fr](https://www.castorama.fr/mkp/r-chaud-gaz-portable-1300w-4-cartouches-190gr-allumage-auto-s-curis-r-chaud-camping-vanlife-flamme-r-glable-black-cook/3701599337450_CAFR.prd) |
-| Briquets | BIC (lot de 2) | 2 | — | 1,79 € | essentiel | les deux | [action.com](https://www.action.com/fr-fr/search/?q=briquet) |
-| Pierre à feu (ferro) | Light My Fire Firesteel Scout bio (avec sifflet) | 1 | 25 g | 13,95 € | essentiel | sac | [lyophilise.fr](https://www.lyophilise.fr/4788-114-firesteel-scout-bio-light-my-fire-pierre-a-feu-grattoir-avec-sifflet.html) |
-| Allume-feu | Light My Fire TinderSticks | 1 | 200 g | 4,50 € | recommandé | les deux | [lyophilise.fr](https://www.lyophilise.fr/4789-allume-feu-light-my-fire-tinderssticks.html) |
-
-- **Réchaud à gaz ultraléger** : Prix barré 50,00 € (-15 % affiché). Entrée de gamme : réchaud de poche Esbit + 20 x 4 g, 14,95 € (170 g) https://www.lyophilise.fr/8039-rechaud-de-poche-esbit-et-20-x-4-g-combustibles-solides.html
-- **Réchaud à combustible solide (secours, stockage long)** : Recharge 12 x 14 g : 9,95 €.
-- **Cartouche de gaz (vissable EN417)** : Prix barré 7,50 €. Poids plein 380 g.
-- **Popote** : Prix barré 30,95 €. Délai 1-3 semaines annoncé.
-- **Réchaud maison (coupure de gaz/électricité)** : Vendu par un tiers. Alternative vendue par Castorama : Campingaz Super Carena R 3000 W, 42,90 € (nécessite une bouteille Campingaz) https://www.castorama.fr/rechaud-super-carena-r-campingaz-3000w/3138520314837_CAFR.prd . Toujours utiliser en local ventilé.
-- **Briquets** : Prix lu sur la page de résultats Action (fiche produit 403). Fiche : https://www.action.com/fr-fr/p/3014797/briquets-bic/
-- **Pierre à feu (ferro)** : Version Army : 19,95 €.
+| Objet | Qté | Priorité | Usage | € Petit budget | €€ Budget moyen | €€€ Gros budget |
+|---|---:|---|---|---|---|---|
+| Réchaud à gaz ultraléger | 1 | recommandé | sac | [BRS-3000T réchaud ultraléger titane](https://www.amazon.fr/s?k=brs%203000t%20r%C3%A9chaud%20gaz%20titane%20ultral%C3%A9ger) · ≈ 15,00 € · 25 g | [MSR PocketRocket 2](https://www.amazon.fr/s?k=msr%20pocketrocket%202%20r%C3%A9chaud%20gaz) · ≈ 42,50 € · 73 g | [MSR PocketRocket Deluxe](https://www.amazon.fr/s?k=msr%20pocketrocket%20deluxe%20r%C3%A9chaud%20r%C3%A9gul%C3%A9) · ≈ 80,00 € · 83 g |
+| Réchaud à combustible solide (secours, stockage long) | 1 | optionnel | les deux | [Esbit réchaud de poche + 6 x 14 g](https://www.amazon.fr/s?k=esbit%20r%C3%A9chaud%20de%20poche%20combustible%20solide%2014%20g) · ≈ 12,00 € · 250 g | [Esbit réchaud de poche + 12 x 14 g](https://www.amazon.fr/s?k=esbit%20r%C3%A9chaud%20poche%2012%20tablettes%2014%20g) · ≈ 21,00 € · 360 g | [Esbit réchaud titane pliant + tablettes](https://www.amazon.fr/s?k=esbit%20r%C3%A9chaud%20titane%20pliant%20tablettes%2014%20g) · ≈ 40,00 € |
+| Cartouche de gaz (vissable EN417) | 2 | recommandé | les deux | [Kemper cartouche gaz vissable 230 g](https://www.amazon.fr/s?k=kemper%20cartouche%20gaz%20230%20g%20vissable) · ≈ 5,00 € · 380 g | [Optimus Energy 230 g](https://www.amazon.fr/s?k=optimus%20energy%20cartouche%20gaz%20230%20g) · ≈ 7,00 € · 380 g | [Primus Power Gas 230 g](https://www.amazon.fr/s?k=primus%20power%20gas%20cartouche%20230%20g) · ≈ 9,00 € · 380 g |
+| Popote | 1 | recommandé | sac | [Boundless Voyage popote titane 750 ml](https://www.amazon.fr/s?k=boundless%20voyage%20popote%20titane%20750%20ml) · ≈ 20,00 € · 100 g | [Toaks titane 0,75 L](https://www.amazon.fr/s?k=toaks%20titanium%20750%20ml%20pot%20poign%C3%A9e) · ≈ 37,50 € · 103 g | [Snow Peak Trek 900 titane](https://www.amazon.fr/s?k=snow%20peak%20trek%20900%20titane%20popote) · ≈ 50,00 € · 130 g |
+| Réchaud maison (coupure de gaz/électricité)<br>*Toujours utiliser en local ventilé.* | 1 | recommandé | maison | [Réchaud gaz butane portable valise](https://www.amazon.fr/s?k=r%C3%A9chaud%20gaz%20portable%20valise%20butane%202000w) · ≈ 22,00 € | [Campingaz Super Carena R 3000 W](https://www.amazon.fr/s?k=campingaz%20super%20carena%20r%20r%C3%A9chaud) · ≈ 43,00 € | [Campingaz Camping Kitchen 2 feux](https://www.amazon.fr/s?k=campingaz%20camping%20kitchen%20r%C3%A9chaud%202%20feux) · ≈ 80,00 € |
+| Briquets | 2 | essentiel | les deux | [BIC Mini J25 briquet](https://www.amazon.fr/s?k=bic%20mini%20j25%20briquet) · ≈ 2,00 € | [BIC Maxi J26 briquet](https://www.amazon.fr/s?k=bic%20maxi%20j26%20briquet) · ≈ 2,50 € | [Zippo Classic chrome brossé](https://www.amazon.fr/s?k=zippo%20classic%20chrome%20bross%C3%A9%20briquet) · ≈ 25,00 € |
+| Pierre à feu (ferro) | 1 | essentiel | sac | [Pierre à feu ferro 5 mm avec grattoir](https://www.amazon.fr/s?k=bayite%20pierre%20%C3%A0%20feu%20ferro%20rod%20survie) · ≈ 8,00 € | [Light My Fire Firesteel Scout bio](https://www.amazon.fr/s?k=light%20my%20fire%20firesteel%20scout%20bio%20sifflet) · ≈ 14,00 € · 25 g | [Light My Fire Firesteel Army 2.0](https://www.amazon.fr/s?k=light%20my%20fire%20firesteel%20army%202.0) · ≈ 20,00 € |
+| Allume-feu | 1 | recommandé | les deux | [Allume-feu cubes cire naturelle](https://www.amazon.fr/s?k=allume-feu%20cubes%20cire%20naturelle%20barbecue) · ≈ 3,50 € | [Light My Fire TinderSticks](https://www.amazon.fr/s?k=light%20my%20fire%20tindersticks%20allume-feu) · ≈ 4,50 € · 200 g | [UCO Sweetfire allume-feu](https://www.amazon.fr/s?k=uco%20sweetfire%20allume-feu) · ≈ 9,00 € |
 
 ### Abri/chaleur
 
-| Objet | Modèle de référence | Qté | Poids | Prix unitaire | Priorité | Usage | Lien |
-|---|---|---:|---:|---:|---|---|---|
-| Couverture de survie | SOL Emergency Blanket | 2 | 82 g | 7,95 € | essentiel | les deux | [lyophilise.fr](https://www.lyophilise.fr/6388-couverture-de-survie-sol.html) |
-| Sac de bivouac d'urgence | SOL Emergency Bivvy | 1 | 115 g | 23,95 € | recommandé | sac | [lyophilise.fr](https://www.lyophilise.fr/6393-bivouac-durgence-sol.html) |
-| Tarp | DD Hammocks Tarp 3x3 m | 1 | 950 g | 41,18 € | recommandé | sac | [rayonrando.com](https://www.rayonrando.com/fr/tarps/3853-tarp-3x3-m.html) |
-| Sac de couchage | Millet Baikal 1100 Reg (plage 5 °C à 0 °C) | 1 | 1220 g | 114,90 € | recommandé | les deux | [rayonrando.com](https://www.rayonrando.com/fr/sacs-de-couchage-5c-a-0c/1056-sac-de-couchage-baikal-1100-reg.html) |
-| Poncho de pluie | Poncho de secours ARVA | 1 | 80 g | 9,95 € | recommandé | sac | [lyophilise.fr](https://www.lyophilise.fr/13959-poncho-de-secours-arva.html) |
-
-- **Couverture de survie** : Entrée de gamme : couverture BCB 2,50 € (50 g) https://www.lyophilise.fr/5421-couverture-de-survie-bcb.html
-- **Sac de bivouac d'urgence** : Recommandé (respirant, réutilisable) : SOL Escape Lite Bivvy 56,95 € (155 g) https://www.lyophilise.fr/8531-sac-de-bivouac-leger-escape-lite-bivvy-sol.html
-- **Tarp** : Prix de base 54,90 € (-25 % affiché). Poids vérifié 950 g, 3000 mm.
-- **Sac de couchage** : Prix de base 149,90 €. Vérifier températures confort/limite sur la fiche.
+| Objet | Qté | Priorité | Usage | € Petit budget | €€ Budget moyen | €€€ Gros budget |
+|---|---:|---|---|---|---|---|
+| Couverture de survie | 2 | essentiel | les deux | [Couverture de survie or/argent 160 x 210 cm](https://www.amazon.fr/s?k=couverture%20de%20survie%20160%20x%20210%20or%20argent) · ≈ 3,00 € · 60 g | [SOL Emergency Blanket](https://www.amazon.fr/s?k=sol%20emergency%20blanket%20couverture%20survie) · ≈ 8,00 € · 82 g | [SOL Heavy Duty Emergency Blanket](https://www.amazon.fr/s?k=sol%20heavy%20duty%20emergency%20blanket) · ≈ 13,00 € |
+| Sac de bivouac d'urgence | 1 | recommandé | sac | [Lifesystems Heatshield Bivi Bag](https://www.amazon.fr/s?k=lifesystems%20heatshield%20bivi%20bag) · ≈ 12,00 € | [SOL Emergency Bivvy](https://www.amazon.fr/s?k=sol%20emergency%20bivvy) · ≈ 24,00 € · 115 g | [SOL Escape Lite Bivvy](https://www.amazon.fr/s?k=sol%20escape%20lite%20bivvy) · ≈ 62,00 € · 155 g |
+| Tarp | 1 | recommandé | sac | [Tarp 3x3 m imperméable Terra Hiker](https://www.amazon.fr/s?k=terra%20hiker%20tarp%203x3%20imperm%C3%A9able) · ≈ 25,00 € · 800 g | [DD Hammocks Tarp 3x3 m](https://www.amazon.fr/s?k=dd%20hammocks%20tarp%203x3) · ≈ 55,00 € · 950 g | [DD Hammocks SuperLight Tarp 3x3 m](https://www.amazon.fr/s?k=dd%20hammocks%20superlight%20tarp%203x3) · ≈ 100,00 € |
+| Sac de couchage<br>*Vérifier températures confort/limite sur la fiche.* | 1 | recommandé | les deux | [Highlander Sleepline 300 sac de couchage](https://www.amazon.fr/s?k=highlander%20sleepline%20300%20sac%20de%20couchage) · ≈ 30,00 € | [Millet Baikal 1100 Reg (plage 5 °C à 0 °C)](https://www.amazon.fr/s?k=millet%20baikal%201100%20reg%20sac%20de%20couchage) · ≈ 115,00 € · 1220 g | [Sea to Summit Trek TkI sac de couchage duvet](https://www.amazon.fr/s?k=sea%20to%20summit%20trek%20tki%20sac%20de%20couchage) · ≈ 220,00 € |
+| Poncho de pluie | 1 | recommandé | sac | [Lifesystems Emergency Poncho](https://www.amazon.fr/s?k=lifesystems%20emergency%20poncho) · ≈ 4,00 € · 50 g | [Poncho de secours ARVA](https://www.amazon.fr/s?k=poncho%20de%20secours%20arva) · ≈ 10,00 € · 80 g | [Sea to Summit Ultra-Sil Nano Tarp Poncho](https://www.amazon.fr/s?k=sea%20to%20summit%20ultra-sil%20nano%20tarp%20poncho) · ≈ 120,00 € |
 
 ### Vêtements
 
-| Objet | Modèle de référence | Qté | Poids | Prix unitaire | Priorité | Usage | Lien |
-|---|---|---:|---:|---:|---|---|---|
-| Sous-couche thermique haut | Damart Sport Comfort 4 Thermolactyl zippé (homme) | 1 | 223 g | 18,36 € | recommandé | sac | [rayonrando.com](https://www.rayonrando.com/fr/sous-vetements-chauds-homme/4526-t-shirt-technique-homme-comfort-4-thermolactyl-zippe.html) |
-| Sous-couche thermique bas | Highlander Collant thermique Long Johns | 1 | — | 8,40 € | recommandé | sac | [rayonrando.com](https://www.rayonrando.com/fr/sous-vetements-chauds-homme/3191-collant-thermique-long-johns.html) |
-| Couche intermédiaire (polaire) | Highlander Hirta Fleece (homme) | 1 | 330 g | 17,96 € | essentiel | sac | [rayonrando.com](https://www.rayonrando.com/fr/polaires-randonnee-homme/4171-polaire-homme-hirta-fleece-bleu.html) |
-| Veste imperméable | Pro-x elements Blake (homme) | 1 | 350 g | 47,97 € | essentiel | sac | [rayonrando.com](https://www.rayonrando.com/fr/vestes-randonnee-pluie-coupe-vent/3516-veste-de-randonnee-homme-blake-noire.html) |
-| Bonnet | Bonnet polaire Pootlass | 1 | 30 g | 10,90 € | essentiel | sac | [rayonrando.com](https://www.rayonrando.com/fr/bonnets-cagoules/4542-bonnet-polaire-pootlass.html) |
-| Gants | Highlander Mountain gloves (imperméables) | 1 | 132 g | 12,45 € | essentiel | sac | [rayonrando.com](https://www.rayonrando.com/fr/gants/4163-gants-mountain-gloves.html) |
-| Chaussettes de rechange | THYO Merinos Wool Trek Mid | 2 | — | 14,24 € | essentiel | sac | [rayonrando.com](https://www.rayonrando.com/fr/chaussettes-de-randonnee/4980-chaussettes-merinos-wool-trek-mid.html) |
-
-- **Sous-couche thermique haut** : Prix soldé (-60 %), tailles limitées. Mérinos : Icebreaker dès ~40-54 € sur rayonrando.com.
-- **Sous-couche thermique bas** : Prix soldé (-50 %).
-- **Couche intermédiaire (polaire)** : Soldé -60 % ; au 30/09 seule la taille XS apparaissait en liste : prix non représentatif si votre taille manque (prix de base 44,90 €).
-- **Veste imperméable** : Prix de base 79,95 €.
-- **Gants** : Sous-gants mérinos Icebreaker : 14,97 € https://www.rayonrando.com/fr/gants/862-sous-gants-unisex-oasis-glove-liners.html
-- **Chaussettes de rechange** : Prix de base 18,99 €.
+| Objet | Qté | Priorité | Usage | € Petit budget | €€ Budget moyen | €€€ Gros budget |
+|---|---:|---|---|---|---|---|
+| Sous-couche thermique haut | 1 | recommandé | sac | [Lapasa haut thermique manches longues](https://www.amazon.fr/s?k=lapasa%20haut%20thermique%20homme) · ≈ 18,00 € | [Odlo Performance Warm Eco manches longues (homme)](https://www.amazon.fr/s?k=odlo%20performance%20warm%20eco%20haut%20manches%20longues%20homme) · ≈ 40,00 € · 200 g | [Icebreaker Merino 200 Oasis manches longues (homme)](https://www.amazon.fr/s?k=icebreaker%20merino%20200%20oasis%20haut%20manches%20longues%20homme) · ≈ 80,00 € · 200 g |
+| Sous-couche thermique bas | 1 | recommandé | sac | [Highlander Collant thermique Long Johns](https://www.amazon.fr/s?k=highlander%20collant%20thermique%20long%20johns) · ≈ 12,00 € | [Odlo Performance Warm Eco collant long (homme)](https://www.amazon.fr/s?k=odlo%20performance%20warm%20eco%20collant%20long%20homme) · ≈ 38,00 € · 180 g | [Icebreaker Merino 200 Oasis Leggings (homme)](https://www.amazon.fr/s?k=icebreaker%20merino%20200%20oasis%20leggings%20homme) · ≈ 70,00 € · 200 g |
+| Couche intermédiaire (polaire) | 1 | essentiel | sac | [Regatta Thompson polaire demi-zip (homme)](https://www.amazon.fr/s?k=regatta%20thompson%20polaire%20homme) · ≈ 22,00 € · 400 g | [Highlander Hirta Fleece (homme)](https://www.amazon.fr/s?k=highlander%20hirta%20fleece%20homme) · ≈ 45,00 € · 330 g | [Patagonia Better Sweater Jacket (homme)](https://www.amazon.fr/s?k=patagonia%20better%20sweater%20veste%20polaire%20homme) · ≈ 130,00 € · 450 g |
+| Veste imperméable | 1 | essentiel | sac | [Regatta Pack-It III veste imperméable (homme)](https://www.amazon.fr/s?k=regatta%20pack%20it%20iii%20veste%20impermeable%20homme) · ≈ 30,00 € · 300 g | [Pro-X Elements Blake (homme)](https://www.amazon.fr/s?k=pro-x%20elements%20blake%20veste%20homme) · ≈ 48,00 € · 350 g | [Columbia Watertight II (homme)](https://www.amazon.fr/s?k=columbia%20watertight%20ii%20veste%20imperm%C3%A9able%20homme) · ≈ 90,00 € · 370 g |
+| Bonnet | 1 | essentiel | sac | [Bonnet polaire Pootlass](https://www.amazon.fr/s?k=pootlass%20bonnet%20polaire) · ≈ 11,00 € · 30 g | [Buff Polar Hat bonnet polaire](https://www.amazon.fr/s?k=buff%20polar%20hat%20bonnet) · ≈ 22,00 € · 50 g | [Icebreaker Merino bonnet Pocket Hat](https://www.amazon.fr/s?k=icebreaker%20merino%20bonnet) · ≈ 35,00 € · 50 g |
+| Gants | 1 | essentiel | sac | [Highlander Mountain gloves (imperméables)](https://www.amazon.fr/s?k=highlander%20mountain%20gloves%20gants%20impermeables) · ≈ 12,50 € · 132 g | [Trekmates Rigg gants imperméables](https://www.amazon.fr/s?k=trekmates%20rigg%20gants%20impermeables) · ≈ 25,00 € · 120 g | [Black Diamond Spark gants](https://www.amazon.fr/s?k=black%20diamond%20spark%20gants) · ≈ 55,00 € · 100 g |
+| Chaussettes de rechange | 2 | essentiel | sac | [Brubeck chaussettes Thermo trekking](https://www.amazon.fr/s?k=brubeck%20chaussettes%20thermo%20trekking) · ≈ 10,00 € | [THYO Merinos Wool Trek Mid](https://www.amazon.fr/s?k=thyo%20merino%20wool%20trek%20mid%20chaussettes) · ≈ 14,00 € | [Darn Tough Hiker Micro Crew](https://www.amazon.fr/s?k=darn%20tough%20hiker%20micro%20crew%20chaussettes) · ≈ 28,00 € · 90 g |
 
 ### Lumière
 
-| Objet | Modèle de référence | Qté | Poids | Prix unitaire | Priorité | Usage | Lien |
-|---|---|---:|---:|---:|---|---|---|
-| Lampe frontale | Petzl Tikkina (piles AAA / batterie Core) | 1 | 92 g | 24,90 € | essentiel | les deux | [lyophilise.fr](https://www.lyophilise.fr/16014-27927-lampe-frontale-petzl-tikkina.html) |
-| Frontale de secours | Petzl e+Lite | 1 | 26 g | 27,95 € | optionnel | sac | [lyophilise.fr](https://www.lyophilise.fr/8092-lampe-frontale-de-secours-petzl-elite.html) |
-| Piles AA | Varta Longlife Power AA (lot de 12) | 1 | — | 9,50 € | essentiel | les deux | [castorama.fr](https://www.castorama.fr/pile-alcaline-aa-lr6-varta-long-life-power-lot-de-12/4008496659234_CAFR.prd) |
-| Lampe dynamo (+ radio FM + powerbank) | XCell Radiolight Dynamo 149039 | 1 | — | 21,99 € | optionnel | maison | [castorama.fr](https://www.castorama.fr/departments/xcell-radiolight-dynamo-149039-lampe-torche-multifonction-rechargeable-radio-fm-powerbank/4042883490390_CAFR.prd) |
-| Lanterne LED | Diall petite lanterne LED 2 fonctions 50 lm | 2 | — | 9,90 € | recommandé | maison | [castorama.fr](https://www.castorama.fr/petite-lanterne-led-2-fonctions-diall-50-lumens/3663602890911_CAFR.prd) |
-
-- **Lampe frontale** : Recommandé (USB-C, 47 g) : Nitecore NU25 UL 44,90 € https://www.lyophilise.fr/12287-lampe-frontale-nitecore-nu25-ul.html
-- **Piles AA** : Pour stockage long / froid : Energizer Ultimate Lithium AA x4, 13,02 € (marketplace) https://www.castorama.fr/mkp/pile-lithium-energizer-ultimate-lr6-1-5-volts-blister-de-4-piles/7638900262643_CAFR.prd . Prévoir aussi des AAA selon la frontale.
-- **Lampe dynamo (+ radio FM + powerbank)** : Vendeur marketplace Castorama.
-- **Lanterne LED** : Préférer à la bougie (risque incendie).
+| Objet | Qté | Priorité | Usage | € Petit budget | €€ Budget moyen | €€€ Gros budget |
+|---|---:|---|---|---|---|---|
+| Lampe frontale | 1 | essentiel | les deux | [Petzl Tikkina (piles AAA)](https://www.amazon.fr/s?k=petzl%20tikkina%20lampe%20frontale) · ≈ 19,00 € · 92 g | [Petzl Tikka (piles AAA / batterie Core)](https://www.amazon.fr/s?k=petzl%20tikka%20lampe%20frontale) · ≈ 28,00 € | [Nitecore NU25 UL (rechargeable USB-C)](https://www.amazon.fr/s?k=nitecore%20nu25%20ul%20lampe%20frontale) · ≈ 45,00 € · 47 g |
+| Frontale de secours | 1 | optionnel | sac | [Petzl Tikkina de secours (piles AAA)](https://www.amazon.fr/s?k=petzl%20tikkina%20lampe%20frontale) · ≈ 19,00 € | [Petzl e+Lite](https://www.amazon.fr/s?k=petzl%20e%2Blite%20lampe%20frontale) · ≈ 28,00 € · 26 g | [Petzl Bindi (rechargeable, 35 g)](https://www.amazon.fr/s?k=petzl%20bindi%20lampe%20frontale%20rechargeable) · ≈ 45,00 € · 35 g |
+| Piles AA<br>*Prévoir aussi des AAA selon la frontale.* | 1 | essentiel | les deux | [Piles AA alcalines Amazon Basics (lot de 20)](https://www.amazon.fr/s?k=amazon%20basics%20piles%20aa%20alcalines%20lot%20de%2020) · ≈ 9,00 € | [Varta Longlife Power AA (lot de 12)](https://www.amazon.fr/s?k=varta%20longlife%20power%20aa%20lot%20de%2012) · ≈ 9,50 € | [Energizer Ultimate Lithium AA (lot de 4)](https://www.amazon.fr/s?k=energizer%20ultimate%20lithium%20aa%20lot%20de%204) · ≈ 13,00 € |
+| Lampe dynamo (+ radio FM + powerbank) | 1 | optionnel | maison | [Lampe torche dynamo à manivelle rechargeable](https://www.amazon.fr/s?k=lampe%20torche%20dynamo%20manivelle%20rechargeable%20led) · ≈ 12,00 € | [XCell Radiolight Dynamo 149039](https://www.amazon.fr/s?k=xcell%20radiolight%20dynamo%20149039) · ≈ 22,00 € | [Midland ER300 Plus radio dynamo solaire](https://www.amazon.fr/s?k=midland%20er300%20plus%20radio%20dynamo%20lampe) · ≈ 40,00 € |
+| Lanterne LED<br>*Préférer à la bougie (risque incendie).* | 2 | recommandé | maison | [Lanterne LED à piles AA](https://www.amazon.fr/s?k=lanterne%20led%20camping%20piles%20aa) · ≈ 8,00 € | [Lanterne LED Energizer Weatherready](https://www.amazon.fr/s?k=energizer%20weatherready%20lanterne%20led) · ≈ 15,00 € | [Lanterne LED Black Diamond Moji](https://www.amazon.fr/s?k=black%20diamond%20moji%20lanterne%20led) · ≈ 25,00 € |
 
 ### Énergie
 
-| Objet | Modèle de référence | Qté | Poids | Prix unitaire | Priorité | Usage | Lien |
-|---|---|---:|---:|---:|---|---|---|
-| Batterie externe 10 000 mAh | Nitecore NB10000 Gen4 | 1 | 143 g | 80,66 € | essentiel | sac | [lyophilise.fr](https://www.lyophilise.fr/11020-batterie-externe-nitecore-nb10000-gen4.html) |
-| Panneau solaire pliable | X-Moove Trail 21 W | 1 | 425 g | 123,95 € | recommandé | les deux | [lyophilise.fr](https://www.lyophilise.fr/9936-panneau-solaire-portable-x-moove-trail-21-w.html) |
-| Station électrique portable | EcoFlow RIVER 3 (ASI) – 245 Wh / 300 W | 1 | — | 259,00 € | recommandé | maison | [fr.ecoflow.com](https://fr.ecoflow.com/products/river-3-portable-power-station) |
-| Groupe électrogène inverter | Mecafer MF3000i 3000 W (essence) | 1 | — | 399,00 € | optionnel | maison | [castorama.fr](https://www.castorama.fr/groupe-electrogene-3000-w-carburant-sp95-et-sp98-autonomie-8-h-l-43-x-l-50-5-x-h-51-5-cm-mecafer-mf3000i/3283494501308_CAFR.prd) |
-
-- **Batterie externe 10 000 mAh** : Prix barré 84,90 € (-5 %). Entrée de gamme : X-Moove Sky 10000 mAh 29,95 € (182 g) https://www.lyophilise.fr/8492-batterie-externe-x-moove-sky-10000-mah-2-ports-usb.html
-- **Panneau solaire pliable** : Entrée : X-Moove Trail 14 W 89,95 € (300 g).
-- **Station électrique portable** : Prix officiel fr.ecoflow.com (variante ASI en stock ; variante standard 249 € en rupture). Bundle + panneau 45 W : 279 €. Alternatives Jackery (prix officiels fr.jackery.com) : Explorer 240 v2 199 €, Explorer 300 Plus 279 €, Explorer 500 v2 299 €, Explorer 1000 v2 519 € https://fr.jackery.com/products/explorer-1000-v2-portable-power-station
-- **Groupe électrogène inverter** : Exclusivement en extérieur (monoxyde de carbone). Entrée : Mercure MC2600 2100 W 299,90 €. Stocker l'essence avec stabilisant, en jerrican homologué.
+| Objet | Qté | Priorité | Usage | € Petit budget | €€ Budget moyen | €€€ Gros budget |
+|---|---:|---|---|---|---|---|
+| Batterie externe 10 000 mAh | 1 | essentiel | sac | [Anker Nano power bank 10000 mAh (câble USB-C intégré)](https://www.amazon.fr/s?k=anker%20nano%20power%20bank%2010000mah%20usb-c) · ≈ 32,00 € · 212 g | [Anker Zolo 10 000 mAh 20 W](https://www.amazon.fr/s?k=anker%20zolo%2010000%20mah%2020w) · ≈ 35,00 € · 212 g | [Nitecore NB10000 Gen4 (IPX7)](https://www.amazon.fr/s?k=nitecore%20nb10000%20gen4%20power%20bank) · ≈ 82,50 € · 143 g |
+| Panneau solaire pliable | 1 | recommandé | les deux | [Choetech panneau solaire pliable 21 W](https://www.amazon.fr/s?k=choetech%20panneau%20solaire%20pliable%2021w) · ≈ 40,00 € · 600 g | [Anker 625 panneau solaire 21 W](https://www.amazon.fr/s?k=anker%20625%20solar%20panel%2021w) · ≈ 60,00 € · 610 g | [X-Moove Trail 21 W](https://www.amazon.fr/s?k=x-moove%20trail%2021w%20panneau%20solaire) · ≈ 124,00 € · 425 g |
+| Station électrique portable | 1 | recommandé | maison | [Jackery Explorer 240 v2 (256 Wh)](https://www.amazon.fr/s?k=jackery%20explorer%20240%20v2%20station) · ≈ 200,00 € · 3600 g | [EcoFlow RIVER 3 (245 Wh / 300 W)](https://www.amazon.fr/s?k=ecoflow%20river%203%20station%20electrique) · ≈ 259,00 € · 3500 g | [EcoFlow River 3 Plus (286 Wh / 600 W)](https://www.amazon.fr/s?k=ecoflow%20river%203%20plus%20station) · ≈ 350,00 € · 4700 g |
+| Groupe électrogène inverter<br>*Exclusivement en extérieur (monoxyde de carbone). Stocker l'essence avec stabilisant, en jerrican homologué.* | 1 | optionnel | maison | [Groupe électrogène inverter 2 000 W essence](https://www.amazon.fr/s?k=groupe%20electrogene%20inverter%202200w%20essence) · ≈ 300,00 € | [Mecafer MF3000i 3000 W (essence)](https://www.amazon.fr/s?k=mecafer%20mf3000i%20groupe%20electrogene) · ≈ 399,00 € | [Honda EU22i inverter 2200 W](https://www.amazon.fr/s?k=honda%20eu22i%20groupe%20electrogene) · ≈ 1 450,00 € · 21000 g |
 
 ### Communication
 
-| Objet | Modèle de référence | Qté | Poids | Prix unitaire | Priorité | Usage | Lien |
-|---|---|---:|---:|---:|---|---|---|
-| Radio d'urgence dynamo/solaire (FM/MW/SW) | HanRongDa HRD-908 | 1 | — | 49,20 € | essentiel | les deux | [passion-radio.fr](https://www.passion-radio.fr/radio-durgence/96264-3118.html) |
-| Récepteur ondes courtes (SSB) | Tecsun PL-330 | 1 | — | 103,92 € | optionnel | maison | [passion-radio.fr](https://www.passion-radio.fr/scanner/PL330-2665.html) |
-| Talkie-walkie PMR446 (sans licence) | Motorola Talkabout T42 (paire) | 1 | — | 34,66 € | recommandé | les deux | [passion-radio.fr](https://www.passion-radio.fr/sans-licence/t42bluepack-2689.html) |
-| Sifflet | CAO Outdoor sifflet de secours | 1 | 9 g | 4,95 € | essentiel | sac | [lyophilise.fr](https://www.lyophilise.fr/8108-sifflet-de-secours-avec-capuchon-cao-outdoor.html) |
-| Miroir de signalisation | BCB | 1 | 15 g | 3,95 € | recommandé | sac | [lyophilise.fr](https://www.lyophilise.fr/12325-miroir-de-signalisation-bcb.html) |
-
-- **Radio d'urgence dynamo/solaire (FM/MW/SW)** : Page affiche 41,00 € HT ; TTC calculé (TVA 20 %). Entrée : PNI DYN300 FM/AM/SW 34,57 € HT ≈ 41,48 € TTC https://www.passion-radio.fr/radio-durgence/pni-dyn300-3154.html . Radio à piles simple : 16,96 € https://www.lyophilise.fr/15539-radio-urgence-a-piles.html
-- **Récepteur ondes courtes (SSB)** : Page affiche 86,60 € HT (statut 'BackOrder') ; TTC calculé.
-- **Talkie-walkie PMR446 (sans licence)** : Page affiche 28,88 € HT ; TTC calculé. Plus robuste : Midland G7 Pro 63,95 € (en rupture) https://www.onedirect.fr/produits/midland-g7-pro . Un Baofeng UV-5R n'est PAS autorisé en émission sans licence radioamateur ni homologué PMR446.
+| Objet | Qté | Priorité | Usage | € Petit budget | €€ Budget moyen | €€€ Gros budget |
+|---|---:|---|---|---|---|---|
+| Radio d'urgence dynamo/solaire (FM/MW/SW) | 1 | essentiel | les deux | [Radio dynamo solaire AM FM](https://www.amazon.fr/s?k=radio%20dynamo%20solaire%20am%20fm%20lampe%20usb) · ≈ 22,00 € | [HanRongDa HRD-908](https://www.amazon.fr/s?k=hanrongda%20hrd-908%20radio%20dynamo%20solaire) · ≈ 49,00 € | [Eton FRX3 radio dynamo solaire](https://www.amazon.fr/s?k=eton%20frx3%20radio%20urgence%20dynamo%20solaire) · ≈ 70,00 € |
+| Récepteur ondes courtes (SSB) | 1 | optionnel | maison | [Tecsun PL-310ET radio ondes courtes SSB](https://www.amazon.fr/s?k=tecsun%20pl-310et%20radio%20ondes%20courtes) · ≈ 55,00 € | [Tecsun PL-330](https://www.amazon.fr/s?k=tecsun%20pl-330%20radio%20ondes%20courtes%20ssb) · ≈ 100,00 € | [Tecsun PL-880](https://www.amazon.fr/s?k=tecsun%20pl-880%20radio%20ondes%20courtes%20ssb) · ≈ 150,00 € |
+| Talkie-walkie PMR446 (sans licence)<br>*Un Baofeng UV-5R n'est PAS autorisé en émission sans licence radioamateur ni homologué PMR446.* | 1 | recommandé | les deux | [Motorola Talkabout T42 (paire)](https://www.amazon.fr/s?k=motorola%20talkabout%20t42%20paire%20talkie-walkie) · ≈ 34,50 € | [Motorola Talkabout T82 (paire)](https://www.amazon.fr/s?k=motorola%20talkabout%20t82%20extreme%20paire%20pmr446) · ≈ 70,00 € | [Midland G7 Pro (paire)](https://www.amazon.fr/s?k=midland%20g7%20pro%20paire%20talkie-walkie%20pmr446) · ≈ 129,50 € |
+| Sifflet | 1 | essentiel | sac | [Sifflet de secours plastique orange](https://www.amazon.fr/s?k=sifflet%20secours%20plastique%20orange%20survie) · ≈ 2,50 € | [CAO Outdoor sifflet de secours](https://www.amazon.fr/s?k=cao%20outdoor%20sifflet%20de%20secours) · ≈ 5,00 € · 9 g | [Fox 40 Classic sifflet](https://www.amazon.fr/s?k=fox%2040%20classic%20sifflet) · ≈ 7,50 € |
+| Miroir de signalisation | 1 | recommandé | sac | [BCB miroir de signalisation](https://www.amazon.fr/s?k=bcb%20miroir%20de%20signalisation%20survie) · ≈ 4,00 € · 15 g | [Coghlan's miroir de signalisation](https://www.amazon.fr/s?k=coghlans%20miroir%20de%20signalisation) · ≈ 6,00 € | [SOL Rescue Flash miroir de signalisation](https://www.amazon.fr/s?k=sol%20rescue%20flash%20miroir%20de%20signalisation) · ≈ 9,00 € |
 
 ### Navigation
 
-| Objet | Modèle de référence | Qté | Poids | Prix unitaire | Priorité | Usage | Lien |
-|---|---|---:|---:|---:|---|---|---|
-| Boussole à plaque | Silva Ranger S | 1 | 58 g | 47,90 € | essentiel | sac | [lyophilise.fr](https://www.lyophilise.fr/14204-boussole-silva-ranger-s.html) |
-| Carte IGN TOP 25 | Carte IGN TOP 25 de votre secteur (ex. 2432ET Massif du Sancy) | 2 | — | 14,30 € | essentiel | les deux | [boutique.ign.fr](https://boutique.ign.fr/cartes/cartes-randonnee-france/top25-seriebleue/top25-seriebleue-france.html) |
-| GPS de randonnée | Garmin eTrex SE | 1 | — | 149,00 € *(estim.)* | optionnel | sac | [decathlon.fr](https://www.decathlon.fr/search?Ntt=garmin+etrex+se) |
-
-- **Boussole à plaque** : Entrée : Silva Field 27,95 € (en rupture) https://www.lyophilise.fr/15778-boussole-silva-field.html
-- **Carte IGN TOP 25** : Prix uniforme 14,30 € observé sur la liste TOP 25 de la boutique IGN. Choisir domicile + itinéraire d'évacuation.
-- **GPS de randonnée** : Estimation : 149 € (i-run.fr) / 148,90 € (Snowleader) d'après extraits moteur de recherche ; pages en 403, non vérifiées. Fonctionne sur 2 piles AA.
+| Objet | Qté | Priorité | Usage | € Petit budget | €€ Budget moyen | €€€ Gros budget |
+|---|---:|---|---|---|---|---|
+| Boussole à plaque | 1 | essentiel | sac | [Boussole à plaque Silva Field](https://www.amazon.fr/s?k=silva%20field%20boussole) · ≈ 28,00 € · 40 g | [Silva Ranger S boussole à plaque](https://www.amazon.fr/s?k=silva%20ranger%20s%20boussole) · ≈ 45,00 € · 58 g | [Suunto MC-2 boussole miroir](https://www.amazon.fr/s?k=suunto%20mc-2%20boussole) · ≈ 70,00 € · 75 g |
+| Carte IGN TOP 25<br>*Choisir la carte du domicile et celles de l'itinéraire d'évacuation.* | 2 | essentiel | les deux | [Carte IGN TOP 25 papier](https://www.amazon.fr/s?k=carte%20ign%20top%2025) · ≈ 14,50 € | [Carte IGN TOP 25 version résistante](https://www.amazon.fr/s?k=ign%20top%2025%20carte%20r%C3%A9sistante) · ≈ 16,50 € | [Carte IGN Série Bleue Top 25 plastifiée](https://www.amazon.fr/s?k=ign%20top%2025%20plastifi%C3%A9e%20imperm%C3%A9able) · ≈ 23,00 € |
+| GPS de randonnée<br>*Fonctionne sur 2 piles AA.* | 1 | optionnel | sac | [Garmin eTrex 10 GPS de randonnée](https://www.amazon.fr/s?k=garmin%20etrex%2010) · ≈ 100,00 € · 142 g | [Garmin eTrex SE GPS de randonnée](https://www.amazon.fr/s?k=garmin%20etrex%20se) · ≈ 130,00 € · 150 g | [Garmin eTrex 22x GPS cartographie TopoActive](https://www.amazon.fr/s?k=garmin%20etrex%2022x%20europe) · ≈ 187,00 € · 150 g |
 
 ### Outils
 
-| Objet | Modèle de référence | Qté | Poids | Prix unitaire | Priorité | Usage | Lien |
-|---|---|---:|---:|---:|---|---|---|
-| Couteau à lame fixe | Morakniv Companion | 1 | 120 g | 14,95 € | essentiel | sac | [lyophilise.fr](https://www.lyophilise.fr/9317-126-couteau-mora-companion.html) |
-| Couteau suisse | Victorinox Huntsman (15 fonctions) | 1 | 97 g | 38,95 € | recommandé | sac | [lyophilise.fr](https://www.lyophilise.fr/9018-couteau-suisse-victorinox-huntsman-15-outils-rouge.html) |
-| Pince multifonction | Leatherman Wingman | 1 | — | 89,00 € | optionnel | les deux | [aciertrempe.fr](https://aciertrempe.fr/multifonctions/poche/pince-multifonction-leatherman-wingman/) |
-| Scie pliante | Silky Pocketboy 170-10 | 1 | 227 g | 44,95 € | recommandé | les deux | [lyophilise.fr](https://www.lyophilise.fr/11026-scie-pliante-silky-pocketboy-170-10.html) |
-| Paracorde | Paracorde réfléchissante SOL | 1 | 158 g | 14,95 € | essentiel | sac | [lyophilise.fr](https://www.lyophilise.fr/10187-paracorde-reflechissante-sol.html) |
-| Duct tape | SOL Duct tape (2 mini-rouleaux) | 1 | 16 g | 7,90 € | essentiel | sac | [rayonrando.com](https://www.rayonrando.com/fr/accessoires-pour-tente/5052-ruban-adhesif-en-toile-duct-tape.html) |
-| Pelle / truelle | Sea to Summit mini-pelle (hygiène) | 1 | 87 g | 9,85 € | recommandé | sac | [lyophilise.fr](https://www.lyophilise.fr/16107-mini-pelle-sea-to-summit.html) |
-| Hachette | Magnusson hachette 600 g manche composite | 1 | — | 16,50 € | optionnel | maison | [castorama.fr](https://www.castorama.fr/hachette-600g-avec-manche-composite-magnusson/5059340086446_CAFR.prd) |
-
-- **Couteau à lame fixe** : Version avec ferro : Companion Spark 36,95 €. Opinel n°7 : 11,50 € (35 g). Port d'arme blanche encadré en France : transporter rangé dans le sac, motif légitime.
-- **Couteau suisse** : Entrée : Victorinox Camper 29,95 €.
-- **Pince multifonction** : Haut de gamme : Leatherman Signal 159 € (213 g, en rupture) https://www.lyophilise.fr/7238-pince-multifonction-leatherman-signal-19-outils.html
-- **Paracorde** : Paracorde 550 avec mousqueton 14,90 € (en rupture).
-- **Duct tape** : Maison : Scotch Extremium 25 m x 48 mm, 14,50 € https://www.castorama.fr/ruban-adhesif-toile-de-reparation-scotch-extremium-25-x-48-mm-noir/4054596696419_CAFR.prd
-- **Pelle / truelle** : Maison : pelle-pioche pliante Outils Perrin 38,40 € (marketplace) https://www.castorama.fr/departments/outils-perrin-pelle-pioche-pliante-de-camping-pelle-us/3239041551159_CAFR.prd
+| Objet | Qté | Priorité | Usage | € Petit budget | €€ Budget moyen | €€€ Gros budget |
+|---|---:|---|---|---|---|---|
+| Couteau à lame fixe<br>*Port d'arme blanche encadré en France : transporter rangé dans le sac, avec un motif légitime.* | 1 | essentiel | sac | [Morakniv Basic 546 (lame carbone/inox, manche bois)](https://www.amazon.fr/s?k=morakniv%20basic%20546%20couteau) · ≈ 12,00 € · 100 g | [Morakniv Companion (inox, manche caoutchouc)](https://www.amazon.fr/s?k=morakniv%20companion%20inox%20couteau) · ≈ 18,50 € · 120 g | [Morakniv Garberg (lame full tang, inox)](https://www.amazon.fr/s?k=morakniv%20garberg%20couteau%20full%20tang) · ≈ 90,00 € · 260 g |
+| Couteau suisse | 1 | recommandé | sac | [Victorinox Camper (13 fonctions)](https://www.amazon.fr/s?k=victorinox%20camper%20couteau%20suisse) · ≈ 29,50 € · 91 g | [Victorinox Huntsman (15 fonctions)](https://www.amazon.fr/s?k=victorinox%20huntsman%20couteau%20suisse) · ≈ 38,00 € · 97 g | [Victorinox Swiss Champ (33 fonctions)](https://www.amazon.fr/s?k=victorinox%20swiss%20champ%20couteau%20suisse) · ≈ 85,00 € · 185 g |
+| Pince multifonction | 1 | optionnel | les deux | [Leatherman Rev (14 outils)](https://www.amazon.fr/s?k=leatherman%20rev%20pince%20multifonction) · ≈ 45,00 € · 150 g | [Leatherman Wingman (14 outils)](https://www.amazon.fr/s?k=leatherman%20wingman%20pince%20multifonction) · ≈ 75,00 € · 200 g | [Leatherman Wave Plus (18 outils)](https://www.amazon.fr/s?k=leatherman%20wave%20plus%20pince%20multifonction) · ≈ 125,00 € · 241 g |
+| Scie pliante | 1 | recommandé | les deux | [Silky Pocketboy 130 (lame 13 cm)](https://www.amazon.fr/s?k=silky%20pocketboy%20130%20scie%20pliante) · ≈ 30,00 € · 170 g | [Silky Pocketboy 170-10](https://www.amazon.fr/s?k=silky%20pocketboy%20170%20scie%20pliante) · ≈ 45,00 € · 227 g | [Silky Gomboy 210 (grosse denture)](https://www.amazon.fr/s?k=silky%20gomboy%20210%20scie%20pliante) · ≈ 60,00 € · 280 g |
+| Paracorde | 1 | essentiel | sac | [Paracorde 550 7 brins 30 m (vert/noir)](https://www.amazon.fr/s?k=paracorde%20550%2030m%207%20brins) · ≈ 9,00 € · 150 g | [Paracorde réfléchissante SOL](https://www.amazon.fr/s?k=sol%20paracorde%20reflechissante) · ≈ 15,00 € · 158 g | [Paracorde Atwood Rope MFG 550 (100 ft)](https://www.amazon.fr/s?k=atwood%20rope%20paracord%20550%20100ft) · ≈ 19,00 € · 250 g |
+| Duct tape | 1 | essentiel | sac | [tesa ruban toilé extra-fort 25 m](https://www.amazon.fr/s?k=tesa%20ruban%20toile%20extra%20fort%2025%20m) · ≈ 6,00 € | [Gorilla Tape noir 11 m](https://www.amazon.fr/s?k=gorilla%20tape%20noir%2011%20m) · ≈ 9,00 € | [Gorilla Tape noir 32 m](https://www.amazon.fr/s?k=gorilla%20tape%20noir%2032%20m) · ≈ 14,00 € |
+| Pelle / truelle | 1 | recommandé | sac | [Coghlan's truelle de camping](https://www.amazon.fr/s?k=coghlans%20truelle%20camping) · ≈ 5,00 € | [Sea to Summit Pocket Trowel (nylon)](https://www.amazon.fr/s?k=sea%20to%20summit%20pocket%20trowel) · ≈ 12,00 € | [TheTentLab Deuce of Spades #2 (aluminium, 17 g)](https://www.amazon.fr/s?k=deuce%20of%20spades%20trowel) · ≈ 25,00 € · 17 g |
+| Hachette | 1 | optionnel | maison | [Hachette 600 g manche fibre de verre](https://www.amazon.fr/s?k=hachette%20600%20g%20manche%20fibre%20de%20verre) · ≈ 15,00 € | [Fiskars X7 hachette (lame 24 cm)](https://www.amazon.fr/s?k=fiskars%20x7%20hachette) · ≈ 30,00 € | [Husqvarna hachette de randonnée 34 cm](https://www.amazon.fr/s?k=husqvarna%20hachette%20randonn%C3%A9e%2034%20cm) · ≈ 60,00 € |
 
 ### Santé
 
-| Objet | Modèle de référence | Qté | Poids | Prix unitaire | Priorité | Usage | Lien |
-|---|---|---:|---:|---:|---|---|---|
-| Trousse de premiers secours | Care Plus First Aid Kit Emergency | 1 | 470 g | 40,95 € | essentiel | les deux | [lyophilise.fr](https://www.lyophilise.fr/6731-kit-de-premier-secours-care-plus-emergency.html) |
-| Garrot tourniquet | C-A-T Gen 7 (CAT Resources) | 1 | — | 42,99 € | recommandé | les deux | [tacmat.fr](https://www.tacmat.fr/produit/garrot-touniquet-cat-gen-7/) |
-| Pansement compressif israélien | Pansement israélien (Persys Medical) | 2 | — | 9,99 € | recommandé | les deux | [tacmat.fr](https://www.tacmat.fr/produit/pansement-bandage-israelien-persys-medical/) |
-| Comprimés d'iode | Iodure de potassium 65 mg (boîte de 10) | 1 | — | — | recommandé | maison | [pharmactu.fr](https://pharmactu.fr/articles/comprimes-iode-pharmacie-distribution-centrales-nucleaires-septembre-2026) |
-| Masques FFP2 | Masque FFP2 NR – boîte de 20 | 1 | — | 3,89 € | essentiel | les deux | [pharma-gdd.com](https://www.pharma-gdd.com/fr/masque-ffp2-nr-d) |
-| Masques FFP3 | Site FFP3 (10 pièces) | 1 | — | 27,90 € | optionnel | maison | [castorama.fr](https://www.castorama.fr/masque-anti-poussiere-ffp3-site-10-pieces/5059340013848_CAFR.prd) |
-| Gants nitrile jetables | Site nitrile T9 (x100) | 1 | — | 8,89 € | essentiel | les deux | [castorama.fr](https://www.castorama.fr/gant-jetable-en-nitrile-pour-la-manipulation-generale-site-taille-9-blanc-lot-de-100/5059340642758_CAFR.prd) |
-
-- **Trousse de premiers secours** : Entrée : trousse Pharmavoyage Premiers soins 11,95 € (215 g) https://www.lyophilise.fr/8958-trousse-de-secours-pharmavoyage-premiers-soins.html . Ajouter médicaments personnels + copie des ordonnances.
-- **Garrot tourniquet** : Aussi 49,99 € chez ylea.eu. Nombreuses contrefaçons : acheter chez un revendeur identifié. Se former (PSC1 / 'Stop the Bleed').
-- **Pansement compressif israélien** : Vérifier la taille (4" / 6") sur la fiche.
-- **Comprimés d'iode** : Gratuit, sans ordonnance, en pharmacie pour les résidents/travailleurs à 0-20 km d'une centrale (campagne à partir de sept. 2026, selon pharmactu.fr). À prendre UNIQUEMENT sur ordre du préfet. Hors zone : pas de prix vérifié.
-- **Masques FFP2** : Boîte de 10 : 2,39 €.
-- **Masques FFP3** : Protection poussières/fumées ; ne protège pas des gaz.
-- **Gants nitrile jetables** : Choisir sa taille.
+| Objet | Qté | Priorité | Usage | € Petit budget | €€ Budget moyen | €€€ Gros budget |
+|---|---:|---|---|---|---|---|
+| Trousse de premiers secours<br>*Ajouter médicaments personnels + copie des ordonnances.* | 1 | essentiel | les deux | [Pharmavoyage Trousse Premiers soins (215 g)](https://www.amazon.fr/s?k=pharmavoyage%20trousse%20premiers%20secours) · ≈ 12,00 € · 215 g | [Care Plus First Aid Kit Emergency](https://www.amazon.fr/s?k=care%20plus%20first%20aid%20kit%20emergency) · ≈ 41,00 € · 470 g | [Care Plus First Aid Kit Outdoor](https://www.amazon.fr/s?k=care%20plus%20first%20aid%20kit%20outdoor%20trousse) · ≈ 60,00 € |
+| Garrot tourniquet<br>*Se former (PSC1 / 'Stop the Bleed').* | 1 | recommandé | les deux | [C-A-T Gen 7 (North American Rescue)](https://www.amazon.fr/s?k=north%20american%20rescue%20cat%20gen%207%20tourniquet) · ≈ 40,00 € | [SOF Tactical Tourniquet Wide Gen 5 (TacMed)](https://www.amazon.fr/s?k=sof%20tactical%20tourniquet%20wide) · ≈ 48,00 € | [SAM XT garrot à verrouillage automatique](https://www.amazon.fr/s?k=sam%20xt%20tourniquet) · ≈ 55,00 € |
+| Pansement compressif israélien<br>*Vérifier la taille (4" / 6") sur la fiche.* | 2 | recommandé | les deux | [Pansement compressif « israélien » 4 pouces](https://www.amazon.fr/s?k=pansement%20isra%C3%A9lien%20compressif%204%20pouces) · ≈ 7,00 € | [Pansement israélien Persys Medical 4 pouces](https://www.amazon.fr/s?k=persys%20medical%20pansement%20isra%C3%A9lien) · ≈ 10,00 € | [Olaes Modular Bandage 6 pouces](https://www.amazon.fr/s?k=olaes%20modular%20bandage%20pansement%20compressif) · ≈ 16,00 € |
+| Comprimés d'iode<br>*À prendre UNIQUEMENT sur ordre du préfet.* | 1 | recommandé | maison | *Médicament : à retirer en pharmacie (gratuit dans les communes proches d'une centrale nucléaire). À prendre uniquement sur consigne du préfet. Aucun lien d'achat.* | *Médicament : à retirer en pharmacie (gratuit dans les communes proches d'une centrale nucléaire). À prendre uniquement sur consigne du préfet. Aucun lien d'achat.* | *Médicament : à retirer en pharmacie (gratuit dans les communes proches d'une centrale nucléaire). À prendre uniquement sur consigne du préfet. Aucun lien d'achat.* |
+| Masques FFP2 | 1 | essentiel | les deux | [Masques FFP2 NR norme EN 149 (boîte de 20)](https://www.amazon.fr/s?k=masque%20ffp2%20en%20149%20boite%2020) · ≈ 9,00 € | [Moldex 2405 FFP2 (boîte de 20)](https://www.amazon.fr/s?k=moldex%202405%20ffp2) · ≈ 25,00 € | [3M Aura 9320+ FFP2 (boîte de 20)](https://www.amazon.fr/s?k=3m%20aura%209320%2B%20ffp2) · ≈ 40,00 € |
+| Masques FFP3<br>*Protection poussières/fumées ; ne protège pas des gaz.* | 1 | optionnel | maison | [Masques FFP3 NR norme EN 149 (boîte de 10)](https://www.amazon.fr/s?k=masque%20ffp3%20en%20149%20boite%2010) · ≈ 15,00 € | [Moldex 2555 FFP3 avec soupape (boîte de 10)](https://www.amazon.fr/s?k=moldex%202555%20ffp3) · ≈ 30,00 € | [Masques FFP3 3M Aura 9332+ (boîte de 10)](https://www.amazon.fr/s?k=3m%20aura%209332%2B%20ffp3%20bo%C3%AEte%20de%2010) · ≈ 40,00 € |
+| Gants nitrile jetables<br>*Choisir sa taille.* | 1 | essentiel | les deux | [Gants nitrile jetables sans poudre T9 (x100, marque distributeur)](https://www.amazon.fr/s?k=gants%20nitrile%20jetables%20taille%20l%20x100) · ≈ 8,00 € | [Gants nitrile Mercator Medical Nitrylex (x100)](https://www.amazon.fr/s?k=mercator%20nitrylex%20gants%20nitrile%20x100) · ≈ 13,00 € | [Gants nitrile Ansell TouchNTuff (x100)](https://www.amazon.fr/s?k=ansell%20touchntuff%20gants%20nitrile%20x100) · ≈ 18,00 € |
 
 ### Hygiène
 
-| Objet | Modèle de référence | Qté | Poids | Prix unitaire | Priorité | Usage | Lien |
-|---|---|---:|---:|---:|---|---|---|
-| Savon (sac) | Sea to Summit savon en feuilles (corps) | 1 | 14 g | 4,46 € | recommandé | sac | [lyophilise.fr](https://www.lyophilise.fr/9924-savons-en-feuilles-sea-to-summit-corps.html) |
-| Gel hydroalcoolique | Wyritol 300 ml flacon pompe | 1 | — | 6,99 € | essentiel | les deux | [castorama.fr](https://www.castorama.fr/gel-hydroalcoolique-flacon-pompe-300ml-wyritol/3661295615019_CAFR.prd) |
-| Papier toilette | Pure Soft 12 rouleaux | 2 | — | 2,58 € | essentiel | maison | [action.com](https://www.action.com/fr-fr/search/?q=papier%20toilette) |
-| Lingettes humides | Teddy Care 60 pièces | 2 | — | 0,99 € | recommandé | les deux | [action.com](https://www.action.com/fr-fr/search/?q=lingettes%20humides%20teddy%20care) |
-| Sacs poubelle 100 L | 10 sacs poubelle transparents 100 L | 2 | — | 4,29 € | essentiel | les deux | [castorama.fr](https://www.castorama.fr/10-sacs-poubelle-transparents-jetables-100l/3570701190074_CAFR.prd) |
-| Toilettes sèches / portables | Thetford Campa Potti Cube | 1 | — | 119,90 € | optionnel | maison | [castorama.fr](https://www.castorama.fr/toilettes-portables-thetford-campa-potti-cube-capacite-du-reservoir-d-eau-21-litres-l-38-3-x-p-42-7-x-h-41-4-cm/8710315024609_CAFR.prd) |
-
-- **Savon (sac)** : Prix barré 4,95 €. Maison : cube de savon de Marseille 500 g, 8,59 € https://www.castorama.fr/cube-de-savon-de-marseille-la-corvette-savonnerie-du-midi-extra-pur-500gr/3182612705027_CAFR.prd
-- **Papier toilette** : Prix lu sur la page de résultats Action (fiche produit 403). Sac : lingettes compressées Océale dès 3,95 € https://www.lyophilise.fr/9468-175-lingettes-compressees-oceale.html
-- **Lingettes humides** : Prix lu sur la page de résultats Action.
-- **Sacs poubelle 100 L** : Multi-usages : toilettes de fortune, étanchéité, poncho.
-- **Toilettes sèches / portables** : Solution économique : seau 20 L à couvercle + sacs poubelle + sciure/litière. Toilettes sèches à séparateur (fabricant FR, marketplace) dès 336 €.
+| Objet | Qté | Priorité | Usage | € Petit budget | €€ Budget moyen | €€€ Gros budget |
+|---|---:|---|---|---|---|---|
+| Savon (sac) | 1 | recommandé | sac | [Sea to Summit Pocket Soap savon en feuilles (50 feuilles, corps)](https://www.amazon.fr/s?k=sea%20to%20summit%20trek%20travel%20pocket%20body%20wash%2050%20feuilles) · ≈ 5,00 € · 14 g | [Sea to Summit Wilderness Wash Pocket Soap (biodégradable)](https://www.amazon.fr/s?k=sea%20to%20summit%20wilderness%20wash%20pocket%20soap) · ≈ 7,50 € · 50 g | [Savon de Marseille cube 600 g Le Chat Marseillais](https://www.amazon.fr/s?k=savon%20de%20marseille%20cube%20600%20g) · ≈ 8,00 € · 600 g |
+| Gel hydroalcoolique | 1 | essentiel | les deux | [Gel hydroalcoolique 300 ml pompe (Mixa/Septimus)](https://www.amazon.fr/s?k=gel%20hydroalcoolique%20300%20ml%20pompe) · ≈ 5,00 € · 330 g | [Wyritol gel hydroalcoolique 300 ml flacon pompe](https://www.amazon.fr/s?k=wyritol%20gel%20hydroalcoolique%20300%20ml%20pompe) · ≈ 7,00 € · 330 g | [Gel hydroalcoolique Sanytol 300 ml pompe](https://www.amazon.fr/s?k=sanytol%20gel%20hydroalcoolique%20300%20ml) · ≈ 9,00 € · 330 g |
+| Papier toilette | 2 | essentiel | maison | [Papier toilette Lotus Confort 12 rouleaux](https://www.amazon.fr/s?k=papier%20toilette%2012%20rouleaux%203%20plis) · ≈ 5,00 € | [Papier toilette Lotus Moltonel 12 rouleaux](https://www.amazon.fr/s?k=lotus%20moltonel%20papier%20toilette%2012%20rouleaux) · ≈ 8,00 € | [Papier toilette Lotus Quilted Comfort 12 rouleaux](https://www.amazon.fr/s?k=lotus%20quilted%20papier%20toilette%2012%20rouleaux) · ≈ 11,00 € |
+| Lingettes humides | 2 | recommandé | les deux | [Lingettes humides bébé Teddy Care 60 pièces](https://www.amazon.fr/s?k=teddy%20care%20lingettes%20b%C3%A9b%C3%A9%2060) · ≈ 1,00 € | [Lingettes Pampers Sensitive 52 pièces](https://www.amazon.fr/s?k=pampers%20sensitive%20lingettes%2052) · ≈ 2,00 € | [Lingettes Mixa bébé 60 pièces](https://www.amazon.fr/s?k=mixa%20b%C3%A9b%C3%A9%20lingettes%2060) · ≈ 3,00 € |
+| Sacs poubelle 100 L<br>*Multi-usages : toilettes de fortune, étanchéité, poncho.* | 2 | essentiel | les deux | [Sacs poubelle 100 L 10 sacs standard](https://www.amazon.fr/s?k=sacs%20poubelle%20100%20litres%2010%20sacs) · ≈ 4,00 € | [Sacs poubelle 100 L renforcés Rosières](https://www.amazon.fr/s?k=sacs%20poubelle%20100%20litres%20renforc%C3%A9s) · ≈ 6,50 € | [Sacs poubelle 100 L très résistants Sacs Cabrol](https://www.amazon.fr/s?k=sacs%20poubelle%20100l%20ultra%20r%C3%A9sistants%2025%20sacs) · ≈ 10,00 € |
+| Toilettes sèches / portables<br>*Solution économique : seau 20 L à couvercle + sacs poubelle + sciure ou litière.* | 1 | optionnel | maison | [Seau toilettes portable 20 L avec siège et couvercle](https://www.amazon.fr/s?k=toilette%20seau%2020%20litres%20si%C3%A8ge%20couvercle) · ≈ 25,00 € | [Thetford Porta Potti 145 toilette portable](https://www.amazon.fr/s?k=thetford%20porta%20potti%20145) · ≈ 75,00 € | [Thetford Porta Potti Qube 335 toilette portable](https://www.amazon.fr/s?k=thetford%20porta%20potti%20qube%20335) · ≈ 125,00 € |
 
 ### Documents/argent
 
-| Objet | Modèle de référence | Qté | Poids | Prix unitaire | Priorité | Usage | Lien |
-|---|---|---:|---:|---:|---|---|---|
-| Pochette étanche documents | aLoksak x2 – 33,7 x 26,7 cm | 1 | 34.5 g | 21,95 € | essentiel | sac | [lyophilise.fr](https://www.lyophilise.fr/8005-sachets-etanches-aloksak-x-2-337-x-267-cm.html) |
-| Clé USB chiffrée (matérielle) | Kingston IronKey Keypad 200 – 32 Go | 1 | — | 184,96 € | optionnel | sac | [ldlc.com](https://www.ldlc.com/fiche/PB00522245.html) |
-
-- **Pochette étanche documents** : Photocopies pièces d'identité, ordonnances, contrats + argent liquide en petites coupures (repère du guide gouvernemental).
-- **Clé USB chiffrée (matérielle)** : Même prix chez materiel.net. Entrée : Kingston IronKey Vault Privacy 50C 16 Go 99,95 € https://www.ldlc.com/fiche/PB00665145.html . Alternative gratuite : conteneur VeraCrypt sur clé standard.
+| Objet | Qté | Priorité | Usage | € Petit budget | €€ Budget moyen | €€€ Gros budget |
+|---|---:|---|---|---|---|---|
+| Pochette étanche documents<br>*Photocopies pièces d'identité, ordonnances, contrats + argent liquide en petites coupures (repère du guide gouvernemental).* | 1 | essentiel | sac | [aLoksak 17 x 25 cm lot de 2](https://www.amazon.fr/s?k=aloksak%2017x25%20cm%20pochette%20%C3%A9tanche%20lot%20de%202) · ≈ 11,00 € | [aLoksak x2 33,7 x 26,7 cm](https://www.amazon.fr/s?k=aloksak%2033%2C7%20x%2026%2C7%20cm%20pochette%20%C3%A9tanche%20x2) · ≈ 22,00 € · 34.5 g | [Ortlieb Document Bag A4 pochette étanche](https://www.amazon.fr/s?k=ortlieb%20document%20bag%20a4%20pochette%20%C3%A9tanche) · ≈ 35,00 € |
+| Clé USB chiffrée (matérielle)<br>*Alternative gratuite : conteneur VeraCrypt sur clé standard.* | 1 | optionnel | sac | [Kingston IronKey Vault Privacy 50 16 Go](https://www.amazon.fr/s?k=kingston%20ironkey%20vault%20privacy%2050%2016%20go) · ≈ 95,00 € | [Kingston IronKey Keypad 200 16 Go](https://www.amazon.fr/s?k=kingston%20ironkey%20keypad%20200%2016%20go) · ≈ 150,00 € | [Kingston IronKey Keypad 200 32 Go](https://www.amazon.fr/s?k=kingston%20ironkey%20keypad%20200%2032%20go) · ≈ 185,00 € |
 
 ### Sécurité
 
-| Objet | Modèle de référence | Qté | Poids | Prix unitaire | Priorité | Usage | Lien |
-|---|---|---:|---:|---:|---|---|---|
-| Extincteur | Kidde 2 kg ABC | 1 | — | 44,90 € | essentiel | maison | [castorama.fr](https://www.castorama.fr/extincteur-polyvalent-kidde-2-kg-abc/0090008462962_CAFR.prd) |
-| Détecteur de fumée | Kidde 10Y29 (pile 10 ans) | 1 | — | 21,90 € | essentiel | maison | [castorama.fr](https://www.castorama.fr/detecteur-de-fumee-anti-vandalisme-kidde-10y29/0047871097531_CAFR.prd) |
-| Détecteur de monoxyde de carbone | Kidde 7CO | 1 | — | 28,90 € | essentiel | maison | [castorama.fr](https://www.castorama.fr/detecteur-de-monoxyde-de-carbone-kidde-7co/0047871313228_CAFR.prd) |
-
-- **Extincteur** : Entrée : Kidde 1 kg ABC 29,90 €. Aérosol eau+mousse Lifebox 750 ml 17,50 €.
-- **Détecteur de fumée** : Obligatoire dans tout logement en France. Entrée : Kidde 3Y29 12,90 €.
-- **Détecteur de monoxyde de carbone** : Indispensable si réchaud/chauffage d'appoint/groupe électrogène.
+| Objet | Qté | Priorité | Usage | € Petit budget | €€ Budget moyen | €€€ Gros budget |
+|---|---:|---|---|---|---|---|
+| Extincteur | 1 | essentiel | maison | [Kidde 1 kg ABC extincteur poudre](https://www.amazon.fr/s?k=kidde%20extincteur%201kg%20abc) · ≈ 30,00 € | [Kidde 2 kg ABC extincteur](https://www.amazon.fr/s?k=kidde%20extincteur%202kg%20abc) · ≈ 45,00 € | [Extincteur 6 kg ABC NF](https://www.amazon.fr/s?k=extincteur%206kg%20abc%20nf) · ≈ 65,00 € |
+| Détecteur de fumée<br>*Obligatoire dans tout logement en France.* | 1 | essentiel | maison | [Kidde 3Y29 détecteur de fumée (pile 3 ans)](https://www.amazon.fr/s?k=kidde%203y29%20detecteur%20fumee) · ≈ 13,00 € | [Kidde 10Y29 détecteur de fumée (pile 10 ans)](https://www.amazon.fr/s?k=kidde%2010y29%20detecteur%20fumee) · ≈ 22,00 € | [Netatmo détecteur de fumée intelligent](https://www.amazon.fr/s?k=netatmo%20detecteur%20fumee%20intelligent) · ≈ 50,00 € |
+| Détecteur de monoxyde de carbone<br>*Indispensable si réchaud/chauffage d'appoint/groupe électrogène.* | 1 | essentiel | maison | [Détecteur de monoxyde de carbone Kidde 5CO](https://www.amazon.fr/s?k=kidde%205co%20detecteur%20monoxyde%20carbone) · ≈ 24,00 € | [Kidde 7CO détecteur monoxyde de carbone](https://www.amazon.fr/s?k=kidde%207co%20detecteur%20monoxyde) · ≈ 29,00 € | [Kidde 7DCO détecteur CO à affichage](https://www.amazon.fr/s?k=kidde%207dco%20detecteur%20monoxyde) · ≈ 45,00 € |
 
 ### Stockage maison
 
-| Objet | Modèle de référence | Qté | Poids | Prix unitaire | Priorité | Usage | Lien |
-|---|---|---:|---:|---:|---|---|---|
-| Étagère métal | GoodHome Ryle 179 x 90 x 40 cm | 1 | — | 34,90 € | recommandé | maison | [castorama.fr](https://www.castorama.fr/etagere-de-garage-en-acier-thermo-laque-noir-h-179-x-l-90-x-p-40-cm-goodhome-ryle/5063022514264_CAFR.prd) |
-| Malles de rangement 60 L | Tontarelli OPP 60 L avec couvercle | 3 | — | 16,90 € | recommandé | maison | [castorama.fr](https://www.castorama.fr/malle-de-rangement-60-l-noire-avec-couvercle-tontarelli-opp/8009404277201_CAFR.prd) |
+| Objet | Qté | Priorité | Usage | € Petit budget | €€ Budget moyen | €€€ Gros budget |
+|---|---:|---|---|---|---|---|
+| Étagère métal | 1 | recommandé | maison | [Étagère métal 5 niveaux 180x90x40 cm (générique)](https://www.amazon.fr/s?k=%C3%A9tag%C3%A8re%20m%C3%A9tallique%205%20niveaux%20180x90x40) · ≈ 35,00 € | [Étagère métal 5 plateaux charge lourde 180x90x40 (Songmics)](https://www.amazon.fr/s?k=songmics%20%C3%A9tag%C3%A8re%20m%C3%A9tal%205%20niveaux%20180x90x40) · ≈ 55,00 € | [Étagère charge lourde 4 plateaux 180 cm](https://www.amazon.fr/s?k=%C3%A9tag%C3%A8re%20charge%20lourde%204%20plateaux%20180%20cm) · ≈ 80,00 € |
+| Malles de rangement 60 L<br>*Étiqueter la date de péremption, rotation FIFO (premier entré, premier sorti).* | 3 | recommandé | maison | [Malle de rangement 60 L avec couvercle (Tontarelli)](https://www.amazon.fr/s?k=tontarelli%20malle%20rangement%2060%20l%20couvercle) · ≈ 17,00 € | [Boîte de rangement 60 L à clips (Sistema)](https://www.amazon.fr/s?k=sistema%20bo%C3%AEte%20rangement%2060%20l%20clips) · ≈ 22,00 € | [Really Useful Box 64 L](https://www.amazon.fr/s?k=really%20useful%20box%2064%20litres) · ≈ 32,00 € |
 
-- **Étagère métal** : Charge lourde : étagère 4 plateaux L.180 cm 79 €.
-- **Malles de rangement 60 L** : Lot de 3 : 50,70 €. Étiqueter date de péremption, rotation FIFO (premier entré, premier sorti).
+## Ajouts selon l'environnement
+
+### Ville / milieu urbain dense
+
+| Objet | Priorité | € Petit budget | €€ Budget moyen | €€€ Gros budget |
+|---|---|---|---|---|
+| Masque FFP2 + lunettes étanches | essentiel | [3M Aura 9320+ FFP2 sans valve (1 masque)](https://www.amazon.fr/s?k=3m%20aura%209320%2B%20ffp2%20masque) · ≈ 2,50 € · 12 g | [3M Aura 9322+ FFP2 avec valve (1 masque)](https://www.amazon.fr/s?k=3m%20aura%209322%2B%20ffp2%20valve%20masque) · ≈ 3,50 € · 15 g | [3M Aura 9332+ FFP3 avec valve (1 masque)](https://www.amazon.fr/s?k=3m%20aura%209332%2B%20ffp3%20masque%20valve) · ≈ 6,00 € · 16 g |
+| Gants de travail robustes | essentiel | [Gants de manutention paume cuir renforcée](https://www.amazon.fr/s?k=gants%20de%20travail%20manutention%20cuir%20renforc%C3%A9s) · ≈ 8,00 € · 90 g | [Mechanix Wear Original (gants de travail)](https://www.amazon.fr/s?k=mechanix%20wear%20original%20gants%20travail) · ≈ 25,00 € · 100 g | [Mechanix Wear M-Pact (gants renforcés)](https://www.amazon.fr/s?k=mechanix%20wear%20m-pact%20gants) · ≈ 40,00 € · 130 g |
+| Chaussures fermées de marche (portées ou attachées au sac) | essentiel | [Hi-Tec chaussures de randonnée basses](https://www.amazon.fr/s?k=hi-tec%20chaussures%20randonn%C3%A9e%20homme) · ≈ 40,00 € | [Salomon X Ultra 4 GTX chaussures basses (paire)](https://www.amazon.fr/s?k=salomon%20x%20ultra%204%20gtx%20chaussures) · ≈ 120,00 € · 780 g | [Merrell Moab 3 GTX chaussures (paire)](https://www.amazon.fr/s?k=merrell%20moab%203%20gtx%20chaussures) · ≈ 130,00 € · 850 g |
+| Lampe frontale + piles | essentiel | [Petzl Tikkina 300 lm (3 piles AAA)](https://www.amazon.fr/s?k=petzl%20tikkina%20lampe%20frontale) · ≈ 20,00 € · 85 g | [Black Diamond Spot 400-R (rechargeable)](https://www.amazon.fr/s?k=black%20diamond%20spot%20400%20lampe%20frontale) · ≈ 45,00 € · 86 g | [Petzl Actik Core 600 lm (rechargeable)](https://www.amazon.fr/s?k=petzl%20actik%20core%20lampe%20frontale) · ≈ 70,00 € · 88 g |
+| Espèces en petites coupures (70–100 €/personne) | essentiel | *Espèces retirées au distributeur : rien à acheter.* | *Espèces retirées au distributeur : rien à acheter.* | *Espèces retirées au distributeur : rien à acheter.* |
+| Clé de robinet de façade (clé « silcock » / carré) | optionnel | [Clé de robinet à carré universelle](https://www.amazon.fr/s?k=cl%C3%A9%20robinet%20de%20fa%C3%A7ade%20carr%C3%A9%209%20mm) · ≈ 8,00 € · 200 g | [Clé à carré réglable multi-tailles](https://www.amazon.fr/s?k=cl%C3%A9%20robinet%20carr%C3%A9%20silcock%20r%C3%A9glable) · ≈ 15,00 € · 250 g | [Clé multi-usage borne et robinet extérieur](https://www.amazon.fr/s?k=cl%C3%A9%20multi-usage%20borne%20eau%20robinet%20ext%C3%A9rieur) · ≈ 25,00 € · 350 g |
+| Pastilles ou filtre + carte des fontaines publiques repérées | recommandé | [Micropur Classic MC 1T (pastilles, 100 tab.)](https://www.amazon.fr/s?k=micropur%20classic%20mc%201t%20pastilles) · ≈ 13,00 € · 60 g | [Sawyer Mini filtre à eau 0,1 µm](https://www.amazon.fr/s?k=sawyer%20mini%20filtre%20eau) · ≈ 30,00 € · 56 g | [Katadyn BeFree 1L filtre 0,1 µm](https://www.amazon.fr/s?k=katadyn%20befree%201l%20filtre%20eau) · ≈ 48,00 € · 63 g |
+| Radio à piles | recommandé | [Retekess V115 radio FM/AM à piles](https://www.amazon.fr/s?k=retekess%20v115%20radio%20portable%20fm%20am) · ≈ 15,00 € · 200 g | [Midland ER300 radio dynamo solaire](https://www.amazon.fr/s?k=midland%20er300%20radio%20dynamo%20solaire) · ≈ 45,00 € · 330 g | [Eton Scorpion II radio solaire dynamo](https://www.amazon.fr/s?k=eton%20scorpion%20ii%20radio%20solaire%20dynamo) · ≈ 70,00 € · 500 g |
+
+### Campagne / plaine / périurbain
+
+| Objet | Priorité | € Petit budget | €€ Budget moyen | €€€ Gros budget |
+|---|---|---|---|---|
+| Tire-tique + vêtements longs | essentiel | [Tire-tique crochet (lot de 2 tailles)](https://www.amazon.fr/s?k=tire%20tique%20crochet) · ≈ 5,00 € | [O'Tom Tick Twister (lot de 2)](https://www.amazon.fr/s?k=otom%20tick%20twister) · ≈ 7,00 € | [Pince tire-tique inox avec loupe](https://www.amazon.fr/s?k=pince%20tire%20tique%20inox) · ≈ 10,00 € |
+| Filtre ou pastilles de traitement de l'eau | essentiel | [Micropur Classic MC 1T (pastilles, 100 tab.)](https://www.amazon.fr/s?k=micropur%20classic%20mc%201t%20pastilles) · ≈ 13,00 € · 60 g | [Sawyer Mini filtre à eau 0,1 µm](https://www.amazon.fr/s?k=sawyer%20mini%20filtre%20eau) · ≈ 30,00 € · 56 g | [Katadyn BeFree 1L filtre 0,1 µm](https://www.amazon.fr/s?k=katadyn%20befree%201l%20filtre%20eau) · ≈ 48,00 € · 63 g |
+| Vêtement ou brassard orange fluo | recommandé | [Brassard orange fluo](https://www.amazon.fr/s?k=brassard%20orange%20fluo) · ≈ 5,00 € · 20 g | [Gilet orange fluo chasse haute visibilité](https://www.amazon.fr/s?k=gilet%20orange%20fluo%20chasse) · ≈ 12,00 € · 100 g | [Veste de chasse orange fluo haute visibilité](https://www.amazon.fr/s?k=veste%20chasse%20orange%20fluo) · ≈ 35,00 € |
+| Sifflet + couverture de survie | recommandé | [Sifflet Fox 40 Classic + couverture de survie](https://www.amazon.fr/s?k=fox%2040%20classic%20sifflet) · ≈ 6,00 € · 15 g | [SOL Emergency Bivvy (sac de survie) + sifflet](https://www.amazon.fr/s?k=sol%20emergency%20bivvy%20sac%20bivouac) · ≈ 20,00 € · 140 g | [SOL Escape Bivvy (respirant) + sifflet](https://www.amazon.fr/s?k=sol%20escape%20bivvy%20sac%20bivouac) · ≈ 60,00 € · 240 g |
+| Carte papier + boussole | recommandé | [Suunto A-10 boussole](https://www.amazon.fr/s?k=suunto%20a-10%20boussole) · ≈ 17,00 € · 40 g | [Silva Ranger boussole à miroir](https://www.amazon.fr/s?k=silva%20ranger%20boussole) · ≈ 40,00 € · 100 g | [Suunto MC-2 boussole](https://www.amazon.fr/s?k=suunto%20mc-2%20boussole) · ≈ 65,00 € · 90 g |
+| Radio à piles | recommandé | [Retekess V115 radio FM/AM à piles](https://www.amazon.fr/s?k=retekess%20v115%20radio%20portable%20fm%20am) · ≈ 15,00 € · 200 g | [Midland ER300 radio dynamo solaire](https://www.amazon.fr/s?k=midland%20er300%20radio%20dynamo%20solaire) · ≈ 45,00 € · 330 g | [Eton Scorpion II radio solaire dynamo](https://www.amazon.fr/s?k=eton%20scorpion%20ii%20radio%20solaire%20dynamo) · ≈ 70,00 € · 500 g |
+
+### Montagne (moyenne et haute)
+
+| Objet | Priorité | € Petit budget | €€ Budget moyen | €€€ Gros budget |
+|---|---|---|---|---|
+| Coupe-vent imperméable + doudoune ou polaire, même en été | essentiel | [Regatta Pack-It III veste imperméable](https://www.amazon.fr/s?k=regatta%20pack%20it%20iii%20veste) · ≈ 30,00 € | [Columbia Watertight II veste imperméable](https://www.amazon.fr/s?k=columbia%20watertight%20ii%20veste) · ≈ 70,00 € · 350 g | [Patagonia Torrentshell 3L veste](https://www.amazon.fr/s?k=patagonia%20torrentshell%203l%20veste) · ≈ 170,00 € · 400 g |
+| Lunettes de soleil, casquette, crème solaire | essentiel | [Julbo Explorer lunettes catégorie 4](https://www.amazon.fr/s?k=lunettes%20glacier%20cat%204%20julbo) · ≈ 40,00 € · 40 g | [Julbo Cham lunettes Spectron 4](https://www.amazon.fr/s?k=julbo%20cham%20spectron%204) · ≈ 80,00 € · 60 g | [Julbo Monterosa 2 lunettes Spectron 4](https://www.amazon.fr/s?k=julbo%20monterosa%20spectron%204) · ≈ 120,00 € · 55 g |
+| Couverture de survie + sifflet + téléphone chargé (112) | essentiel | [Sifflet Fox 40 Classic + couverture de survie](https://www.amazon.fr/s?k=fox%2040%20classic%20sifflet) · ≈ 6,00 € · 15 g | [SOL Emergency Bivvy (sac de survie) + sifflet](https://www.amazon.fr/s?k=sol%20emergency%20bivvy%20sac%20bivouac) · ≈ 20,00 € · 140 g | [SOL Escape Bivvy (respirant) + sifflet](https://www.amazon.fr/s?k=sol%20escape%20bivvy%20sac%20bivouac) · ≈ 60,00 € · 240 g |
+| Balise de détresse (PLB) ou communicateur satellite | recommandé | [Ocean Signal rescueME PLB3 (balise sans abonnement)](https://www.amazon.fr/s?k=ocean%20signal%20rescueme%20plb3) · ≈ 290,00 € | [Garmin inReach Mini 2 (abonnement requis)](https://www.amazon.fr/s?k=garmin%20inreach%20mini%202) · ≈ 350,00 € | [Garmin inReach Messenger Plus (abonnement requis)](https://www.amazon.fr/s?k=garmin%20inreach%20messenger%20plus) · ≈ 480,00 € |
+| Batterie externe | recommandé | [Anker PowerCore 10000 batterie externe](https://www.amazon.fr/s?k=anker%20powercore%2010000) · ≈ 25,00 € · 180 g | [Anker PowerCore 20000 batterie externe](https://www.amazon.fr/s?k=anker%20powercore%2020000) · ≈ 40,00 € · 350 g | [Nitecore NB10000 Gen 3 batterie externe](https://www.amazon.fr/s?k=nitecore%20nb10000%20gen3%20batterie%20externe) · ≈ 50,00 € · 150 g |
+| DVA + pelle + sonde (terrain enneigé hors domaine sécurisé), avec formation | essentiel | [Ortovox Zoom+ DVA](https://www.amazon.fr/s?k=ortovox%20zoom%2B%20dva) · ≈ 250,00 € · 210 g | [BCA Tracker 4 DVA](https://www.amazon.fr/s?k=bca%20tracker%204%20dva) · ≈ 295,00 € · 215 g | [Ortovox Diract Voice DVA](https://www.amazon.fr/s?k=ortovox%20diract%20voice%20dva) · ≈ 390,00 € · 215 g |
+| Lampe frontale | essentiel | [Petzl Tikkina 300 lm (3 piles AAA)](https://www.amazon.fr/s?k=petzl%20tikkina%20lampe%20frontale) · ≈ 20,00 € · 85 g | [Black Diamond Spot 400-R (rechargeable)](https://www.amazon.fr/s?k=black%20diamond%20spot%20400%20lampe%20frontale) · ≈ 45,00 € · 86 g | [Petzl Actik Core 600 lm (rechargeable)](https://www.amazon.fr/s?k=petzl%20actik%20core%20lampe%20frontale) · ≈ 70,00 € · 88 g |
+
+### Forêt (dont risque de feu de forêt)
+
+| Objet | Priorité | € Petit budget | €€ Budget moyen | €€€ Gros budget |
+|---|---|---|---|---|
+| Masque FFP2 + lunettes étanches | essentiel | [3M Aura 9320+ FFP2 sans valve (1 masque)](https://www.amazon.fr/s?k=3m%20aura%209320%2B%20ffp2%20masque) · ≈ 2,50 € · 12 g | [3M Aura 9322+ FFP2 avec valve (1 masque)](https://www.amazon.fr/s?k=3m%20aura%209322%2B%20ffp2%20valve%20masque) · ≈ 3,50 € · 15 g | [3M Aura 9332+ FFP3 avec valve (1 masque)](https://www.amazon.fr/s?k=3m%20aura%209332%2B%20ffp3%20masque%20valve) · ≈ 6,00 € · 16 g |
+| Vêtements couvrants en coton ou en laine, chaussures fermées | essentiel | [Pantalon coton de randonnée](https://www.amazon.fr/s?k=pantalon%20coton%20randonn%C3%A9e%20homme) · ≈ 20,00 € · 450 g | [Pantalon de travail coton Dickies](https://www.amazon.fr/s?k=pantalon%20travail%20coton%20dickies) · ≈ 45,00 € · 600 g | [Pantalon de travail coton Carhartt](https://www.amazon.fr/s?k=carhartt%20pantalon%20travail%20coton) · ≈ 70,00 € · 700 g |
+| Foulard ou linge à humidifier | recommandé | [Bandana coton](https://www.amazon.fr/s?k=bandana%20coton%20foulard) · ≈ 4,00 € · 40 g | [Foulard coton grand format](https://www.amazon.fr/s?k=foulard%20coton%20%C3%A9charpe%20grand) · ≈ 12,00 € · 80 g | [Tour de cou laine mérinos](https://www.amazon.fr/s?k=tour%20de%20cou%20laine%20m%C3%A9rinos) · ≈ 25,00 € · 70 g |
+| Gants en cuir épais | recommandé | [Gants de soudeur cuir épais](https://www.amazon.fr/s?k=gants%20cuir%20soudeur%20%C3%A9pais) · ≈ 10,00 € · 200 g | [Gants de soudeur cuir fendu manchette longue](https://www.amazon.fr/s?k=gants%20soudeur%20cuir%20fendu%20longs) · ≈ 18,00 € · 250 g | [Gants cuir forestier/pompier](https://www.amazon.fr/s?k=gants%20cuir%20pompier%20forestier) · ≈ 30,00 € · 250 g |
+| Radio à piles + lampe | recommandé | [Retekess V115 radio à piles + lampe](https://www.amazon.fr/s?k=retekess%20v115%20radio%20portable%20fm%20am) · ≈ 15,00 € · 200 g | [Midland ER300 radio dynamo solaire](https://www.amazon.fr/s?k=midland%20er300%20radio%20dynamo%20solaire) · ≈ 45,00 € · 330 g | [Eton Scorpion II radio solaire lampe](https://www.amazon.fr/s?k=eton%20scorpion%20ii%20radio%20solaire%20dynamo) · ≈ 70,00 € · 500 g |
+| Tire-tique | recommandé | [Tire-tique crochet (lot de 2 tailles)](https://www.amazon.fr/s?k=tire%20tique%20crochet) · ≈ 5,00 € | [O'Tom Tick Twister (lot de 2)](https://www.amazon.fr/s?k=otom%20tick%20twister) · ≈ 7,00 € | [Pince tire-tique inox avec loupe](https://www.amazon.fr/s?k=pince%20tire%20tique%20inox) · ≈ 10,00 € |
+
+### Littoral / zones inondables / zones humides
+
+| Objet | Priorité | € Petit budget | €€ Budget moyen | €€€ Gros budget |
+|---|---|---|---|---|
+| Sac étanche ou sac-poubelle épais en doublure | essentiel | [Sac étanche 10 L](https://www.amazon.fr/s?k=sac%20%C3%A9tanche%2010l) · ≈ 8,00 € · 150 g | [Sea to Summit Big River Dry Bag 8 L](https://www.amazon.fr/s?k=sea%20to%20summit%20big%20river%20dry%20bag%208l) · ≈ 25,00 € · 100 g | [Ortlieb Dry Bag PS10 13 L](https://www.amazon.fr/s?k=ortlieb%20dry%20bag%20ps10%2013l) · ≈ 30,00 € · 150 g |
+| Bottes + gants | recommandé | [Dunlop Acifort bottes caoutchouc](https://www.amazon.fr/s?k=dunlop%20acifort%20bottes) · ≈ 25,00 € | [Bottes Le Chameau Vierzonord (paire)](https://www.amazon.fr/s?k=le%20chameau%20vierzonord%20bottes) · ≈ 110,00 € · 1400 g | [Bottes Aigle Parcours 2 (paire)](https://www.amazon.fr/s?k=aigle%20parcours%202%20bottes%20caoutchouc) · ≈ 120,00 € · 1300 g |
+| Pansements étanches | recommandé | [Hansaplast pansements waterproof](https://www.amazon.fr/s?k=hansaplast%20pansements%20waterproof) · ≈ 4,00 € · 20 g | [Elastoplast pansements waterproof](https://www.amazon.fr/s?k=elastoplast%20waterproof%20pansements) · ≈ 5,00 € · 20 g | [3M Tegaderm film transparent 10x12](https://www.amazon.fr/s?k=3m%20tegaderm%20film%20transparent%2010x12) · ≈ 20,00 € · 50 g |
+| Lampe + sifflet | essentiel | [Petzl Tikkina (frontale 300 lm)](https://www.amazon.fr/s?k=petzl%20tikkina%20lampe%20frontale%20300%20lumens) · ≈ 22,00 € · 85 g | [Petzl Tikka (frontale 350 lm)](https://www.amazon.fr/s?k=petzl%20tikka%20lampe%20frontale%20350%20lumens) · ≈ 35,00 € · 85 g | [Petzl Actik Core (600 lm rechargeable)](https://www.amazon.fr/s?k=petzl%20actik%20core%20lampe%20frontale%20600%20lumens) · ≈ 75,00 € · 88 g |
+| Radio à piles, téléphone chargé, copies des ordonnances et papiers | essentiel | [Retekess V115 radio portable FM/AM](https://www.amazon.fr/s?k=retekess%20v115%20radio%20portable%20fm%20am) · ≈ 17,00 € | [Sangean DT-250 radio portable FM/AM](https://www.amazon.fr/s?k=sangean%20dt-250%20radio%20portable%20fm%20am) · ≈ 30,00 € | [Midland ER300 radio dynamo solaire](https://www.amazon.fr/s?k=midland%20er300%20radio%20dynamo%20solaire) · ≈ 60,00 € · 500 g |
+| Pastilles ou filtre à eau | recommandé | [Katadyn Micropur Classic MC 1T (pastilles x30)](https://www.amazon.fr/s?k=katadyn%20micropur%20classic%20mc%201t%20pastilles) · ≈ 9,00 € | [Sawyer Mini filtre à eau 0,1 µm](https://www.amazon.fr/s?k=sawyer%20mini%20filtre%20eau) · ≈ 45,00 € · 57 g | [Katadyn BeFree 1 L filtre à eau 0,1 µm](https://www.amazon.fr/s?k=katadyn%20befree%201l%20filtre%20eau) · ≈ 49,00 € · 59 g |
+| Répulsif anti-moustiques | optionnel | [Insect Ecran Zones Infestées spray adulte](https://www.amazon.fr/s?k=insect%20ecran%20zones%20infestees%20spray%20adulte) · ≈ 10,00 € | [Manouka Tropika lotion anti-moustiques 75 ml](https://www.amazon.fr/s?k=manouka%20tropika%20lotion%20anti%20moustiques%2075%20ml) · ≈ 14,00 € | [Anti-Brumm Forte spray anti-moustiques 150 ml](https://www.amazon.fr/s?k=anti%20brumm%20forte%20spray%20150%20ml) · ≈ 14,00 € |
+
+### Chaud / canicule / sec
+
+| Objet | Priorité | € Petit budget | €€ Budget moyen | €€€ Gros budget |
+|---|---|---|---|---|
+| Eau supplémentaire (jusqu'au double de la dotation du sac) | essentiel | [Cristaline eau de source 6 × 1,5 L](https://www.amazon.fr/s?k=cristaline%20eau%20de%20source%206%20x%201%2C5%20l) · ≈ 3,50 € | [Volvic eau minérale 6 × 1,5 L](https://www.amazon.fr/s?k=volvic%206%20x%201%2C5%20l) · ≈ 6,00 € | [Evian eau minérale 6 × 1,5 L](https://www.amazon.fr/s?k=evian%206%20x%201%2C5%20l) · ≈ 7,50 € |
+| Sels de réhydratation ou aliments salés | essentiel | [Adiaril sachets de réhydratation orale (x10)](https://www.amazon.fr/s?k=adiaril%20sachets%20reidratation%20orale) · ≈ 6,00 € | [Isostar Hydrate Perform poudre 400 g](https://www.amazon.fr/s?k=isostar%20hydrate%20perform%20poudre%20400g) · ≈ 13,00 € | [Nuun Sport tablettes électrolytes (4 tubes)](https://www.amazon.fr/s?k=nuun%20sport%20tablettes%20electrolytes%204%20tubes) · ≈ 24,00 € |
+| Chapeau ou casquette, lunettes, crème solaire | essentiel | [Nivea Sun Protect Hydrate SPF50 200 ml](https://www.amazon.fr/s?k=nivea%20sun%20protect%20hydrate%20spf50%20200%20ml) · ≈ 9,00 € | [La Roche-Posay Anthelios UVMune 400 SPF50+ 50 ml](https://www.amazon.fr/s?k=la%20roche%20posay%20anthelios%20uvmune%20400%20spf50%2050%20ml) · ≈ 14,00 € | [Bioderma Photoderm Max SPF50+ 40 ml](https://www.amazon.fr/s?k=bioderma%20photoderm%20max%20spf50%2040%20ml) · ≈ 15,00 € |
+| Vêtements amples, clairs et légers (le coton convient par temps chaud) | recommandé | [Fruit of the Loom t-shirt coton blanc (lot de 3)](https://www.amazon.fr/s?k=fruit%20of%20the%20loom%20t-shirt%20blanc%20lot%20de%203) · ≈ 12,00 € | [Regatta Fingal t-shirt technique](https://www.amazon.fr/s?k=regatta%20fingal%20t-shirt%20homme) · ≈ 18,00 € | [Columbia Silver Ridge chemise manches longues](https://www.amazon.fr/s?k=columbia%20silver%20ridge%20chemise%20manches%20longues%20homme) · ≈ 50,00 € |
+| Brumisateur ou linge à mouiller | recommandé | [Evian brumisateur spray 300 ml](https://www.amazon.fr/s?k=evian%20brumisateur%20spray%20300%20ml) · ≈ 5,50 € | [Brumisateur à main rechargeable 300 ml](https://www.amazon.fr/s?k=brumisateur%20pulv%C3%A9risateur%20eau%20300%20ml%20rechargeable) · ≈ 9,00 € | [Ventilateur brumisateur portable rechargeable USB](https://www.amazon.fr/s?k=ventilateur%20portable%20brumisateur%20usb%20rechargeable) · ≈ 25,00 € |
+| Bâche ou couverture de survie (pour faire de l'ombre) | recommandé | [Couverture de survie or/argent 210x130 (lot)](https://www.amazon.fr/s?k=couverture%20de%20survie%20or%20argent%20lot) · ≈ 6,00 € | [Terra Hiker tarp 3 × 3 m imperméable](https://www.amazon.fr/s?k=terra%20hiker%20tarp%203x3) · ≈ 25,00 € | [Helikon-Tex Supertarp](https://www.amazon.fr/s?k=helikon%20tex%20supertarp%20b%C3%A2che) · ≈ 90,00 € |
+| Pochette isotherme pour les médicaments | recommandé | [Pochette isotherme médicaments avec pack froid](https://www.amazon.fr/s?k=pochette%20isotherme%20m%C3%A9dicaments%20pack%20froid) · ≈ 8,00 € | [Pochette isotherme Medi-Cool avec pack froid](https://www.amazon.fr/s?k=medi%20cool%20pochette%20isotherme%20medicaments) · ≈ 17,00 € | [Frio pochette réfrigérante insuline](https://www.amazon.fr/s?k=frio%20pochette%20refrigerante%20insuline) · ≈ 35,00 € |
+
+### Froid / hiver (neige, gel)
+
+| Objet | Priorité | € Petit budget | €€ Budget moyen | €€€ Gros budget |
+|---|---|---|---|---|
+| Système 3 couches : sous-couche en laine mérinos ou synthétique, couche isolante, coque coupe-vent | essentiel | [Lapasa ensemble sous-vêtement thermique](https://www.amazon.fr/s?k=lapasa%20ensemble%20thermique) · ≈ 20,00 € | [Odlo Performance Warm Eco haut manches longues](https://www.amazon.fr/s?k=odlo%20performance%20warm%20eco) · ≈ 40,00 € | [Icebreaker 200 Oasis haut mérinos](https://www.amazon.fr/s?k=icebreaker%20200%20oasis%20haut%20m%C3%A9rinos) · ≈ 90,00 € |
+| Bonnet, moufles par-dessus des gants fins, chaussettes épaisses en laine de rechange | essentiel | [Bonnet, gants et moufles hiver (lot)](https://www.amazon.fr/s?k=bonnet%20gants%20moufles%20hiver%20chaud%20lot) · ≈ 15,00 € | [Trekmates Mogul Dry moufles imperméables](https://www.amazon.fr/s?k=trekmates%20mogul%20dry%20mitt) · ≈ 35,00 € | [Black Diamond Mercury Mitts moufles](https://www.amazon.fr/s?k=black%20diamond%20mercury%20mitts) · ≈ 90,00 € |
+| Chaufferettes chimiques ou électriques | recommandé | [HotHands chaufferettes mains (10 paires)](https://www.amazon.fr/s?k=hothands%20chaufferettes%20mains%2010%20paires) · ≈ 10,00 € | [Ocoopa chaufferette main rechargeable](https://www.amazon.fr/s?k=ocoopa%20chaufferette%20main%20rechargeable) · ≈ 25,00 € | [Ocoopa UT3 Pro chaufferette électrique](https://www.amazon.fr/s?k=ocoopa%20ut3%20pro%20chaufferette) · ≈ 45,00 € |
+| Isolation du sol (tapis de sol, couvertures sous soi) | essentiel | [Tapis de sol mousse randonnée](https://www.amazon.fr/s?k=tapis%20de%20sol%20mousse%20randonn%C3%A9e) · ≈ 12,00 € | [Therm-a-Rest Z Lite Sol](https://www.amazon.fr/s?k=therm-a-rest%20z%20lite%20sol%20matelas%20mousse) · ≈ 48,00 € · 410 g | [Therm-a-Rest NeoAir XLite NXT](https://www.amazon.fr/s?k=therm-a-rest%20neoair%20xlite%20nxt%20matelas) · ≈ 230,00 € · 354 g |
+| Thermos (boissons chaudes) + aliments caloriques | recommandé | [Bouteille isotherme inox 1 L](https://www.amazon.fr/s?k=bouteille%20isotherme%20inox%201%20l) · ≈ 15,00 € | [Stanley Classic bouteille isotherme 1 L](https://www.amazon.fr/s?k=stanley%20classic%20bouteille%20isotherme%201%20l) · ≈ 45,00 € | [Stanley Classic Legendary 1,4 L](https://www.amazon.fr/s?k=stanley%20classic%20legendary%201%2C4%20l) · ≈ 55,00 € |
+| Pastilles ou ébullition plutôt qu'un filtre seul | recommandé | [Katadyn Micropur Classic MC 1T (pastilles x30)](https://www.amazon.fr/s?k=katadyn%20micropur%20classic%20mc%201t%20pastilles) · ≈ 9,00 € | [Katadyn Micropur Forte MF 1T (50)](https://www.amazon.fr/s?k=katadyn%20micropur%20forte%20mf%201t%20pastilles) · ≈ 16,00 € | [Katadyn Micropur Forte MF 1T (100)](https://www.amazon.fr/s?k=katadyn%20micropur%20forte%20mf%201t%20100%20pastilles) · ≈ 25,00 € |
+| Kit voiture d'hiver (pelle, couvertures, chaînes, chaufferettes) | recommandé | [Pelle pliante voiture neige acier](https://www.amazon.fr/s?k=pelle%20pliante%20voiture%20neige) · ≈ 17,00 € | [Michelin Easy Grip chaînes à neige](https://www.amazon.fr/s?k=michelin%20easy%20grip%20cha%C3%AEnes%20%C3%A0%20neige) · ≈ 45,00 € | [Kit hiver voiture chaînes pelle couverture](https://www.amazon.fr/s?k=kit%20hiver%20voiture%20cha%C3%AEnes%20pelle%20couverture) · ≈ 70,00 € |
+
+### Humide / pluvieux
+
+| Objet | Priorité | € Petit budget | €€ Budget moyen | €€€ Gros budget |
+|---|---|---|---|---|
+| Veste et pantalon de pluie | essentiel | [Regatta Pack-It III veste imperméable](https://www.amazon.fr/s?k=regatta%20pack%20it%20iii%20veste) · ≈ 30,00 € | [Columbia Watertight II veste de pluie](https://www.amazon.fr/s?k=columbia%20watertight%20ii) · ≈ 80,00 € | [Helly Hansen Loke veste pluie](https://www.amazon.fr/s?k=helly%20hansen%20loke%20veste%20pluie%20homme) · ≈ 120,00 € |
+| Doublure étanche du sac (sac-poubelle épais) | essentiel | [Sacs poubelle 100 L renforcés (x20)](https://www.amazon.fr/s?k=sacs%20poubelle%20100%20l%20renforc%C3%A9s) · ≈ 8,00 € | [Sea to Summit sac étanche 20 L](https://www.amazon.fr/s?k=sea%20to%20summit%20sac%20%C3%A9tanche%2020%20l) · ≈ 20,00 € | [Exped Fold Drybag UL 22 L](https://www.amazon.fr/s?k=exped%20fold%20drybag%20ul%2022%20l) · ≈ 25,00 € |
+| Tenue de nuit dédiée, toujours sèche | essentiel | [Pyjama polaire homme](https://www.amazon.fr/s?k=pyjama%20polaire%20homme%20chaud) · ≈ 20,00 € | [Odlo Active Warm ensemble thermique](https://www.amazon.fr/s?k=odlo%20active%20warm%20ensemble%20thermique) · ≈ 50,00 € | [Icebreaker 200 Oasis ensemble mérinos](https://www.amazon.fr/s?k=icebreaker%20200%20oasis%20ensemble%20m%C3%A9rinos) · ≈ 140,00 € |
+| Chaussettes de rechange en laine ou synthétique | essentiel | [Chaussettes de randonnée en laine (lot de 3)](https://www.amazon.fr/s?k=chaussettes%20randonn%C3%A9e%20laine%20lot%20de%203) · ≈ 12,00 € | [Falke TK2 chaussettes trekking](https://www.amazon.fr/s?k=falke%20tk2%20chaussettes%20trekking) · ≈ 20,00 € | [Smartwool Hike Light Cushion](https://www.amazon.fr/s?k=smartwool%20hike%20light%20cushion%20chaussettes) · ≈ 28,00 € |
+| Allume-feu fiable par temps humide (coton vaseliné, allumettes-tempête) | recommandé | [UCO allumettes tempête (25)](https://www.amazon.fr/s?k=uco%20allumettes%20temp%C3%AAte%20stormproof) · ≈ 6,00 € | [Esbit tablettes combustible (20)](https://www.amazon.fr/s?k=esbit%20tablettes%20combustible%2020) · ≈ 10,00 € | [Light My Fire Swedish FireSteel 2.0](https://www.amazon.fr/s?k=light%20my%20fire%20swedish%20firesteel) · ≈ 16,00 € |
+| Bâche | recommandé | [Bâche 3x2 m polyéthylène œillets](https://www.amazon.fr/s?k=b%C3%A2che%203x2%20m%20poly%C3%A9thyl%C3%A8ne%20oeillets) · ≈ 8,00 € | [Terra Hiker tarp 3 × 3 m imperméable](https://www.amazon.fr/s?k=terra%20hiker%20tarp%203x3) · ≈ 25,00 € | [Helikon-Tex Supertarp](https://www.amazon.fr/s?k=helikon%20tex%20supertarp%20b%C3%A2che) · ≈ 90,00 € |
+
+## Provenance des prix
+
+- **Gammes** (js/gear-tiers.js) : modèles et prix indicatifs établis le 02/10/2026 par recherche web (sites de marques, comparatifs, revendeurs) ; Amazon.fr bloque la consultation automatique, donc ni la disponibilité ni le prix exact n'y ont été vérifiés produit par produit. Les marques vendues seulement en magasin propre (Decathlon : Quechua, Forclaz…) sont exclues, car absentes d'Amazon.
+- **Quand l'API Amazon sera active** (après les premières ventes du compte Partenaires, voir [AMAZON.md](AMAZON.md)), l'application affichera les prix officiels datés à la place des estimations.
+- **Catalogue d'origine** (js/gear.js, champs `url` et `note`) : prix relevés le 30/09/2026 chez des revendeurs spécialisés. Ces liens ne sont plus affichés dans l'application ; ils restent la trace de la première estimation.
 
 ## Points de vigilance
 
 - **Eau** : les filtres (Sawyer, Katadyn BeFree, LifeStraw) retiennent les bactéries et les protozoaires, **pas les virus** ni les produits chimiques. En zone urbaine ou après une inondation, **filtrer puis désinfecter** (recommandation du CDC). Le Micropur *Classic* (à l'argent) sert seulement à **conserver** une eau déjà potable.
-- **Comprimés d'iode** : à prendre **uniquement sur ordre du préfet**. Selon l'ASNR, ils sont disponibles en pharmacie pour les habitants des zones PPI (20 km autour des centrales). Une campagne de distribution 0-20 km en septembre 2026 est annoncée par la presse spécialisée (Pharmactu). *Je ne peux pas la confirmer sur un site officiel.*
-- **Radio** : les talkies-walkies **PMR446** homologués (ex. Motorola T42, Midland G7) s'utilisent sans licence. Émettre avec un émetteur-récepteur type Baofeng UV-5R demande une licence de radioamateur.
-- **Garrot tourniquet** : il existe beaucoup de contrefaçons. Achetez chez un revendeur identifié et formez-vous (le guide SGDSN recommande la formation au garrot).
-- **Groupe électrogène, réchaud, chauffage d'appoint** : à utiliser uniquement dehors ou dans une pièce aérée, avec un **détecteur de CO** (recommandé par le BBK).
+- **Comprimés d'iode** : médicament à retirer en pharmacie, à prendre **uniquement sur ordre du préfet** ; aucun lien d'achat n'est proposé.
+- **Radio** : les talkies-walkies **PMR446** homologués s'utilisent sans licence. Émettre avec un émetteur-récepteur type Baofeng UV-5R demande une licence de radioamateur.
+- **Garrot tourniquet** : beaucoup de contrefaçons circulent, y compris sur les places de marché. Les trois gammes proposent des modèles homologués CoTCCC : achetez chez le vendeur officiel de la marque et formez-vous.
+- **Groupe électrogène, réchaud, chauffage d'appoint** : uniquement dehors ou dans une pièce aérée, avec un **détecteur de CO**.
 - **Couteau** : en France, porter un couteau sans motif légitime est interdit. Gardez-le rangé dans le sac.
 - **Rotation** : notez les dates sur les contenants (premier entré, premier sorti) et vérifiez le kit **deux fois par an** (guide SGDSN).
-- **Sites évités** : le domaine `equipement-de-survie.fr`, qui ressort dans les moteurs de recherche, redirigeait le 30/09/2026 vers un site de casino. Il n'est pas utilisé ici.
-- **Revendeurs non consultables** pendant le relevé (blocage anti-robot) : decathlon.fr, amazon.fr, leroymerlin.fr, fnac, darty, manomano, auvieuxcampeur… Ils restent de bonnes options : comparez vous-même.
-- **passion-radio.fr** affiche ses prix HT. Pour les radios concernées, le TTC indiqué a été **calculé** (HT × 1,20).

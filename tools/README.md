@@ -23,3 +23,7 @@ Depuis un serveur local à la racine du dépôt, ouvrir `tools/ui-smoke.html?wid
 ## Logo
 
 Sources dans `design/` (logo complet sur fond crème et sur fond transparent). `node tools/build-logo.mjs` (avec le module sharp : `npm i --no-save sharp`) en tire l'emblème seul (couleurs d'origine et version claire pour fonds sombres), les icônes d'application (web, installation, iOS), le favicon, le logo complet clair et foncé, l'aperçu de partage du site et les écrans de démarrage iOS.
+
+## Matériel conseillé et liens Amazon
+
+`node tools/test-shop.mjs` contrôle les 3 gammes de budget (`js/gear-tiers.js`) : chaque objet couvert, prix croissants, aucune marque absente d'Amazon, liens et mention Partenaire, sacs pré-remplis selon la gamme, signature de l'API Amazon et tâche planifiée simulée. `node tools/build-materiel.mjs` régénère `docs/MATERIEL.md`. Mise en service de l'affiliation et des prix officiels : `docs/AMAZON.md`.

@@ -47,6 +47,7 @@
         <label>Eau par pers. et par jour <select data-pp="waterL">${[[2, '2 L (boisson seule)'], [3, '3 L'], [4, '4 L (praticiens : boisson + hygiène minimale)'], [7.5, '7,5 L'], [15, '15 L (humanitaire)']].map(([v, t]) => opt(v, P.waterL, t)).join('')}</select></label>
         <label>kcal par pers. et par jour <input type="number" step="100" min="0" data-pp="kcal" value="${P.kcal}"></label>
         <label>Budget (€) <input type="number" step="50" min="0" data-pp="budget" value="${P.budget}"></label>
+        ${window.Shop ? `<label>Gamme de matériel ${Shop.tierSelect('data-pp="tier"', P.tier)}</label><p class="small muted">Gamme proposée par défaut pour les nouveaux sacs et les achats de la maison : petit budget, budget moyen ou gros budget. Modifiable sur chaque sac.</p>` : ''}
       </div>
       <div class="card"><h3>Compétences</h3>
         ${lock('Le suivi des compétences fait partie de Premium.')}
@@ -58,7 +59,7 @@
   function bind(root, S, commit) {
     root.addEventListener('change', e => {
       const t = e.target, d = t.dataset, P = S.profile;
-      if (d.pp) { P[d.pp] = t.type === 'checkbox' ? t.checked : t.type === 'number' || ['days', 'waterL'].includes(d.pp) ? +t.value : t.value; if (['days', 'adults', 'children', 'waterL'].includes(d.pp) && App.rescaleHome) App.rescaleHome(); commit(); }
+      if (d.pp) { P[d.pp] = t.type === 'checkbox' ? t.checked : t.type === 'number' || ['days', 'waterL'].includes(d.pp) ? +t.value : t.value; if (['days', 'adults', 'children', 'waterL'].includes(d.pp) && App.rescaleHome) App.rescaleHome(); if (d.pp === 'tier' && App.retierHome) App.retierHome(); commit(); }
       if (d.ph) { P.health[d.ph] = t.checked; commit(); }
       if (d.pk) { P.skills[d.pk] = t.checked; commit(); }
     });

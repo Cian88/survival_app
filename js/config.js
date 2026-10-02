@@ -28,6 +28,11 @@ window.KS_CONFIG = {
     osm: 'https://cartes.hold-out.app/osm-europe-20261002.pmtiles',
     terrain: 'https://cartes.hold-out.app/terrain-europe-z12.pmtiles',
   },
+  /* Achats (js/shop.js, docs/AMAZON.md) : chaque objet conseillé renvoie vers Amazon.fr, en 3 gammes de budget.
+     - tag : identifiant Partenaires Amazon (ex. « holdout-21 »). Vide : liens sans affiliation et sans mention.
+       Renseigné : ajouté à chaque lien, et la mention obligatoire « En tant que Partenaire Amazon… » s'affiche.
+     - prices : true une fois l'API Amazon activée sur le serveur (prix officiels datés à la place des estimations). */
+  amazon: { tag: '', prices: false },
   /* Compte (js/account.js, serveur dans server/). Google et Apple n'apparaissent que si leurs identifiants sont renseignés
      (docs/COMPTES.md) ; sur iPhone, Apple est toujours proposé. privacyUrl : politique de confidentialité (exigée par l'App Store). */
   account: {

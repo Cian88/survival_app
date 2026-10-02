@@ -72,6 +72,18 @@
         w.addEventListener('keydown', e => { if (e.key === 'Escape') { close(); resolve(false); } });
       }));
     },
+    /* Choix parmi de grandes options : [{ id, title, sub, detail }] → Promise<id | null>. intro : HTML de confiance. */
+    choose(title, intro, options, preselect) {
+      return new Promise(resolve => open(`
+        <h3>${esc(title)}</h3>${intro ? `<p class="small">${intro}</p>` : ''}
+        <div class="choices">${options.map(o => `<button class="choice ${o.id === preselect ? 'on' : ''}" data-id="${esc(o.id)}"><b>${esc(o.title)}</b>${o.sub ? `<span class="choice-sub">${esc(o.sub)}</span>` : ''}${o.detail ? `<span class="small muted">${esc(o.detail)}</span>` : ''}</button>`).join('')}</div>
+        <div class="row end"><button class="btn ghost" data-x>Annuler</button></div>`, (w, close) => {
+        w.querySelector('[data-x]').onclick = () => { close(); resolve(null); };
+        w.querySelectorAll('[data-id]').forEach(b => b.onclick = () => { close(); resolve(b.dataset.id); });
+        w.addEventListener('keydown', e => { if (e.key === 'Escape') { close(); resolve(null); } });
+        const pre = w.querySelector('.choice.on'); if (pre) setTimeout(() => pre.focus());
+      }));
+    },
     notice(msg) {
       return new Promise(resolve => open(`<p>${esc(msg)}</p><div class="row end"><button class="btn" data-ok>OK</button></div>`, (w, close) => {
         w.querySelector('[data-ok]').onclick = () => { close(); resolve(); };

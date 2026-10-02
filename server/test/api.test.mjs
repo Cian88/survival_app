@@ -32,7 +32,7 @@ rmSync(new URL('../' + STATE, import.meta.url), { recursive: true, force: true }
 execFileSync(WR[0], [...WR[1], 'd1', 'migrations', 'apply', 'holdout', '--local', '--persist-to', STATE], { cwd: DIR, stdio: 'ignore' });
 const pub = await crypto.subtle.exportKey('jwk', lic.publicKey);
 const vars = { MAIL_MODE: 'outbox', GOOGLE_CLIENT_IDS: 'test-web,test-ios', GOOGLE_JWKS_URL: `http://127.0.0.1:${JWKS_PORT}/google`, APPLE_AUDIENCES: 'com.holdout.app', APPLE_JWKS_URL: `http://127.0.0.1:${JWKS_PORT}/apple`, LICENCE_PUBLIC_JWK: JSON.stringify({ kty: pub.kty, crv: pub.crv, x: pub.x, y: pub.y }) };
-const dev = spawn(WR[0], [...WR[1], 'dev', '--local', '--port', String(PORT), '--persist-to', STATE, '--show-interactive-dev-session=false', ...Object.entries(vars).flatMap(([k, v]) => ['--var', `${k}:${v}`])], { cwd: DIR, stdio: ['ignore', 'pipe', 'pipe'] });
+const dev = spawn(WR[0], [...WR[1], 'dev', '--local', '--port', String(PORT), '--persist-to', STATE, '--show-interactive-dev-session=false', '--test-scheduled', ...Object.entries(vars).flatMap(([k, v]) => ['--var', `${k}:${v}`])], { cwd: DIR, stdio: ['ignore', 'pipe', 'pipe'] });
 let devLog = ''; dev.stdout.on('data', d => devLog += d); dev.stderr.on('data', d => devLog += d);
 const API = `http://127.0.0.1:${PORT}`;
 for (let i = 0; ; i++) { try { if ((await fetch(API + '/health')).ok) break; } catch (e) { } if (i > 120) { console.error(devLog); throw new Error('wrangler dev ne démarre pas'); } await new Promise(r => setTimeout(r, 500)); }
@@ -157,4 +157,9 @@ assert.equal((await call('POST', '/auth/google', { idToken: await g({ sub: 'g-al
 const pre = await fetch(API + '/vault', { method: 'OPTIONS', headers: { Origin: 'capacitor://localhost', 'Access-Control-Request-Method': 'PUT', 'Access-Control-Request-Headers': 'authorization, content-type' } });
 assert.equal(pre.status, 204); assert.equal(pre.headers.get('access-control-allow-origin'), '*'); assert.match(pre.headers.get('access-control-allow-headers'), /authorization/);
 console.log('PASS: suppression complète du compte (exigence App Store) et CORS');
+/* ---------- Prix Amazon : sans les secrets AMAZON_*, la tâche planifiée ne fait rien et la route renvoie une liste vide ---------- */
+r = await call('GET', '/shop/prices'); assert.equal(r.status, 200); assert.deepEqual(r.body, { items: {} });
+const cron = await fetch(API + '/__scheduled?cron=17+*+*+*+*'); assert.equal(cron.status, 200, 'tâche planifiée');
+assert.deepEqual((await call('GET', '/shop/prices')).body, { items: {} });
+console.log('PASS: prix Amazon inactifs sans clés (route et tâche planifiée)');
 finish(0);

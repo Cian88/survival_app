@@ -360,3 +360,19 @@ table { overflow-wrap: break-word; word-break: normal; }
   td button.link, td .btn { min-width: 44px; min-height: 44px; justify-content: center; }
   .hero-date { font-size: 12px; } .preview-label { font-size: 11px; } .plan .badge { font-size: 12px; }
 }
+
+/* Gammes de budget (js/shop.js) : choix à la création d'un sac, colonnes du catalogue, liens Amazon. */
+.choices { display: grid; gap: 10px; margin: 14px 0; }
+.choice { display: grid; gap: 3px; text-align: left; padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: var(--bg); color: var(--ink); font: inherit; cursor: pointer; }
+.choice:hover, .choice.on { border-color: var(--accent); }
+.choice.on { box-shadow: inset 0 0 0 1px var(--accent); }
+.choice-sub { font-weight: 600; color: var(--accent); }
+a.buy { white-space: nowrap; font-weight: 600; }
+a.buy::after { content: " ↗"; font-weight: 400; }
+table.gear-tiers td.tiercell { min-width: 150px; vertical-align: top; }
+table.gear-tiers td.tiercell.on { background: color-mix(in srgb, var(--accent) 9%, transparent); }
+table.gear-tiers td.tiercell > * + * { margin-top: 3px; }
+@media (max-width: 800px), (max-height: 500px) and (orientation: landscape) {
+  table.stack td.tiercell { display: block; text-align: left; padding: 6px 8px; border-radius: 8px; }
+  table.stack td.tiercell::before { display: block; margin-bottom: 2px; }
+}

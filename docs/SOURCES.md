@@ -43,7 +43,7 @@ Analyse détaillée, avec l'URL de chaque vidéo : [`APS.md`](APS.md). Sources :
 Limites : les sous-titres automatiques contiennent des erreurs. Le « Manuel de Survie » 2026 et les dossiers réservés aux inscrits n'ont pas été lus.
 
 ## Matériel et prix
-Voir [`MATERIEL.md`](MATERIEL.md). Les 83 références ont été relevées le 30/09/2026 : pour 80 d'entre elles, le prix a été lu sur la page liée ; les 3 autres sont des estimations dont la base est expliquée. Certains grands revendeurs (Decathlon, Amazon, Leroy Merlin, Fnac, Darty…) bloquaient la consultation automatique ; aucun prix n'y a été relevé. Aucun lien n'est affilié. J'ai contrôlé moi-même un échantillon de liens avant intégration. Pour les conserves et l'eau en bouteille, le prix a été ramené à un prix unitaire cohérent avec la quantité.
+Voir [`MATERIEL.md`](MATERIEL.md). **Depuis le 02/10/2026**, chaque objet conseillé est proposé en 3 gammes de budget avec un lien de recherche Amazon.fr (`js/gear-tiers.js`) ; leurs prix sont des estimations du marché (Amazon bloque la consultation automatique), remplacées par les prix officiels quand l'API Amazon sera active ([`AMAZON.md`](AMAZON.md)). Historique : les 83 références ont été relevées le 30/09/2026 : pour 80 d'entre elles, le prix a été lu sur la page liée ; les 3 autres sont des estimations dont la base est expliquée. Certains grands revendeurs (Decathlon, Amazon, Leroy Merlin, Fnac, Darty…) bloquaient la consultation automatique ; aucun prix n'y a été relevé. Aucun lien n'est affilié. J'ai contrôlé moi-même un échantillon de liens avant intégration. Pour les conserves et l'eau en bouteille, le prix a été ramené à un prix unitaire cohérent avec la quantité.
 
 ## Données cartographiques
 

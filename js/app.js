@@ -8,11 +8,10 @@
   const today = () => new Date().toISOString().slice(0, 10);
   const GEAR = window.GEAR || [];
   const GEAR_BY_ID = window.GEAR_BY_ID = Object.fromEntries(GEAR.map(g => [g.id, g]));
-  const linkify = t => h(t).replace(/https?:\/\/[^\s<)]+[^\s<).,;]/g, u => `<a href="${u}" target="_blank" rel="noopener">${u.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]}</a>`);
   const srcLinks = keys => (keys || []).map(k => SOURCES[k] ? `<a href="${SOURCES[k].u}" target="_blank" rel="noopener">${h(SOURCES[k].t.split(' — ')[0])}</a>` : '').join(' · ');
 
   const DEFAULT = {
-    profile: { adults: 2, children: 0, babies: 0, pets: 0, days: 14, waterL: 4, kcal: 2100, budget: 1000, lieu: [], climat: [], home: null, dwelling: 'maison', floor: 0, heating: 'electrique', cooking: 'electrique', water: 'reseau', vehicle: false, health: {}, skills: {} },
+    profile: { adults: 2, children: 0, babies: 0, pets: 0, days: 14, waterL: 4, kcal: 2100, budget: 1000, tier: 'moyen', lieu: [], climat: [], home: null, dwelling: 'maison', floor: 0, heating: 'electrique', cooking: 'electrique', water: 'reseau', vehicle: false, health: {}, skills: {} },
     checks: {}, inventory: [], bags: [], homePlan: [], contacts: [], notes: { rdv: '', pims: '', famille: '' }, lastCheck: null, points: [], map: {},
   };
   const App = window.App = {
@@ -162,7 +161,27 @@
     GEAR.filter(g => !scopeFilter || g.scope !== 'maison').forEach(g => (cats[g.category] = cats[g.category] || []).push(g));
     return Object.entries(cats).map(([c, list]) => `<optgroup label="${h(c)}">${list.map(g => `<option value="${g.id}">${h(g.name)}${g.price_eur ? ' — ' + eur(g.price_eur) : ''}</option>`).join('')}</optgroup>`).join('');
   }
-  function lineFromGear(g) { return { key: uid(), gearId: g.id, name: g.name + (g.model ? ' — ' + g.model : ''), category: g.category, qty: g.qty || 1, weight_g: g.weight_g || 0, price: g.price_eur || 0, have: false }; }
+  /* Ligne de sac ou du plan maison pour un objet du catalogue, dans la gamme de budget demandée (js/shop.js). */
+  function lineFromGear(g, tier) {
+    const l = { key: uid(), gearId: g.id, name: g.name + (g.model ? ' — ' + g.model : ''), category: g.category, qty: g.qty || 1, weight_g: g.weight_g || 0, price: g.price_eur || 0, have: false };
+    return Shop.has(g.id) ? Shop.apply(l, g.id, g.name, tier) : l;
+  }
+  const bagTier = b => Shop.tierOf(b.tier || S.profile.tier);
+  /* Clé d'achat d'une ligne (lignes créées avant les gammes de budget : déduite de l'objet d'origine). */
+  const shopKey = it => it.shop || it.gearId || it.envKey || (it.rid && 'bag:' + it.rid);
+  function buyCell(it, tier) {
+    const k = shopKey(it), o = k && Shop.offer(k, it.tier || tier);
+    if (!o || o.none) return '';
+    return ` <a class="buy small" href="${h(o.url)}" target="_blank" rel="noopener sponsored" title="${h(o.model)}">Amazon</a>`;
+  }
+  /* Applique la gamme à des lignes : celles d'avant les gammes reçoivent leur clé, les lignes modifiées à la main restent telles quelles. */
+  function retier(lines, tier) {
+    for (const it of lines) {
+      if (!it.shop) { const k = shopKey(it); if (k && Shop.has(k)) { it.shop = k; it.base = it.gearId && GEAR_BY_ID[it.gearId] ? GEAR_BY_ID[it.gearId].name : it.envKey ? envBase(it.envKey) : it.name; } }
+    }
+    Shop.retier(lines, tier);
+  }
+  App.retierHome = () => retier(S.homePlan, S.profile.tier);
   /* ---------- Variantes du sac selon l'environnement ---------- */
   const ENVS = window.ENV_VARIANTS || [];
   const ENV_BY_ID = Object.fromEntries(ENVS.map(e => [e.id, e]));
@@ -181,7 +200,7 @@
       ${list.map(e => `<div class="envblock">
         <h4>${h(e.name)}</h4>${e.summary ? `<p class="small">${h(e.summary)}</p>` : ''}
         ${e.risks && e.risks.length ? `<p class="small"><b>Risques :</b></p><ul class="small">${e.risks.map(r => `<li>${h(r.t)}${srcA(r.src)}</li>`).join('')}</ul>` : ''}
-        ${e.add && e.add.length ? `<p class="small"><b>À ajouter ou renforcer :</b></p><ul class="small addlist">${e.add.map((a, i) => { const k = e.id + ':' + i; return `<li><span class="chip ${h(a.priority || '')}">${h(a.priority || '')}</span> <b>${h(a.item)}</b> — ${h(a.why)}${srcA(a.src)} ${have.has(k) ? '<span class="muted">✓ dans le sac</span>' : `<button class="link" data-envadd="${b.id}|${k}">+ ajouter</button>`}</li>`; }).join('')}</ul>` : ''}
+        ${e.add && e.add.length ? `<p class="small"><b>À ajouter ou renforcer :</b></p><ul class="small addlist">${e.add.map((a, i) => { const k = e.id + ':' + i; return `<li><span class="chip ${h(a.priority || '')}">${h(a.priority || '')}</span> <b>${h(a.item)}</b> — ${h(a.why)}${srcA(a.src)}${buyCell({ shop: k }, bagTier(b))} ${have.has(k) ? '<span class="muted">✓ dans le sac</span>' : `<button class="link" data-envadd="${b.id}|${k}">+ ajouter</button>`}</li>`; }).join('')}</ul>` : ''}
         ${e.lighten && e.lighten.length ? `<p class="small"><b>Moins utile / à alléger :</b></p><ul class="small">${e.lighten.map(r => `<li>${h(r.item)} — ${h(r.why)}${srcA(r.src)}</li>`).join('')}</ul>` : ''}
         ${e.quantities && e.quantities.length ? `<p class="small"><b>Quantités :</b></p><ul class="small">${e.quantities.map(r => `<li>${h(r.t)}${srcA(r.src)}</li>`).join('')}</ul>` : ''}
         ${e.reflexes && e.reflexes.length ? `<p class="small"><b>Réflexes :</b></p><ul class="small">${e.reflexes.map(r => `<li>${h(r.t)}${srcA(r.src)}</li>`).join('')}</ul>` : ''}
@@ -190,9 +209,11 @@
       <button class="btn ghost" data-envaddall="${b.id}">Ajouter tous les « essentiels » de ces environnements</button>
     </details>`;
   }
-  function envLine(k) {
+  const envBase = k => { const [id, i] = k.split(':'), a = ENV_BY_ID[id].add[+i]; return a.item + ' (' + ENV_BY_ID[id].name + ')'; };
+  function envLine(k, tier) {
     const [id, i] = k.split(':'), a = ENV_BY_ID[id].add[+i];
-    return { key: uid(), envKey: k, name: a.item + ' (' + ENV_BY_ID[id].name + ')', category: a.category || 'Environnement', qty: 1, weight_g: 0, price: 0, have: false };
+    const l = { key: uid(), envKey: k, name: envBase(k), category: a.category || 'Environnement', qty: 1, weight_g: 0, price: 0, have: false };
+    return Shop.has(k) ? Shop.apply(l, k, envBase(k), tier) : l;
   }
   function renderEnvCompare() {
     if (!ENVS.length) return '';
@@ -208,7 +229,7 @@
     $('#tab-bag').innerHTML = `
     <div class="card">
       <h2>Mes sacs</h2>
-      <p class="small">Deux types de sac, deux usages : le <b>sac d'évacuation</b> sert à rejoindre vite un lieu sûr ; le <b>sac de survie</b> sert à tenir en autonomie en pleine nature. Choisissez le type et la <b>durée d'autonomie</b> : seuls les <b>consommables</b> (eau portée, pastilles, nourriture, gaz, piles, hygiène, médicaments) s'ajustent. Les <b>équipements durables</b> (filtre, réchaud, panneau solaire, vêtements, outils) gardent la même quantité : un filtre sert aussi bien 1 jour que 3 mois. Testez toujours le sac chargé sur une vraie marche.</p>
+      <p class="small">Deux types de sac, deux usages : le <b>sac d'évacuation</b> sert à rejoindre vite un lieu sûr ; le <b>sac de survie</b> sert à tenir en autonomie en pleine nature. Choisissez le type et la <b>durée d'autonomie</b> : seuls les <b>consommables</b> (eau portée, pastilles, nourriture, gaz, piles, hygiène, médicaments) s'ajustent. Les <b>équipements durables</b> (filtre, réchaud, panneau solaire, vêtements, outils) gardent la même quantité : un filtre sert aussi bien 1 jour que 3 mois. Testez toujours le sac chargé sur une vraie marche. À la création, choisissez votre <b>budget</b> : pour chaque objet, l'app propose un modèle petit budget, moyen ou gros budget, avec son lien Amazon.</p>
       <div class="row"><button class="btn" data-act="bagnew" data-type="evac">+ Sac d'évacuation</button><button class="btn" data-act="bagnew" data-type="survie">+ Sac de survie</button></div>
     </div>
     ${S.bags.map(b => { b.type = b.type || 'evac'; const T = Bags.TYPES[b.type]; b.days = b.days || T.def; const t = bagTotals(b); return `<div class="card bagcard bag-${b.type}" data-bag="${b.id}">
@@ -216,6 +237,7 @@
       <div class="row">
         <label>Type <select data-bagtype="${b.id}">${Object.entries(Bags.TYPES).map(([k, x]) => `<option value="${k}" ${b.type === k ? 'selected' : ''}>${x.name}</option>`).join('')}</select></label>
         <label>Autonomie <select data-bagdays="${b.id}">${T.durations.map(d => `<option value="${d}" ${+b.days === d ? 'selected' : ''}>${Bags.dLabel(d)}</option>`).join('')}</select></label>
+        <label>Budget ${Shop.tierSelect(`data-bagtier="${b.id}"`, bagTier(b))}</label>
       </div>
       <details class="small"><summary class="muted">À quoi sert un ${T.name.toLowerCase()} ?</summary><p>${h(T.purpose)}</p><p class="src">${T.src.map(x => `<a href="${h(x.u)}" target="_blank" rel="noopener">${h(x.t)}</a>`).join(' · ')}</p></details>
       <div class="row small"><span class="chip">${t.have}/${t.n} objets prêts</span><span class="chip">Poids connu : ${kg(t.w)}</span><span class="chip">Coût total : ${eur(t.cost)}</span><span class="chip">Reste à acheter : ${eur(t.left)}</span></div>
@@ -226,12 +248,13 @@
         <button class="btn ghost" data-bagprefill="${b.id}">Pré-remplir : ${T.name.toLowerCase()} ${Bags.dLabel(+b.days)}</button>
         <button class="btn ghost" data-bagcustom="${b.id}">+ Objet personnalisé</button></div>
       <div class="tablewrap"><table><tr><th>✓</th><th>Objet</th><th class="num">Qté</th><th class="num">Poids u. (g)</th><th class="num">Prix u. (€)</th><th></th></tr>
-      ${b.items.map(it => { const note = it.auto ? Bags.ruleNote(b, it) : ''; return `<tr><td><input type="checkbox" data-bh="${b.id}|${it.key}" ${it.have ? 'checked' : ''}></td><td>${h(it.name)}<div class="small muted">${h(it.category || '')}${it.auto ? ` · <span class="chip auto" title="${h(note || '')}">consommable · ${Bags.dLabel(+b.days)}</span>${note ? ` <span class="small">${h(note)}</span>` : ''}` : it.kind === 'durable' ? ' · <span class="chip" title="Même quantité quelle que soit la durée">durable</span>' : ''}</div></td>
+      ${b.items.map(it => { const note = it.auto ? Bags.ruleNote(b, it) : ''; return `<tr><td><input type="checkbox" data-bh="${b.id}|${it.key}" ${it.have ? 'checked' : ''}></td><td>${h(it.name)}${it.have ? '' : buyCell(it, bagTier(b))}<div class="small muted">${h(it.category || '')}${it.auto ? ` · <span class="chip auto" title="${h(note || '')}">consommable · ${Bags.dLabel(+b.days)}</span>${note ? ` <span class="small">${h(note)}</span>` : ''}` : it.kind === 'durable' ? ' · <span class="chip" title="Même quantité quelle que soit la durée">durable</span>' : ''}</div></td>
         <td class="num"><input type="number" min="0" value="${it.qty}" data-bf="${b.id}|${it.key}|qty" style="width:4em">${it.unit ? `<div class="small muted">${h(it.unit)}</div>` : ''}</td>
         <td class="num"><input type="number" min="0" value="${it.weight_g || 0}" data-bf="${b.id}|${it.key}|weight_g" style="width:5.5em"></td>
         <td class="num"><input type="number" min="0" step="0.01" value="${it.price || 0}" data-bf="${b.id}|${it.key}|price" style="width:6em"></td>
         <td><button class="link danger" data-bdel="${b.id}|${it.key}">✕</button></td></tr>`; }).join('') || `<tr><td colspan="6" class="muted">Sac vide : utilisez « Pré-remplir ».</td></tr>`}
-      </table></div></div>`; }).join('')}
+      </table></div>
+      <p class="small muted">${h(Shop.priceNote())} Un prix ou un poids modifié à la main est conservé quand vous changez de budget. ${h(Shop.disclosure())}</p></div>`; }).join('')}
     ${renderEnvCompare()}
     <div class="card"><h3>Listes de référence officielles</h3>
       <p><b>Kit 72 h — guide SGDSN (France)</b> : 6 L d'eau/personne en bouteilles, pastilles de désinfection (dernier recours), nourriture non périssable sans cuisson, médicaments habituels, lunettes de secours, gel, masques, pansements, couteau multifonction, ouvre-boîte, réchaud, radio à piles, batterie externe, piles, chargeur, savon, lampe, bougies, allumettes, briquet, vêtements chauds, couverture de survie, doubles des clés, photocopies des papiers (pochette étanche), argent liquide, jeux/livres.</p>
@@ -243,34 +266,44 @@
 
   /* ---------- Matériel & budget ---------- */
   let gf = { q: '', cat: '', scope: '', prio: '' };
-  function tierTotals(scope) {
+  /* Prix unitaire d'un objet du catalogue dans une gamme (prix de référence si l'objet n'a pas de gammes). */
+  const gearPrice = (g, tier) => { const o = Shop.offer(g.id, tier); return o && !o.none ? o.price : g.price_eur || 0; };
+  function tierTotals(scope, tier) {
     const r = { essentiel: 0, recommandé: 0, optionnel: 0 };
-    GEAR.filter(g => scope === 'sac' ? g.scope !== 'maison' : g.scope !== 'sac').forEach(g => { if (r[g.priority] != null) r[g.priority] += (g.price_eur || 0) * (g.qty || 1); });
+    GEAR.filter(g => scope === 'sac' ? g.scope !== 'maison' : g.scope !== 'sac').forEach(g => { if (r[g.priority] != null) r[g.priority] += gearPrice(g, tier) * (g.qty || 1); });
     return r;
   }
+  function tierCell(g, t, sel) {
+    const o = Shop.offer(g.id, t);
+    return `<td class="tiercell ${t === sel ? 'on' : ''}">${o ? `<div class="small">${h(o.model)}</div><div>${Shop.priceHTML(o)}${o.weight_g ? ` <span class="small muted">· ${o.weight_g} g</span>` : ''}</div>${Shop.linkHTML(o)}${o.note ? `<div class="small muted">${h(o.note)}</div>` : ''}` : '—'}</td>`;
+  }
   function renderGear() {
-    const cats = [...new Set(GEAR.map(g => g.category))];
-    const list = GEAR.filter(g => (!gf.cat || g.category === gf.cat) && (!gf.scope || g.scope === gf.scope || g.scope === 'les deux') && (!gf.prio || g.priority === gf.prio) && (!gf.q || (g.name + ' ' + (g.model || '') + ' ' + (g.note || '')).toLowerCase().includes(gf.q.toLowerCase())));
-    const ts = tierTotals('sac'), tm = tierTotals('maison'), b = budget();
-    const est = GEAR.filter(g => g.price_status !== 'relevé').length;
+    const tier = Shop.tierOf(S.profile.tier), cats = [...new Set(GEAR.map(g => g.category))];
+    const text = g => [g.name, g.model, g.tip, ...Shop.TIERS.map(t => (Shop.offer(g.id, t.id) || {}).model)].join(' ').toLowerCase();
+    const list = GEAR.filter(g => (!gf.cat || g.category === gf.cat) && (!gf.scope || g.scope === gf.scope || g.scope === 'les deux') && (!gf.prio || g.priority === gf.prio) && (!gf.q || text(g).includes(gf.q.toLowerCase())));
+    const ts = tierTotals('sac', tier), tm = tierTotals('maison', tier), b = budget();
+    const bagCost = t => { const x = tierTotals('sac', t); return x.essentiel + x.recommandé; };
     $('#tab-gear').innerHTML = `
     <div class="card"><h2>Récapitulatif budgétaire</h2>
-      <p class="small muted">Prix indicatifs relevés ou estimés le ${h((GEAR[0] || {}).source_date || '—')} (1 exemplaire × quantité suggérée). ${est} prix sur ${GEAR.length} sont des estimations. Les prix varient : vérifiez avant achat.</p>
-      <div class="tablewrap"><table><tr><th>Palier (catalogue)</th><th class="num">Sac d'évacuation (1 pers.)</th><th class="num">Écosystème maison</th><th class="num">Cumul</th></tr>
+      <div class="row"><label>Gamme ${Shop.tierSelect('data-gtier', tier)}</label><span class="small muted">${h(Shop.priceNote())}</span></div>
+      <p class="small">Matériel « sac » du catalogue (essentiel + recommandé, 1 personne) : ${Shop.TIERS.map(t => `${h(t.label.toLowerCase())} <b>${eur(bagCost(t.id))}</b>`).join(' · ')}.</p>
+      <div class="tablewrap"><table><tr><th>Palier (${h(Shop.label(tier).toLowerCase())})</th><th class="num">Sac d'évacuation (1 pers.)</th><th class="num">Écosystème maison</th><th class="num">Cumul</th></tr>
       <tr><td><span class="chip essentiel">essentiel</span></td><td class="num">${eur(ts.essentiel)}</td><td class="num">${eur(tm.essentiel)}</td><td class="num">${eur(ts.essentiel + tm.essentiel)}</td></tr>
       <tr><td>+ <span class="chip recommandé">recommandé</span></td><td class="num">${eur(ts.essentiel + ts.recommandé)}</td><td class="num">${eur(tm.essentiel + tm.recommandé)}</td><td class="num">${eur(ts.essentiel + ts.recommandé + tm.essentiel + tm.recommandé)}</td></tr>
       <tr><td>+ <span class="chip optionnel">optionnel</span> (tout)</td><td class="num">${eur(ts.essentiel + ts.recommandé + ts.optionnel)}</td><td class="num">${eur(tm.essentiel + tm.recommandé + tm.optionnel)}</td><td class="num">${eur(Object.values(ts).reduce((a, x) => a + x, 0) + Object.values(tm).reduce((a, x) => a + x, 0))}</td></tr></table></div>
-      <div class="alert">Les communautés de praticiens insistent : <b>commencez avec ce que vous avez déjà</b>, constituez d'abord une épargne de précaution, puis achetez progressivement en testant. Les paliers ci-dessous sont une référence de matériel de qualité, pas un ticket d'entrée. <a href="https://old.reddit.com/r/preppers/wiki/doingitright" target="_blank" rel="noopener">[wiki r/preppers]</a> <a href="https://theprepared.com/prepping-basics/guides/emergency-preparedness-checklist-prepping-beginners/" target="_blank" rel="noopener">[The Prepared]</a></div>
+      <div class="alert">Les communautés de praticiens insistent : <b>commencez avec ce que vous avez déjà</b>, constituez d'abord une épargne de précaution, puis achetez progressivement en testant. Les paliers ci-dessous sont une référence, pas un ticket d'entrée : le petit budget couvre les mêmes besoins avec du matériel plus lourd ou moins durable. <a href="https://old.reddit.com/r/preppers/wiki/doingitright" target="_blank" rel="noopener">[wiki r/preppers]</a> <a href="https://theprepared.com/prepping-basics/guides/emergency-preparedness-checklist-prepping-beginners/" target="_blank" rel="noopener">[The Prepared]</a></div>
       <p class="small">Les objets classés « les deux » sont comptés dans chaque colonne (un exemplaire pour le sac, un pour la maison). Le coût du sac est à multiplier par le nombre de personnes (${persons()}), en mutualisant ce qui peut l'être (réchaud, filtre, radio…).</p>
       <h3>Mon plan d'achat (sacs + maison)</h3>
       <div class="row"><span class="kpi">${eur(b.total)}</span><span>prévus · acquis ${eur(b.spent)} · reste ${eur(b.left)} · budget cible ${eur(S.profile.budget)}</span></div>
       ${bar(S.profile.budget ? b.total / S.profile.budget * 100 : 0, b.total > S.profile.budget ? 'bad' : '')}
       <div class="tablewrap"><table><tr><th>Catégorie</th><th class="num">Prévu</th><th class="num">Acquis</th></tr>${Object.entries(b.byCat).sort((a, c) => c[1].total - a[1].total).map(([c, v]) => `<tr><td>${h(c)}</td><td class="num">${eur(v.total)}</td><td class="num">${eur(v.spent)}</td></tr>`).join('') || '<tr><td colspan="3" class="muted">Ajoutez des objets à un sac ou à la maison.</td></tr>'}</table></div>
       <h3>Achats pour la maison</h3>
-      <div class="tablewrap"><table><tr><th>✓</th><th>Objet</th><th class="num">Qté</th><th class="num">Prix u.</th><th></th></tr>${S.homePlan.map(it => `<tr><td><input type="checkbox" data-hh="${it.key}" ${it.have ? 'checked' : ''}></td><td>${h(it.name)}<div class="small muted">${h(it.category)}${it.auto && Bags.HOME_RULES[it.gearId] ? ` · <span class="chip auto">auto · ${S.profile.days} j</span> ${h(Bags.HOME_RULES[it.gearId].note)}` : ''}</div></td><td class="num"><input type="number" min="0" value="${it.qty}" data-hq="${it.key}" style="width:4em"></td><td class="num">${eur(it.price)}</td><td><button class="link danger" data-hdel="${it.key}">✕</button></td></tr>`).join('') || '<tr><td colspan="5" class="muted">Rien pour l\'instant — bouton « + Maison » dans le catalogue.</td></tr>'}</table></div>
+      <p class="small muted">Gamme de la maison : celle choisie ci-dessus (modifiable aussi dans Mon profil).</p>
+      <div class="tablewrap"><table><tr><th>✓</th><th>Objet</th><th class="num">Qté</th><th class="num">Prix u.</th><th></th></tr>${S.homePlan.map(it => `<tr><td><input type="checkbox" data-hh="${it.key}" ${it.have ? 'checked' : ''}></td><td>${h(it.name)}${it.have ? '' : buyCell(it, tier)}<div class="small muted">${h(it.category)}${it.auto && Bags.HOME_RULES[it.gearId] ? ` · <span class="chip auto">auto · ${S.profile.days} j</span> ${h(Bags.HOME_RULES[it.gearId].note)}` : ''}</div></td><td class="num"><input type="number" min="0" value="${it.qty}" data-hq="${it.key}" style="width:4em"></td><td class="num">${eur(it.price)}</td><td><button class="link danger" data-hdel="${it.key}">✕</button></td></tr>`).join('') || '<tr><td colspan="5" class="muted">Rien pour l\'instant — bouton « + Maison » dans le catalogue.</td></tr>'}</table></div>
       <button class="btn ghost" data-act="homeessential">Pré-remplir maison : essentiels</button> <button class="btn ghost" data-act="plancsv">Exporter le plan (CSV)</button> <button class="btn ghost" data-act="catcsv">Exporter le catalogue (CSV)</button>
     </div>
     <div class="card"><h2>Catalogue du matériel (${GEAR.length} références)</h2>
+      <p class="small">Pour chaque objet, trois modèles selon le budget. La colonne surlignée est votre gamme ; « + Sac » ajoute le modèle de la gamme du sac choisi.</p>
       <div class="row">
         <input id="gq" placeholder="Rechercher…" value="${h(gf.q)}" style="flex:1 1 200px">
         <select id="gcat"><option value="">Toutes catégories</option>${cats.map(c => `<option ${gf.cat === c ? 'selected' : ''}>${h(c)}</option>`).join('')}</select>
@@ -278,15 +311,13 @@
         <select id="gprio"><option value="">Toutes priorités</option>${['essentiel', 'recommandé', 'optionnel'].map(p => `<option ${gf.prio === p ? 'selected' : ''}>${p}</option>`).join('')}</select>
         <select id="gbag">${S.bags.map(b => `<option value="${b.id}">→ ${h(b.name)}</option>`).join('')}</select>
       </div>
-      <div class="tablewrap"><table><tr><th>Objet</th><th>Priorité</th><th class="num">Prix</th><th class="num hide-sm">Poids</th><th>Lien</th><th></th></tr>
-      ${list.map(g => `<tr><td><b>${h(g.name)}</b>${g.model ? `<div class="small">${h(g.model)}</div>` : ''}<div class="small muted">${h(g.category)} · ${h(g.scope)}${g.qty > 1 ? ' · qté suggérée ' + g.qty : ''}</div>${g.note ? `<details class="small"><summary class="muted">Détails, alternatives</summary>${linkify(g.note)}</details>` : ''}</td>
+      <div class="tablewrap"><table class="gear-tiers"><tr><th>Objet</th><th>Priorité</th>${Shop.TIERS.map(t => `<th>${t.short} ${h(t.label)}</th>`).join('')}<th></th></tr>
+      ${list.map(g => { const none = (Shop.offer(g.id, tier) || {}).none; return `<tr><td><b>${h(g.name)}</b><div class="small muted">${h(g.category)} · ${h(g.scope)}${g.qty > 1 ? ' · qté suggérée ' + g.qty : ''}</div>${g.tip ? `<div class="small">${h(g.tip)}</div>` : ''}</td>
         <td><span class="chip ${h(g.priority)}">${h(g.priority)}</span></td>
-        <td class="num">${g.price_eur ? eur(g.price_eur) : '—'}<div class="small muted">${g.price_status === 'relevé' ? 'relevé' : 'estimation'}</div></td>
-        <td class="num hide-sm">${g.weight_g ? g.weight_g + ' g' : '—'}</td>
-        <td>${g.url ? `<a href="${h(g.url)}" target="_blank" rel="noopener">${h(new URL(g.url).hostname.replace('www.', ''))}</a>` : ''}</td>
-        <td style="white-space:nowrap">${g.scope !== 'maison' ? `<button class="btn ghost" data-tobag="${g.id}">+ Sac</button>` : ''} ${g.scope !== 'sac' ? `<button class="btn ghost" data-tohome="${g.id}">+ Maison</button>` : ''}</td></tr>`).join('')}
+        ${none ? `<td colspan="3" class="small">${h(none)}</td>` : Shop.TIERS.map(t => tierCell(g, t.id, tier)).join('')}
+        <td style="white-space:nowrap">${g.scope !== 'maison' ? `<button class="btn ghost" data-tobag="${g.id}">+ Sac</button>` : ''} ${g.scope !== 'sac' ? `<button class="btn ghost" data-tohome="${g.id}">+ Maison</button>` : ''}</td></tr>`; }).join('')}
       </table></div>
-      <p class="small muted">Les liens mènent vers des pages produits ou des recherches chez des revendeurs, sans affiliation. Aucune marque n'est imposée : les modèles cités sont des exemples de référence.</p>
+      <p class="small muted">${h(Shop.disclosure())} ${h(Shop.priceNote())} Aucune marque n'est imposée : les modèles cités sont des exemples, vérifiez la fiche (taille, compatibilité) avant d'acheter.</p>
     </div>`;
     const upd = () => { gf = { q: $('#gq').value, cat: $('#gcat').value, scope: $('#gscope').value, prio: $('#gprio').value }; const pos = $('#gq').selectionStart; renderGear(); const q = $('#gq'); q.focus(); q.setSelectionRange(pos, pos); };
     $('#gq').oninput = upd; ['gcat', 'gscope', 'gprio'].forEach(id => $('#' + id).onchange = upd);
@@ -454,10 +485,12 @@
     if (d.check) { if (t.checked) S.checks[d.check] = true; else delete S.checks[d.check]; return commit(); }
     if (d.invqty) { const it = S.inventory.find(x => x.id === d.invqty); it.qty = +t.value; return commit(); }
     if (d.bagname) { S.bags.find(b => b.id === d.bagname).name = t.value; return commit(); }
-    if (d.bagadd) { const g = GEAR_BY_ID[t.value]; if (g) S.bags.find(b => b.id === d.bagadd).items.push(lineFromGear(g)); return commit(); }
+    if (d.bagadd) { const g = GEAR_BY_ID[t.value]; if (g) { const b = S.bags.find(x => x.id === d.bagadd); b.items.push(lineFromGear(g, bagTier(b))); } return commit(); }
     if (d.bh) { const [b, k] = d.bh.split('|'); S.bags.find(x => x.id === b).items.find(x => x.key === k).have = t.checked; return commit(); }
-    if (d.bf) { const [b, k, f] = d.bf.split('|'), it = S.bags.find(x => x.id === b).items.find(x => x.key === k); it[f] = +t.value; if (f === 'qty') it.auto = false; return commit(); }
+    if (d.bf) { const [b, k, f] = d.bf.split('|'), it = S.bags.find(x => x.id === b).items.find(x => x.key === k); it[f] = +t.value; if (f === 'qty') it.auto = false; else it.fixed = true; return commit(); }
     if (d.bagtype) { const b = S.bags.find(x => x.id === d.bagtype); b.type = t.value; const T = Bags.TYPES[b.type]; if (!T.durations.includes(+b.days)) b.days = T.def; Bags.rescale(b, +S.profile.kcal || 2100, GEAR_BY_ID, uid); return commit(); }
+    if (d.bagtier) { const b = S.bags.find(x => x.id === d.bagtier); b.tier = Shop.tierOf(t.value); retier(b.items, b.tier); return commit(); }
+    if (d.gtier !== undefined) { S.profile.tier = Shop.tierOf(t.value); retier(S.homePlan, S.profile.tier); return commit(); }
     if (d.bagdays) { const b = S.bags.find(x => x.id === d.bagdays); b.days = +t.value; Bags.rescale(b, +S.profile.kcal || 2100, GEAR_BY_ID, uid); return commit(); }
     if (d.homedays) { S.profile.days = +t.value; rescaleHome(); return commit(); }
     if (d.hh) { S.homePlan.find(x => x.key === d.hh).have = t.checked; return commit(); }
@@ -483,30 +516,37 @@
     if (d.invdel) { S.inventory = S.inventory.filter(x => x.id !== d.invdel); return commit(); }
     if ((d.env || d.envadd || d.envaddall) && !Premium.gate('Les variantes du sac selon le lieu et le climat font partie de Premium.')) return;
     if (d.env) { const [bid, eid] = d.env.split('|'), b = S.bags.find(x => x.id === bid); b.env = b.env || []; b.env = b.env.includes(eid) ? b.env.filter(x => x !== eid) : [...b.env, eid]; return commit(); }
-    if (d.envadd) { const [bid, k] = d.envadd.split('|'); S.bags.find(x => x.id === bid).items.push(envLine(k)); return commit(); }
-    if (d.envaddall) { const b = S.bags.find(x => x.id === d.envaddall), have = new Set(b.items.map(i => i.envKey)); (b.env || []).forEach(id => (ENV_BY_ID[id].add || []).forEach((a, i) => { const k = id + ':' + i; if (a.priority === 'essentiel' && !have.has(k)) b.items.push(envLine(k)); })); return commit(); }
+    if (d.envadd) { const [bid, k] = d.envadd.split('|'); const b = S.bags.find(x => x.id === bid); b.items.push(envLine(k, bagTier(b))); return commit(); }
+    if (d.envaddall) { const b = S.bags.find(x => x.id === d.envaddall), have = new Set(b.items.map(i => i.envKey)); (b.env || []).forEach(id => (ENV_BY_ID[id].add || []).forEach((a, i) => { const k = id + ':' + i; if (a.priority === 'essentiel' && !have.has(k)) b.items.push(envLine(k, bagTier(b))); })); return commit(); }
     if (d.bagdel) { UI.confirm('Supprimer ce sac et sa liste ?', 'Supprimer').then(ok => { if (ok) { S.bags = S.bags.filter(b => b.id !== d.bagdel); commit(); } }); return; }
     if (d.bagprefill) { Bags.prefill(S.bags.find(x => x.id === d.bagprefill), GEAR_BY_ID, +S.profile.kcal || 2100, uid); return commit(); }
-    if (d.bagessential) { const b = S.bags.find(x => x.id === d.bagessential), have = new Set(b.items.map(i => i.gearId)); GEAR.filter(g => g.scope !== 'maison' && g.priority === 'essentiel' && !have.has(g.id)).forEach(g => b.items.push(lineFromGear(g))); return commit(); }
+    if (d.bagessential) { const b = S.bags.find(x => x.id === d.bagessential), have = new Set(b.items.map(i => i.gearId)); GEAR.filter(g => g.scope !== 'maison' && g.priority === 'essentiel' && !have.has(g.id)).forEach(g => b.items.push(lineFromGear(g, bagTier(b)))); return commit(); }
     if (d.bagcustom) { UI.ask('Objet personnalisé', [{ name: 'n', label: 'Nom de l\'objet', required: true }], 'Ajouter').then(o => { const n = o && o.n; if (n) { S.bags.find(x => x.id === d.bagcustom).items.push({ key: uid(), name: n, category: 'Personnel', qty: 1, weight_g: 0, price: 0, have: false }); commit(); } }); return; }
     if (d.bdel) { const [b, k] = d.bdel.split('|'); const bag = S.bags.find(x => x.id === b); bag.items = bag.items.filter(x => x.key !== k); return commit(); }
-    if (d.tobag) { const bag = S.bags.find(b => b.id === $('#gbag').value) || S.bags[0]; bag.items.push(lineFromGear(GEAR_BY_ID[d.tobag])); t.textContent = '✓ ajouté'; App.save(); return setTimeout(renderGear, 600); }
-    if (d.tohome) { const g = GEAR_BY_ID[d.tohome], l = lineFromGear(g); S.homePlan.push(l); t.textContent = '✓ ajouté'; App.save(); return setTimeout(renderGear, 600); }
+    if (d.tobag) { const bag = S.bags.find(b => b.id === $('#gbag').value) || S.bags[0]; bag.items.push(lineFromGear(GEAR_BY_ID[d.tobag], bagTier(bag))); t.textContent = '✓ ajouté'; App.save(); return setTimeout(renderGear, 600); }
+    if (d.tohome) { const g = GEAR_BY_ID[d.tohome], l = lineFromGear(g, S.profile.tier); S.homePlan.push(l); t.textContent = '✓ ajouté'; App.save(); return setTimeout(renderGear, 600); }
     if (d.hdel) { S.homePlan = S.homePlan.filter(x => x.key !== d.hdel); return commit(); }
     if (d.ctdel) { S.contacts = S.contacts.filter(x => x.id !== d.ctdel); return commit(); }
     switch (d.act) {
       case 'bagnew': if (S.bags.length >= Premium.LIMITS.bags && !Premium.gate('La version gratuite comprend un sac. Premium permet un sac par personne.')) return;
-        { const ty = d.type || 'evac', T = Bags.TYPES[ty], nb = { id: uid(), type: ty, days: T.def, name: T.name + ' ' + (S.bags.filter(x => (x.type || 'evac') === ty).length + 1), owner: '', items: [], env: [...(S.profile.lieu || []), ...(S.profile.climat || [])] }; Bags.prefill(nb, GEAR_BY_ID, +S.profile.kcal || 2100, uid); S.bags.push(nb); } return commit();
+        { const ty = d.type || 'evac', T = Bags.TYPES[ty], K = +S.profile.kcal || 2100, est = Bags.estimate(ty, T.def, GEAR_BY_ID, K);
+          UI.choose('Quel budget pour ce ' + T.name.toLowerCase() + ' ?', `Pour chaque objet, l'app propose un modèle selon votre budget, avec son lien Amazon. Estimation pour un sac pré-rempli de ${Bags.dLabel(T.def)} (1 personne, prix indicatifs) ; vous pourrez changer de budget, retirer ce que vous avez déjà ou modifier chaque ligne.`,
+            Shop.TIERS.map(t => ({ id: t.id, title: t.short + ' ' + t.label, sub: '≈ ' + eur(est[t.id].cost), detail: t.hint })), Shop.tierOf(S.profile.tier)).then(tier => {
+            if (!tier) return;
+            const nb = { id: uid(), type: ty, days: T.def, tier, name: T.name + ' ' + (S.bags.filter(x => (x.type || 'evac') === ty).length + 1), owner: '', items: [], env: [...(S.profile.lieu || []), ...(S.profile.climat || [])] };
+            Bags.prefill(nb, GEAR_BY_ID, K, uid); S.bags.push(nb); commit();
+          }); } return;
       case 'onboarded': S.onboarded = true; App.save(); return show('audit');
       case 'audcsv': if (!Premium.gate('La liste de courses personnalisée fait partie de Premium.')) return;
         return App.download('etat-des-lieux-manques.csv', Needs.gapsCsv(S), 'text/csv');
-      case 'homeessential': { const have = new Set(S.homePlan.map(i => i.gearId)); GEAR.filter(g => g.scope !== 'sac' && g.priority === 'essentiel' && !have.has(g.id)).forEach(g => { const l = lineFromGear(g); if (Bags.HOME_RULES[g.id]) l.auto = true; S.homePlan.push(l); }); rescaleHome(); return commit(); }
+      case 'homeessential': { const have = new Set(S.homePlan.map(i => i.gearId)); GEAR.filter(g => g.scope !== 'sac' && g.priority === 'essentiel' && !have.has(g.id)).forEach(g => { const l = lineFromGear(g, S.profile.tier); if (Bags.HOME_RULES[g.id]) l.auto = true; S.homePlan.push(l); }); rescaleHome(); return commit(); }
       case 'checked': S.lastCheck = today(); return commit();
       case 'export': return App.download(`holdout-sauvegarde-${today()}.json`, JSON.stringify(S, null, 1), 'application/json');
       case 'reset': UI.confirm('Effacer toutes vos données locales ? Les cartes téléchargées restent en cache.', 'Tout effacer').then(ok => { if (ok) { try { localStorage.removeItem('survie.v1'); } catch (e) { } location.reload(); } }); return;
       case 'invcsv': return App.download('inventaire.csv', toCsv([['Article', 'Catégorie', 'Quantité', 'Litres/unité', 'kcal/unité', 'Péremption', 'Emplacement'], ...S.inventory.map(i => [i.name, CAT_LABEL[i.cat], i.qty, i.litres, i.kcal, i.expiry, i.where])]), 'text/csv');
-      case 'plancsv': return App.download('plan-achat.csv', toCsv([['Emplacement', 'Objet', 'Catégorie', 'Quantité', 'Prix unitaire', 'Total', 'Acquis'], ...planLines().map(l => [l.where, l.name, l.category, l.qty, l.price, (l.qty || 1) * (l.price || 0), l.have ? 'oui' : 'non'])]), 'text/csv');
-      case 'catcsv': return App.download('catalogue-materiel.csv', toCsv([['Catégorie', 'Objet', 'Modèle', 'Qté', 'Poids (g)', 'Prix (€)', 'Statut prix', 'Priorité', 'Usage', 'Lien', 'Note'], ...GEAR.map(g => [g.category, g.name, g.model, g.qty, g.weight_g, g.price_eur, g.price_status, g.priority, g.scope, g.url, g.note])]), 'text/csv');
+      case 'plancsv': return App.download('plan-achat.csv', toCsv([['Emplacement', 'Objet', 'Catégorie', 'Quantité', 'Prix unitaire', 'Total', 'Acquis', 'Lien Amazon'], ...planLines().map(l => { const k = shopKey(l), o = k && Shop.offer(k, l.tier || S.profile.tier); return [l.where, l.name, l.category, l.qty, l.price, (l.qty || 1) * (l.price || 0), l.have ? 'oui' : 'non', o && !o.none ? o.url : '']; })]), 'text/csv');
+      case 'catcsv': return App.download('catalogue-materiel.csv', toCsv([['Catégorie', 'Objet', 'Qté', 'Priorité', 'Usage', 'Conseil', ...Shop.TIERS.flatMap(t => [t.label + ' : modèle', t.label + ' : prix indicatif (€)', t.label + ' : lien Amazon'])],
+        ...GEAR.map(g => [g.category, g.name, g.qty, g.priority, g.scope, g.tip, ...Shop.TIERS.flatMap(t => { const o = Shop.offer(g.id, t.id); return !o ? ['', g.price_eur, ''] : o.none ? [o.none, '', ''] : [o.model, o.price, o.url]; })])]), 'text/csv');
     }
   });
   document.addEventListener('submit', e => {
@@ -528,5 +568,6 @@
   show(RENDER[startTab] || startTab === 'map' ? startTab : 'now');
   Premium.load().then(() => App.refresh());
   if (window.Account) Account.init();
+  Shop.refresh().then(ok => { if (ok) App.refresh(); }); // prix Amazon officiels, si l'API est activée (js/config.js)
   if ('serviceWorker' in navigator && /^https?:/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW', err));
 })();

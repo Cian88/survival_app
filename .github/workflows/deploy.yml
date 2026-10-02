@@ -26,6 +26,7 @@ jobs:
           node-version: 24
       - run: node tools/test-map-packs.mjs
       - run: node tools/test-osm-points.mjs
+      - run: node tools/test-shop.mjs
       - run: node tools/account/test-vault-crypto.mjs
 
   changes:
@@ -41,6 +42,7 @@ jobs:
           filters: |
             server:
               - 'server/**'
+              - 'js/gear-tiers.js'
 
   api:
     name: Serveur de comptes (api.hold-out.app)

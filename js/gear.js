@@ -1,5 +1,6 @@
 /* Catalogue du matériel : 83 références. Prix relevés le 30/09/2026 sur les pages indiquées (price_status = « relevé »)
-   ou estimés (base expliquée dans note). Les prix changent : vérifiez avant achat. Aucun lien affilié. */
+   ou estimés (base expliquée dans note). Les prix changent : vérifiez avant achat. Les champs url et note gardent la provenance des prix de référence (non affichée) ; tip est le conseil affiché.
+   Les produits proposés à l'achat, en 3 gammes de budget avec liens Amazon, sont dans js/gear-tiers.js. */
 window.GEAR = [
 {
 "id": "G001",
@@ -14,7 +15,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "sac",
-"note": "Poids 1255-1294 g selon taille. Entrée de gamme : Wilsa Trekker 55, 94,95 €, 2140 g (relevé) https://www.rayonrando.com/fr/sacs-a-dos-de-randonnee-50-55-l/2775-sac-a-dos-trekker-55.html . Alternative Decathlon Forclaz MT500 Air 50+10 L ≈114,99 € (estimation : extrait moteur de recherche, page decathlon.fr bloquée 403) https://www.decathlon.fr/search?Ntt=sac+trekking+50+L"
+"note": "Poids 1255-1294 g selon taille. Entrée de gamme : Wilsa Trekker 55, 94,95 €, 2140 g (relevé) https://www.rayonrando.com/fr/sacs-a-dos-de-randonnee-50-55-l/2775-sac-a-dos-trekker-55.html . Alternative Decathlon Forclaz MT500 Air 50+10 L ≈114,99 € (estimation : extrait moteur de recherche, page decathlon.fr bloquée 403) https://www.decathlon.fr/search?Ntt=sac+trekking+50+L",
+"tip": "Essayez-le chargé : réglez le dos à votre taille."
 },
 {
 "id": "G002",
@@ -29,7 +31,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "sac",
-"note": "Recommandé : Osprey Ultralight Raincover à partir de 42,95 € (112-125 g) https://www.lyophilise.fr/11289-200-housse-de-pluie-osprey-ultralight.html"
+"note": "Recommandé : Osprey Ultralight Raincover à partir de 42,95 € (112-125 g) https://www.lyophilise.fr/11289-200-housse-de-pluie-osprey-ultralight.html",
+"tip": ""
 },
 {
 "id": "G003",
@@ -44,7 +47,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "sac",
-"note": "Protège couchage et vêtements de rechange. Poids non indiqué sur la liste."
+"note": "Protège couchage et vêtements de rechange. Poids non indiqué sur la liste.",
+"tip": "Protège couchage et vêtements de rechange."
 },
 {
 "id": "G004",
@@ -59,7 +63,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "sac",
-"note": "Grande ouverture compatible filtres/pastilles."
+"note": "Grande ouverture compatible filtres/pastilles.",
+"tip": "Grande ouverture compatible filtres/pastilles."
 },
 {
 "id": "G005",
@@ -74,7 +79,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "les deux",
-"note": "Aussi 64,95 € chez allspares.fr https://www.allspares.fr/filtre-a-eau-sawyer-squeeze-sp129-sp129 . Entrée de gamme : Sawyer Mini à partir de 37,90 € (85 g) https://www.lyophilise.fr/9363-29287-filtre-a-eau-sawyer-mini.html . Ne filtre pas les virus ni les produits chimiques : combiner avec pastilles si doute."
+"note": "Aussi 64,95 € chez allspares.fr https://www.allspares.fr/filtre-a-eau-sawyer-squeeze-sp129-sp129 . Entrée de gamme : Sawyer Mini à partir de 37,90 € (85 g) https://www.lyophilise.fr/9363-29287-filtre-a-eau-sawyer-mini.html . Ne filtre pas les virus ni les produits chimiques : combiner avec pastilles si doute.",
+"tip": "Ne filtre pas les virus ni les produits chimiques : combiner avec pastilles si doute."
 },
 {
 "id": "G006",
@@ -89,7 +95,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "optionnel",
 "scope": "sac",
-"note": "Alternative : LifeStraw Peak Collapsible Squeeze 1 L, 48,95 € (110 g) https://www.lyophilise.fr/8137-97-filtre-a-eau-lifestraw-peak-series-collapsible-squeeze.html"
+"note": "Alternative : LifeStraw Peak Collapsible Squeeze 1 L, 48,95 € (110 g) https://www.lyophilise.fr/8137-97-filtre-a-eau-lifestraw-peak-series-collapsible-squeeze.html",
+"tip": ""
 },
 {
 "id": "G007",
@@ -104,7 +111,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "les deux",
-"note": "Aussi 6,00 € chez dan-military.fr. Alternative : Micropur Forte MF 1T 100 cp, 22,95 € (en rupture le 30/09) https://www.lyophilise.fr/4010-micropur-forte-mf-1t-100-comprimes-1-comp-1-l.html . Attention : Micropur CLASSIC (argent) = conservation, pas désinfection virale."
+"note": "Aussi 6,00 € chez dan-military.fr. Alternative : Micropur Forte MF 1T 100 cp, 22,95 € (en rupture le 30/09) https://www.lyophilise.fr/4010-micropur-forte-mf-1t-100-comprimes-1-comp-1-l.html . Attention : Micropur CLASSIC (argent) = conservation, pas désinfection virale.",
+"tip": "Attention : Micropur CLASSIC (argent) = conservation, pas désinfection virale."
 },
 {
 "id": "G008",
@@ -119,7 +127,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "sac",
-"note": "Filetage compatible Sawyer Squeeze/Mini."
+"note": "Filetage compatible Sawyer Squeeze/Mini.",
+"tip": "Choisir un filetage compatible avec son filtre (28 mm pour Sawyer)."
 },
 {
 "id": "G009",
@@ -134,7 +143,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "sac",
-"note": "Poids = 500 g par sachet. Délai annoncé 1 à 3 semaines. Pack 24 x 125 ml (3 L) : 19,90 € https://www.lyophilise.fr/4287-eau-potable-en-sachet-5-ans-24-x-125-ml-3-l.html"
+"note": "Poids = 500 g par sachet. Délai annoncé 1 à 3 semaines. Pack 24 x 125 ml (3 L) : 19,90 € https://www.lyophilise.fr/4287-eau-potable-en-sachet-5-ans-24-x-125-ml-3-l.html",
+"tip": "Environ 500 g par sachet."
 },
 {
 "id": "G010",
@@ -149,7 +159,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "maison",
-"note": "Vendu par Castorama. Version 15 L avec robinet : 12,50 €."
+"note": "Vendu par Castorama. Version 15 L avec robinet : 12,50 €.",
+"tip": ""
 },
 {
 "id": "G011",
@@ -164,7 +175,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "maison",
-"note": "Note clients moyenne 3,08/5 (23 avis) sur la page : vérifier l'étanchéité du robinet."
+"note": "Note clients moyenne 3,08/5 (23 avis) sur la page : vérifier l'étanchéité du robinet.",
+"tip": ""
 },
 {
 "id": "G012",
@@ -173,13 +185,14 @@ window.GEAR = [
 "model": "6 L par personne pour 72 h (SGDSN) — ex. pack 6 × 1 L",
 "qty": 1,
 "weight_g": null,
-"price_eur": 3.0,
+"price_eur": 3,
 "price_status": "estimation",
 "url": "https://www.auchan.fr/cristaline-eau-de-source-plate-bouteilles/pr-C1206322",
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "maison",
-"note": "Prix estimé pour 6 L (≈ 0,25-0,50 €/L en grande surface, non relevé). Multiplier par le nombre de personnes et par la durée visée (voir le calculateur de l'onglet Écosystème)."
+"note": "Prix estimé pour 6 L (≈ 0,25-0,50 €/L en grande surface, non relevé). Multiplier par le nombre de personnes et par la durée visée (voir le calculateur de l'onglet Écosystème).",
+"tip": "Multiplier par le nombre de personnes et par la durée visée (voir le calculateur de l'onglet Écosystème)."
 },
 {
 "id": "G013",
@@ -194,7 +207,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "optionnel",
 "scope": "maison",
-"note": "Ions d'argent : empêche la recontamination de l'eau déjà potable stockée ; ne désinfecte pas une eau douteuse."
+"note": "Ions d'argent : empêche la recontamination de l'eau déjà potable stockée ; ne désinfecte pas une eau douteuse.",
+"tip": "Ions d'argent : empêche la recontamination de l'eau déjà potable stockée ; ne désinfecte pas une eau douteuse."
 },
 {
 "id": "G014",
@@ -209,7 +223,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "sac",
-"note": "960 g net, ~4790 kcal au total. Pour 72 h compter 6 repas + petits-déj./encas. Variante 'Petit prix' 10 repas : 65,66 €."
+"note": "960 g net, ~4790 kcal au total. Pour 72 h compter 6 repas + petits-déj./encas. Variante 'Petit prix' 10 repas : 65,66 €.",
+"tip": "Pour 72 h, comptez 6 repas plus petits-déjeuners et en-cas."
 },
 {
 "id": "G015",
@@ -224,7 +239,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "les deux",
-"note": "Prix barré 11,05 €, remise -10 % affichée le 30/09. Entrée de gamme : Ration de survie 5 ans 500 g, 6,95 € https://www.lyophilise.fr/4799-ration-de-survie-5-ans.html"
+"note": "Prix barré 11,05 €, remise -10 % affichée le 30/09. Entrée de gamme : Ration de survie 5 ans 500 g, 6,95 € https://www.lyophilise.fr/4799-ration-de-survie-5-ans.html",
+"tip": ""
 },
 {
 "id": "G016",
@@ -239,7 +255,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "sac",
-"note": "387 kcal par barre."
+"note": "387 kcal par barre.",
+"tip": ""
 },
 {
 "id": "G017",
@@ -254,7 +271,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "maison",
-"note": "Poids net 2445 g. Pour 1 mois : Pack Survie 1 mois 489,95 € https://www.lyophilise.fr/7511-pack-survie-1-mois-repas-rations-compactes-filtre-a-eau-stockage-15-ans.html"
+"note": "Poids net 2445 g. Pour 1 mois : Pack Survie 1 mois 489,95 € https://www.lyophilise.fr/7511-pack-survie-1-mois-repas-rations-compactes-filtre-a-eau-stockage-15-ans.html",
+"tip": ""
 },
 {
 "id": "G018",
@@ -263,13 +281,14 @@ window.GEAR = [
 "model": "Conserves du commerce 400 g",
 "qty": 20,
 "weight_g": null,
-"price_eur": 2.0,
+"price_eur": 2,
 "price_status": "estimation",
 "url": "https://www.auchan.fr/recherche?text=conserve",
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "maison",
-"note": "Prix unitaire estimé ≈ 1-3 €/boîte (non relevé : sites de grande distribution inaccessibles ou prix liés au magasin) ; 20 boîtes ≈ 40 €. Rotation FIFO, prévoir un ouvre-boîte manuel. Reportez les kcal de l'étiquette dans l'inventaire."
+"note": "Prix unitaire estimé ≈ 1-3 €/boîte (non relevé : sites de grande distribution inaccessibles ou prix liés au magasin) ; 20 boîtes ≈ 40 €. Rotation FIFO, prévoir un ouvre-boîte manuel. Reportez les kcal de l'étiquette dans l'inventaire.",
+"tip": "Rotation FIFO, prévoir un ouvre-boîte manuel. Reportez les kcal de l'étiquette dans l'inventaire."
 },
 {
 "id": "G019",
@@ -284,7 +303,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "sac",
-"note": "Prix barré 50,00 € (-15 % affiché). Entrée de gamme : réchaud de poche Esbit + 20 x 4 g, 14,95 € (170 g) https://www.lyophilise.fr/8039-rechaud-de-poche-esbit-et-20-x-4-g-combustibles-solides.html"
+"note": "Prix barré 50,00 € (-15 % affiché). Entrée de gamme : réchaud de poche Esbit + 20 x 4 g, 14,95 € (170 g) https://www.lyophilise.fr/8039-rechaud-de-poche-esbit-et-20-x-4-g-combustibles-solides.html",
+"tip": ""
 },
 {
 "id": "G020",
@@ -299,7 +319,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "optionnel",
 "scope": "les deux",
-"note": "Recharge 12 x 14 g : 9,95 €."
+"note": "Recharge 12 x 14 g : 9,95 €.",
+"tip": ""
 },
 {
 "id": "G021",
@@ -314,7 +335,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "les deux",
-"note": "Prix barré 7,50 €. Poids plein 380 g."
+"note": "Prix barré 7,50 €. Poids plein 380 g.",
+"tip": ""
 },
 {
 "id": "G022",
@@ -329,7 +351,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "sac",
-"note": "Prix barré 30,95 €. Délai 1-3 semaines annoncé."
+"note": "Prix barré 30,95 €. Délai 1-3 semaines annoncé.",
+"tip": ""
 },
 {
 "id": "G023",
@@ -344,7 +367,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "maison",
-"note": "Vendu par un tiers. Alternative vendue par Castorama : Campingaz Super Carena R 3000 W, 42,90 € (nécessite une bouteille Campingaz) https://www.castorama.fr/rechaud-super-carena-r-campingaz-3000w/3138520314837_CAFR.prd . Toujours utiliser en local ventilé."
+"note": "Vendu par un tiers. Alternative vendue par Castorama : Campingaz Super Carena R 3000 W, 42,90 € (nécessite une bouteille Campingaz) https://www.castorama.fr/rechaud-super-carena-r-campingaz-3000w/3138520314837_CAFR.prd . Toujours utiliser en local ventilé.",
+"tip": "Toujours utiliser en local ventilé."
 },
 {
 "id": "G024",
@@ -359,7 +383,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "les deux",
-"note": "Prix lu sur la page de résultats Action (fiche produit 403). Fiche : https://www.action.com/fr-fr/p/3014797/briquets-bic/"
+"note": "Prix lu sur la page de résultats Action (fiche produit 403). Fiche : https://www.action.com/fr-fr/p/3014797/briquets-bic/",
+"tip": ""
 },
 {
 "id": "G025",
@@ -374,7 +399,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "sac",
-"note": "Version Army : 19,95 €."
+"note": "Version Army : 19,95 €.",
+"tip": ""
 },
 {
 "id": "G026",
@@ -389,7 +415,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "les deux",
-"note": ""
+"note": "",
+"tip": ""
 },
 {
 "id": "G027",
@@ -404,7 +431,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "les deux",
-"note": "Entrée de gamme : couverture BCB 2,50 € (50 g) https://www.lyophilise.fr/5421-couverture-de-survie-bcb.html"
+"note": "Entrée de gamme : couverture BCB 2,50 € (50 g) https://www.lyophilise.fr/5421-couverture-de-survie-bcb.html",
+"tip": ""
 },
 {
 "id": "G028",
@@ -419,7 +447,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "sac",
-"note": "Recommandé (respirant, réutilisable) : SOL Escape Lite Bivvy 56,95 € (155 g) https://www.lyophilise.fr/8531-sac-de-bivouac-leger-escape-lite-bivvy-sol.html"
+"note": "Recommandé (respirant, réutilisable) : SOL Escape Lite Bivvy 56,95 € (155 g) https://www.lyophilise.fr/8531-sac-de-bivouac-leger-escape-lite-bivvy-sol.html",
+"tip": ""
 },
 {
 "id": "G029",
@@ -434,7 +463,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "sac",
-"note": "Prix de base 54,90 € (-25 % affiché). Poids vérifié 950 g, 3000 mm."
+"note": "Prix de base 54,90 € (-25 % affiché). Poids vérifié 950 g, 3000 mm.",
+"tip": ""
 },
 {
 "id": "G030",
@@ -449,7 +479,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "les deux",
-"note": "Prix de base 149,90 €. Vérifier températures confort/limite sur la fiche."
+"note": "Prix de base 149,90 €. Vérifier températures confort/limite sur la fiche.",
+"tip": "Vérifier températures confort/limite sur la fiche."
 },
 {
 "id": "G031",
@@ -464,7 +495,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "sac",
-"note": ""
+"note": "",
+"tip": ""
 },
 {
 "id": "G032",
@@ -479,7 +511,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "sac",
-"note": "Prix soldé (-60 %), tailles limitées. Mérinos : Icebreaker dès ~40-54 € sur rayonrando.com."
+"note": "Prix soldé (-60 %), tailles limitées. Mérinos : Icebreaker dès ~40-54 € sur rayonrando.com.",
+"tip": ""
 },
 {
 "id": "G033",
@@ -494,7 +527,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "sac",
-"note": "Prix soldé (-50 %)."
+"note": "Prix soldé (-50 %).",
+"tip": ""
 },
 {
 "id": "G034",
@@ -509,7 +543,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "sac",
-"note": "Soldé -60 % ; au 30/09 seule la taille XS apparaissait en liste : prix non représentatif si votre taille manque (prix de base 44,90 €)."
+"note": "Soldé -60 % ; au 30/09 seule la taille XS apparaissait en liste : prix non représentatif si votre taille manque (prix de base 44,90 €).",
+"tip": ""
 },
 {
 "id": "G035",
@@ -524,7 +559,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "sac",
-"note": "Prix de base 79,95 €."
+"note": "Prix de base 79,95 €.",
+"tip": ""
 },
 {
 "id": "G036",
@@ -539,7 +575,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "sac",
-"note": ""
+"note": "",
+"tip": ""
 },
 {
 "id": "G037",
@@ -554,7 +591,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "sac",
-"note": "Sous-gants mérinos Icebreaker : 14,97 € https://www.rayonrando.com/fr/gants/862-sous-gants-unisex-oasis-glove-liners.html"
+"note": "Sous-gants mérinos Icebreaker : 14,97 € https://www.rayonrando.com/fr/gants/862-sous-gants-unisex-oasis-glove-liners.html",
+"tip": ""
 },
 {
 "id": "G038",
@@ -569,7 +607,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "sac",
-"note": "Prix de base 18,99 €."
+"note": "Prix de base 18,99 €.",
+"tip": ""
 },
 {
 "id": "G039",
@@ -584,7 +623,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "les deux",
-"note": "Recommandé (USB-C, 47 g) : Nitecore NU25 UL 44,90 € https://www.lyophilise.fr/12287-lampe-frontale-nitecore-nu25-ul.html"
+"note": "Recommandé (USB-C, 47 g) : Nitecore NU25 UL 44,90 € https://www.lyophilise.fr/12287-lampe-frontale-nitecore-nu25-ul.html",
+"tip": ""
 },
 {
 "id": "G040",
@@ -599,7 +639,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "optionnel",
 "scope": "sac",
-"note": ""
+"note": "",
+"tip": ""
 },
 {
 "id": "G041",
@@ -614,7 +655,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "les deux",
-"note": "Pour stockage long / froid : Energizer Ultimate Lithium AA x4, 13,02 € (marketplace) https://www.castorama.fr/mkp/pile-lithium-energizer-ultimate-lr6-1-5-volts-blister-de-4-piles/7638900262643_CAFR.prd . Prévoir aussi des AAA selon la frontale."
+"note": "Pour stockage long / froid : Energizer Ultimate Lithium AA x4, 13,02 € (marketplace) https://www.castorama.fr/mkp/pile-lithium-energizer-ultimate-lr6-1-5-volts-blister-de-4-piles/7638900262643_CAFR.prd . Prévoir aussi des AAA selon la frontale.",
+"tip": "Prévoir aussi des AAA selon la frontale."
 },
 {
 "id": "G042",
@@ -629,7 +671,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "optionnel",
 "scope": "maison",
-"note": "Vendeur marketplace Castorama."
+"note": "Vendeur marketplace Castorama.",
+"tip": ""
 },
 {
 "id": "G043",
@@ -644,7 +687,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "maison",
-"note": "Préférer à la bougie (risque incendie)."
+"note": "Préférer à la bougie (risque incendie).",
+"tip": "Préférer à la bougie (risque incendie)."
 },
 {
 "id": "G044",
@@ -659,7 +703,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "sac",
-"note": "Prix barré 84,90 € (-5 %). Entrée de gamme : X-Moove Sky 10000 mAh 29,95 € (182 g) https://www.lyophilise.fr/8492-batterie-externe-x-moove-sky-10000-mah-2-ports-usb.html"
+"note": "Prix barré 84,90 € (-5 %). Entrée de gamme : X-Moove Sky 10000 mAh 29,95 € (182 g) https://www.lyophilise.fr/8492-batterie-externe-x-moove-sky-10000-mah-2-ports-usb.html",
+"tip": ""
 },
 {
 "id": "G045",
@@ -674,7 +719,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "les deux",
-"note": "Entrée : X-Moove Trail 14 W 89,95 € (300 g)."
+"note": "Entrée : X-Moove Trail 14 W 89,95 € (300 g).",
+"tip": ""
 },
 {
 "id": "G046",
@@ -683,13 +729,14 @@ window.GEAR = [
 "model": "EcoFlow RIVER 3 (ASI) – 245 Wh / 300 W",
 "qty": 1,
 "weight_g": null,
-"price_eur": 259.0,
+"price_eur": 259,
 "price_status": "relevé",
 "url": "https://fr.ecoflow.com/products/river-3-portable-power-station",
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "maison",
-"note": "Prix officiel fr.ecoflow.com (variante ASI en stock ; variante standard 249 € en rupture). Bundle + panneau 45 W : 279 €. Alternatives Jackery (prix officiels fr.jackery.com) : Explorer 240 v2 199 €, Explorer 300 Plus 279 €, Explorer 500 v2 299 €, Explorer 1000 v2 519 € https://fr.jackery.com/products/explorer-1000-v2-portable-power-station"
+"note": "Prix officiel fr.ecoflow.com (variante ASI en stock ; variante standard 249 € en rupture). Bundle + panneau 45 W : 279 €. Alternatives Jackery (prix officiels fr.jackery.com) : Explorer 240 v2 199 €, Explorer 300 Plus 279 €, Explorer 500 v2 299 €, Explorer 1000 v2 519 € https://fr.jackery.com/products/explorer-1000-v2-portable-power-station",
+"tip": ""
 },
 {
 "id": "G047",
@@ -698,13 +745,14 @@ window.GEAR = [
 "model": "Mecafer MF3000i 3000 W (essence)",
 "qty": 1,
 "weight_g": null,
-"price_eur": 399.0,
+"price_eur": 399,
 "price_status": "relevé",
 "url": "https://www.castorama.fr/groupe-electrogene-3000-w-carburant-sp95-et-sp98-autonomie-8-h-l-43-x-l-50-5-x-h-51-5-cm-mecafer-mf3000i/3283494501308_CAFR.prd",
 "source_date": "2026-09-30",
 "priority": "optionnel",
 "scope": "maison",
-"note": "Exclusivement en extérieur (monoxyde de carbone). Entrée : Mercure MC2600 2100 W 299,90 €. Stocker l'essence avec stabilisant, en jerrican homologué."
+"note": "Exclusivement en extérieur (monoxyde de carbone). Entrée : Mercure MC2600 2100 W 299,90 €. Stocker l'essence avec stabilisant, en jerrican homologué.",
+"tip": "Exclusivement en extérieur (monoxyde de carbone). Stocker l'essence avec stabilisant, en jerrican homologué."
 },
 {
 "id": "G048",
@@ -719,7 +767,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "les deux",
-"note": "Page affiche 41,00 € HT ; TTC calculé (TVA 20 %). Entrée : PNI DYN300 FM/AM/SW 34,57 € HT ≈ 41,48 € TTC https://www.passion-radio.fr/radio-durgence/pni-dyn300-3154.html . Radio à piles simple : 16,96 € https://www.lyophilise.fr/15539-radio-urgence-a-piles.html"
+"note": "Page affiche 41,00 € HT ; TTC calculé (TVA 20 %). Entrée : PNI DYN300 FM/AM/SW 34,57 € HT ≈ 41,48 € TTC https://www.passion-radio.fr/radio-durgence/pni-dyn300-3154.html . Radio à piles simple : 16,96 € https://www.lyophilise.fr/15539-radio-urgence-a-piles.html",
+"tip": ""
 },
 {
 "id": "G049",
@@ -734,7 +783,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "optionnel",
 "scope": "maison",
-"note": "Page affiche 86,60 € HT (statut 'BackOrder') ; TTC calculé."
+"note": "Page affiche 86,60 € HT (statut 'BackOrder') ; TTC calculé.",
+"tip": ""
 },
 {
 "id": "G050",
@@ -749,7 +799,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "les deux",
-"note": "Page affiche 28,88 € HT ; TTC calculé. Plus robuste : Midland G7 Pro 63,95 € (en rupture) https://www.onedirect.fr/produits/midland-g7-pro . Un Baofeng UV-5R n'est PAS autorisé en émission sans licence radioamateur ni homologué PMR446."
+"note": "Page affiche 28,88 € HT ; TTC calculé. Plus robuste : Midland G7 Pro 63,95 € (en rupture) https://www.onedirect.fr/produits/midland-g7-pro . Un Baofeng UV-5R n'est PAS autorisé en émission sans licence radioamateur ni homologué PMR446.",
+"tip": "Un Baofeng UV-5R n'est PAS autorisé en émission sans licence radioamateur ni homologué PMR446."
 },
 {
 "id": "G051",
@@ -764,7 +815,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "sac",
-"note": ""
+"note": "",
+"tip": ""
 },
 {
 "id": "G052",
@@ -779,7 +831,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "sac",
-"note": ""
+"note": "",
+"tip": ""
 },
 {
 "id": "G053",
@@ -794,7 +847,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "sac",
-"note": "Entrée : Silva Field 27,95 € (en rupture) https://www.lyophilise.fr/15778-boussole-silva-field.html"
+"note": "Entrée : Silva Field 27,95 € (en rupture) https://www.lyophilise.fr/15778-boussole-silva-field.html",
+"tip": ""
 },
 {
 "id": "G054",
@@ -809,7 +863,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "les deux",
-"note": "Prix uniforme 14,30 € observé sur la liste TOP 25 de la boutique IGN. Choisir domicile + itinéraire d'évacuation."
+"note": "Prix uniforme 14,30 € observé sur la liste TOP 25 de la boutique IGN. Choisir domicile + itinéraire d'évacuation.",
+"tip": "Choisir la carte du domicile et celles de l'itinéraire d'évacuation."
 },
 {
 "id": "G055",
@@ -818,13 +873,14 @@ window.GEAR = [
 "model": "Garmin eTrex SE",
 "qty": 1,
 "weight_g": null,
-"price_eur": 149.0,
+"price_eur": 149,
 "price_status": "estimation",
 "url": "https://www.decathlon.fr/search?Ntt=garmin+etrex+se",
 "source_date": "2026-09-30",
 "priority": "optionnel",
 "scope": "sac",
-"note": "Estimation : 149 € (i-run.fr) / 148,90 € (Snowleader) d'après extraits moteur de recherche ; pages en 403, non vérifiées. Fonctionne sur 2 piles AA."
+"note": "Estimation : 149 € (i-run.fr) / 148,90 € (Snowleader) d'après extraits moteur de recherche ; pages en 403, non vérifiées. Fonctionne sur 2 piles AA.",
+"tip": "Fonctionne sur 2 piles AA."
 },
 {
 "id": "G056",
@@ -839,7 +895,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "sac",
-"note": "Version avec ferro : Companion Spark 36,95 €. Opinel n°7 : 11,50 € (35 g). Port d'arme blanche encadré en France : transporter rangé dans le sac, motif légitime."
+"note": "Version avec ferro : Companion Spark 36,95 €. Opinel n°7 : 11,50 € (35 g). Port d'arme blanche encadré en France : transporter rangé dans le sac, motif légitime.",
+"tip": "Port d'arme blanche encadré en France : transporter rangé dans le sac, avec un motif légitime."
 },
 {
 "id": "G057",
@@ -854,7 +911,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "sac",
-"note": "Entrée : Victorinox Camper 29,95 €."
+"note": "Entrée : Victorinox Camper 29,95 €.",
+"tip": ""
 },
 {
 "id": "G058",
@@ -863,13 +921,14 @@ window.GEAR = [
 "model": "Leatherman Wingman",
 "qty": 1,
 "weight_g": null,
-"price_eur": 89.0,
+"price_eur": 89,
 "price_status": "relevé",
 "url": "https://aciertrempe.fr/multifonctions/poche/pince-multifonction-leatherman-wingman/",
 "source_date": "2026-09-30",
 "priority": "optionnel",
 "scope": "les deux",
-"note": "Haut de gamme : Leatherman Signal 159 € (213 g, en rupture) https://www.lyophilise.fr/7238-pince-multifonction-leatherman-signal-19-outils.html"
+"note": "Haut de gamme : Leatherman Signal 159 € (213 g, en rupture) https://www.lyophilise.fr/7238-pince-multifonction-leatherman-signal-19-outils.html",
+"tip": ""
 },
 {
 "id": "G059",
@@ -884,7 +943,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "les deux",
-"note": ""
+"note": "",
+"tip": ""
 },
 {
 "id": "G060",
@@ -899,7 +959,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "sac",
-"note": "Paracorde 550 avec mousqueton 14,90 € (en rupture)."
+"note": "Paracorde 550 avec mousqueton 14,90 € (en rupture).",
+"tip": ""
 },
 {
 "id": "G061",
@@ -914,7 +975,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "sac",
-"note": "Maison : Scotch Extremium 25 m x 48 mm, 14,50 € https://www.castorama.fr/ruban-adhesif-toile-de-reparation-scotch-extremium-25-x-48-mm-noir/4054596696419_CAFR.prd"
+"note": "Maison : Scotch Extremium 25 m x 48 mm, 14,50 € https://www.castorama.fr/ruban-adhesif-toile-de-reparation-scotch-extremium-25-x-48-mm-noir/4054596696419_CAFR.prd",
+"tip": ""
 },
 {
 "id": "G062",
@@ -929,7 +991,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "sac",
-"note": "Maison : pelle-pioche pliante Outils Perrin 38,40 € (marketplace) https://www.castorama.fr/departments/outils-perrin-pelle-pioche-pliante-de-camping-pelle-us/3239041551159_CAFR.prd"
+"note": "Maison : pelle-pioche pliante Outils Perrin 38,40 € (marketplace) https://www.castorama.fr/departments/outils-perrin-pelle-pioche-pliante-de-camping-pelle-us/3239041551159_CAFR.prd",
+"tip": ""
 },
 {
 "id": "G063",
@@ -944,7 +1007,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "optionnel",
 "scope": "maison",
-"note": ""
+"note": "",
+"tip": ""
 },
 {
 "id": "G064",
@@ -959,7 +1023,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "les deux",
-"note": "Entrée : trousse Pharmavoyage Premiers soins 11,95 € (215 g) https://www.lyophilise.fr/8958-trousse-de-secours-pharmavoyage-premiers-soins.html . Ajouter médicaments personnels + copie des ordonnances."
+"note": "Entrée : trousse Pharmavoyage Premiers soins 11,95 € (215 g) https://www.lyophilise.fr/8958-trousse-de-secours-pharmavoyage-premiers-soins.html . Ajouter médicaments personnels + copie des ordonnances.",
+"tip": "Ajouter médicaments personnels + copie des ordonnances."
 },
 {
 "id": "G065",
@@ -974,7 +1039,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "les deux",
-"note": "Aussi 49,99 € chez ylea.eu. Nombreuses contrefaçons : acheter chez un revendeur identifié. Se former (PSC1 / 'Stop the Bleed')."
+"note": "Aussi 49,99 € chez ylea.eu. Nombreuses contrefaçons : acheter chez un revendeur identifié. Se former (PSC1 / 'Stop the Bleed').",
+"tip": "Se former (PSC1 / 'Stop the Bleed')."
 },
 {
 "id": "G066",
@@ -989,7 +1055,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "les deux",
-"note": "Vérifier la taille (4\" / 6\") sur la fiche."
+"note": "Vérifier la taille (4\" / 6\") sur la fiche.",
+"tip": "Vérifier la taille (4\" / 6\") sur la fiche."
 },
 {
 "id": "G067",
@@ -998,13 +1065,14 @@ window.GEAR = [
 "model": "Iodure de potassium 65 mg (boîte de 10)",
 "qty": 1,
 "weight_g": null,
-"price_eur": 0.0,
+"price_eur": 0,
 "price_status": "relevé",
 "url": "https://pharmactu.fr/articles/comprimes-iode-pharmacie-distribution-centrales-nucleaires-septembre-2026",
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "maison",
-"note": "Gratuit, sans ordonnance, en pharmacie pour les résidents/travailleurs à 0-20 km d'une centrale (campagne à partir de sept. 2026, selon pharmactu.fr). À prendre UNIQUEMENT sur ordre du préfet. Hors zone : pas de prix vérifié."
+"note": "Gratuit, sans ordonnance, en pharmacie pour les résidents/travailleurs à 0-20 km d'une centrale (campagne à partir de sept. 2026, selon pharmactu.fr). À prendre UNIQUEMENT sur ordre du préfet. Hors zone : pas de prix vérifié.",
+"tip": "À prendre UNIQUEMENT sur ordre du préfet."
 },
 {
 "id": "G068",
@@ -1019,7 +1087,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "les deux",
-"note": "Boîte de 10 : 2,39 €."
+"note": "Boîte de 10 : 2,39 €.",
+"tip": ""
 },
 {
 "id": "G069",
@@ -1034,7 +1103,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "optionnel",
 "scope": "maison",
-"note": "Protection poussières/fumées ; ne protège pas des gaz."
+"note": "Protection poussières/fumées ; ne protège pas des gaz.",
+"tip": "Protection poussières/fumées ; ne protège pas des gaz."
 },
 {
 "id": "G070",
@@ -1049,7 +1119,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "les deux",
-"note": "Choisir sa taille."
+"note": "Choisir sa taille.",
+"tip": "Choisir sa taille."
 },
 {
 "id": "G071",
@@ -1064,7 +1135,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "sac",
-"note": "Prix barré 4,95 €. Maison : cube de savon de Marseille 500 g, 8,59 € https://www.castorama.fr/cube-de-savon-de-marseille-la-corvette-savonnerie-du-midi-extra-pur-500gr/3182612705027_CAFR.prd"
+"note": "Prix barré 4,95 €. Maison : cube de savon de Marseille 500 g, 8,59 € https://www.castorama.fr/cube-de-savon-de-marseille-la-corvette-savonnerie-du-midi-extra-pur-500gr/3182612705027_CAFR.prd",
+"tip": ""
 },
 {
 "id": "G072",
@@ -1079,7 +1151,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "les deux",
-"note": ""
+"note": "",
+"tip": ""
 },
 {
 "id": "G073",
@@ -1094,7 +1167,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "maison",
-"note": "Prix lu sur la page de résultats Action (fiche produit 403). Sac : lingettes compressées Océale dès 3,95 € https://www.lyophilise.fr/9468-175-lingettes-compressees-oceale.html"
+"note": "Prix lu sur la page de résultats Action (fiche produit 403). Sac : lingettes compressées Océale dès 3,95 € https://www.lyophilise.fr/9468-175-lingettes-compressees-oceale.html",
+"tip": ""
 },
 {
 "id": "G074",
@@ -1109,7 +1183,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "les deux",
-"note": "Prix lu sur la page de résultats Action."
+"note": "Prix lu sur la page de résultats Action.",
+"tip": ""
 },
 {
 "id": "G075",
@@ -1124,7 +1199,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "les deux",
-"note": "Multi-usages : toilettes de fortune, étanchéité, poncho."
+"note": "Multi-usages : toilettes de fortune, étanchéité, poncho.",
+"tip": "Multi-usages : toilettes de fortune, étanchéité, poncho."
 },
 {
 "id": "G076",
@@ -1139,7 +1215,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "optionnel",
 "scope": "maison",
-"note": "Solution économique : seau 20 L à couvercle + sacs poubelle + sciure/litière. Toilettes sèches à séparateur (fabricant FR, marketplace) dès 336 €."
+"note": "Solution économique : seau 20 L à couvercle + sacs poubelle + sciure/litière. Toilettes sèches à séparateur (fabricant FR, marketplace) dès 336 €.",
+"tip": "Solution économique : seau 20 L à couvercle + sacs poubelle + sciure ou litière."
 },
 {
 "id": "G077",
@@ -1154,7 +1231,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "sac",
-"note": "Photocopies pièces d'identité, ordonnances, contrats + argent liquide en petites coupures (repère du guide gouvernemental)."
+"note": "Photocopies pièces d'identité, ordonnances, contrats + argent liquide en petites coupures (repère du guide gouvernemental).",
+"tip": "Photocopies pièces d'identité, ordonnances, contrats + argent liquide en petites coupures (repère du guide gouvernemental)."
 },
 {
 "id": "G078",
@@ -1169,7 +1247,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "optionnel",
 "scope": "sac",
-"note": "Même prix chez materiel.net. Entrée : Kingston IronKey Vault Privacy 50C 16 Go 99,95 € https://www.ldlc.com/fiche/PB00665145.html . Alternative gratuite : conteneur VeraCrypt sur clé standard."
+"note": "Même prix chez materiel.net. Entrée : Kingston IronKey Vault Privacy 50C 16 Go 99,95 € https://www.ldlc.com/fiche/PB00665145.html . Alternative gratuite : conteneur VeraCrypt sur clé standard.",
+"tip": "Alternative gratuite : conteneur VeraCrypt sur clé standard."
 },
 {
 "id": "G079",
@@ -1184,7 +1263,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "maison",
-"note": "Entrée : Kidde 1 kg ABC 29,90 €. Aérosol eau+mousse Lifebox 750 ml 17,50 €."
+"note": "Entrée : Kidde 1 kg ABC 29,90 €. Aérosol eau+mousse Lifebox 750 ml 17,50 €.",
+"tip": ""
 },
 {
 "id": "G080",
@@ -1199,7 +1279,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "maison",
-"note": "Obligatoire dans tout logement en France. Entrée : Kidde 3Y29 12,90 €."
+"note": "Obligatoire dans tout logement en France. Entrée : Kidde 3Y29 12,90 €.",
+"tip": "Obligatoire dans tout logement en France."
 },
 {
 "id": "G081",
@@ -1214,7 +1295,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "essentiel",
 "scope": "maison",
-"note": "Indispensable si réchaud/chauffage d'appoint/groupe électrogène."
+"note": "Indispensable si réchaud/chauffage d'appoint/groupe électrogène.",
+"tip": "Indispensable si réchaud/chauffage d'appoint/groupe électrogène."
 },
 {
 "id": "G082",
@@ -1229,7 +1311,8 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "maison",
-"note": "Charge lourde : étagère 4 plateaux L.180 cm 79 €."
+"note": "Charge lourde : étagère 4 plateaux L.180 cm 79 €.",
+"tip": ""
 },
 {
 "id": "G083",
@@ -1244,6 +1327,7 @@ window.GEAR = [
 "source_date": "2026-09-30",
 "priority": "recommandé",
 "scope": "maison",
-"note": "Lot de 3 : 50,70 €. Étiqueter date de péremption, rotation FIFO (premier entré, premier sorti)."
+"note": "Lot de 3 : 50,70 €. Étiqueter date de péremption, rotation FIFO (premier entré, premier sorti).",
+"tip": "Étiqueter la date de péremption, rotation FIFO (premier entré, premier sorti)."
 }
 ];

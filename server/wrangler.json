@@ -8,6 +8,11 @@
       "custom_domain": true
     }
   ],
+  "triggers": {
+    "crons": [
+      "17 * * * *"
+    ]
+  },
   "workers_dev": false,
   "d1_databases": [
     {

@@ -77,18 +77,30 @@
 
   /* Une règle est « consommable » si sa quantité dépend de la durée (q(1) ≠ q(14)). */
   const isConso = r => !!r.q && r.q(1, 2100) !== r.q(14, 2100);
-  function lineFor(rule, d, K, GEAR_BY_ID, uid) {
-    const qty = rule.q ? rule.q(d, K) : 1;
+  /* tier : gamme de budget du sac (js/shop.js) ; elle fixe le modèle conseillé, son prix et son poids. */
+  function lineFor(rule, d, K, GEAR_BY_ID, uid, tier) {
+    const qty = rule.q ? rule.q(d, K) : 1, S = window.Shop;
     if (rule.g) {
       const g = GEAR_BY_ID[rule.g]; if (!g) return null;
-      return { key: uid(), gearId: g.id, rid: rule.g, name: g.name + (g.model ? ' — ' + g.model : ''), category: g.category, qty, weight_g: g.weight_g || 0, price: g.price_eur || 0, have: false, auto: isConso(rule), kind: isConso(rule) ? 'conso' : 'durable' };
+      const l = { key: uid(), gearId: g.id, rid: rule.g, name: g.name + (g.model ? ' — ' + g.model : ''), category: g.category, qty, weight_g: g.weight_g || 0, price: g.price_eur || 0, have: false, auto: isConso(rule), kind: isConso(rule) ? 'conso' : 'durable' };
+      return S && S.has(g.id) ? S.apply(l, g.id, g.name, tier) : l;
     }
-    return { key: uid(), rid: rule.c, name: rule.n, category: rule.cat || 'Personnel', qty, unit: rule.unit, weight_g: 0, price: 0, have: false, auto: isConso(rule), kind: isConso(rule) ? 'conso' : 'durable' };
+    const l = { key: uid(), rid: rule.c, name: rule.n, category: rule.cat || 'Personnel', qty, unit: rule.unit, weight_g: 0, price: 0, have: false, auto: isConso(rule), kind: isConso(rule) ? 'conso' : 'durable' };
+    return S && S.has('bag:' + rule.c) ? S.apply(l, 'bag:' + rule.c, rule.n, tier) : l;
   }
-  /* Pré-remplit un sac selon son type et sa durée (sans doublon). */
+  /* Pré-remplit un sac selon son type, sa durée et sa gamme de budget (sans doublon). */
   function prefill(bag, GEAR_BY_ID, K, uid) {
     const T = TYPES[bag.type || 'evac'], d = bag.days || T.def, have = new Set(bag.items.map(i => i.rid || i.gearId));
-    for (const r of T.items) { const id = r.g || r.c; if (have.has(id)) continue; const l = lineFor(r, d, K, GEAR_BY_ID, uid); if (l && l.qty > 0) bag.items.push(l); }
+    for (const r of T.items) { const id = r.g || r.c; if (have.has(id)) continue; const l = lineFor(r, d, K, GEAR_BY_ID, uid, bag.tier); if (l && l.qty > 0) bag.items.push(l); }
+  }
+  /* Coût d'un sac pré-rempli dans chaque gamme, pour aider à choisir à la création. */
+  function estimate(type, days, GEAR_BY_ID, K) {
+    const out = {}, uid = () => '';
+    for (const tier of ['faible', 'moyen', 'eleve']) {
+      const b = { type, days, tier, items: [] }; prefill(b, GEAR_BY_ID, K, uid);
+      out[tier] = { cost: b.items.reduce((a, it) => a + (+it.qty || 1) * (+it.price || 0), 0), weight: b.items.reduce((a, it) => a + (+it.qty || 1) * (+it.weight_g || 0), 0) };
+    }
+    return out;
   }
   /* Recalcule les quantités des consommables (lignes « auto ») quand la durée change. */
   function rescale(bag, K, GEAR_BY_ID, uid) {
@@ -101,7 +113,7 @@
     // Consommables qui deviennent nécessaires avec une durée plus longue (quantité nulle à 1 jour)
     if (GEAR_BY_ID && bag.items.length) {
       const have = new Set(bag.items.map(i => i.rid || i.gearId));
-      for (const r of T.items) if (isConso(r) && !have.has(r.g || r.c) && r.q(d, K) > 0 && r.q(1, K) === 0) { const l = lineFor(r, d, K, GEAR_BY_ID, uid); if (l) bag.items.push(l); }
+      for (const r of T.items) if (isConso(r) && !have.has(r.g || r.c) && r.q(d, K) > 0 && r.q(1, K) === 0) { const l = lineFor(r, d, K, GEAR_BY_ID, uid, bag.tier); if (l) bag.items.push(l); }
     }
   }
   const ruleNote = (bag, it) => { const r = TYPES[bag.type || 'evac'].items.find(x => (x.g || x.c) === (it.rid || it.gearId)); return r && r.note; };
@@ -117,5 +129,5 @@
     G075: { q: (n, d) => Math.max(1, Math.ceil(n * d / 10)), note: '1 lot de 10 sacs par personne et par tranche de 10 jours (toilettes de secours) — hypothèse' },
     G021: { q: (n, d) => Math.max(1, Math.ceil(n * d * 1.5 * 20 / 230)), note: 'cartouches de 230 g : 1,5 L bouilli/pers./jour × 13–20 g/L (non vérifié) — hypothèse' },
   };
-  window.Bags = { TYPES, SRC, dLabel, prefill, rescale, lineFor, ruleNote, HOME_RULES, WATER_STORE_MAX, isConso };
+  window.Bags = { TYPES, SRC, dLabel, prefill, rescale, lineFor, estimate, ruleNote, HOME_RULES, WATER_STORE_MAX, isConso };
 })();

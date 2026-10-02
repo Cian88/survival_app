@@ -4,6 +4,7 @@
    L'application fonctionne hors ligne : ce serveur sert à créer le compte, synchroniser et retrouver Premium. */
 import { now, randomToken, sha256, hmac, sameHex, HttpError, fail, EMAIL_RE, UUID_RE, AUTHKEY_RE, normEmail, list, limit, verifyIdToken, es256Jwt, verifyLicence, signLicence, sendMail, unb64u, td } from './lib.js';
 import { page, resetForm } from './pages.js';
+import { refreshPrices, currentPrices } from './amazon.js';
 
 const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, content-type', 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS', 'Access-Control-Max-Age': '86400' };
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { ...CORS, 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' } });
@@ -119,6 +120,7 @@ async function route(req, env) {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
   switch (R) {
     case 'GET /health': return json({ ok: true });
+    case 'GET /shop/prices': return json(await currentPrices(env));
 
     case 'POST /auth/register': {
       const b = await readJson(req), email = normEmail(b.email);
@@ -298,5 +300,9 @@ export default {
       console.error(e && e.stack || e);
       return json({ error: 'Erreur du serveur.', code: 'server_error' }, 500);
     }
+  },
+  /* Toutes les heures : prix Amazon officiels (inactif sans les secrets AMAZON_*, server/src/amazon.js). */
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(refreshPrices(env).then(r => console.log('prix Amazon', JSON.stringify(r))));
   },
 };
