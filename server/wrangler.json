@@ -18,7 +18,7 @@
     }
   ],
   "vars": {
-    "MAIL_MODE": "log",
+    "MAIL_MODE": "resend",
     "MAIL_FROM": "Holdout <compte@hold-out.app>",
     "GOOGLE_CLIENT_IDS": "17816717554-2p6ma9dqj9g7er9colmp24hrr8ed02kb.apps.googleusercontent.com",
     "APPLE_AUDIENCES": "com.holdout.app",
