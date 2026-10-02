@@ -1,8 +1,0 @@
-# Hébergement alternatif (Netlify) : même dossier que l'app iOS.
-[build]
-  command = "node tools/build-www.mjs"
-  publish = "www"
-[[headers]]
-  for = "/sw.js"
-  [headers.values]
-    Cache-Control = "no-cache"

@@ -46,7 +46,7 @@ Les fichiers publiés par Protomaps (`build.protomaps.com`) **ne sont pas lisibl
 **Mapterhorn** : lisible directement (CORS ouvert). Pour ne plus en dépendre, on peut en héberger aussi une copie Europe (≈ 26 Go, détail 0 à 12) et la renseigner dans `map.terrain`.
 
 **Tester avant l'hébergement** : servir un extrait local, puis dans la console du navigateur :
-`localStorage.setItem('holdout.dev.osm', '<url du fichier>')`. Le serveur doit gérer les en-têtes `Range`. Le prototype `proto/topo-vectoriel/` fournit un extrait des Pyrénées.
+`localStorage.setItem('holdout.dev.osm', '<url du fichier>')`. Le serveur doit gérer les en-têtes `Range`. Un extrait de zone se fabrique avec `pmtiles extract … --bbox=…` (voir « Mettre en ligne le fond OSM »).
 
 ## Points à surveiller
 - **iPhone (Safari / WKWebView)** : Chrome et Edge lisent Mapterhorn sans requête préalable CORS. Si Safari en envoyait une, Mapterhorn la refuserait (HTTP 403). C'est à vérifier sur un appareil ; sinon, il faut héberger notre copie des altitudes avec une règle CORS complète.
