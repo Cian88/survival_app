@@ -279,9 +279,11 @@ async function route(req, env) {
     }
     case 'POST /me/licences': {
       const b = await readJson(req), p = await verifyLicence(env, b.licence);
-      if (p.plan === 'admin') fail(400, 'Les clés administrateur restent propres à chaque appareil.', 'admin_licence');
       if (p.exp && p.exp < now()) fail(400, 'Cette licence a expiré.', 'expired_licence');
-      await run(env, 'INSERT OR IGNORE INTO licences (id, user_id, token, plan, exp, source, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)', String(p.id || await sha256(b.licence)), u.id, String(b.licence).trim(), p.plan || null, p.exp || null, 'app', now());
+      const id = String(p.id || await sha256(b.licence));
+      await run(env, 'INSERT OR IGNORE INTO licences (id, user_id, token, plan, exp, source, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)', id, u.id, String(b.licence).trim(), p.plan || null, p.exp || null, 'app', now());
+      const owner = await one(env, 'SELECT user_id FROM licences WHERE id = ?', id);
+      if (owner.user_id !== u.id) fail(409, 'Cette licence est déjà rattachée à un autre compte.', 'licence_taken');
       return json(await account(env, u));
     }
     case 'POST /me/appstore': {

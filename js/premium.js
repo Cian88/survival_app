@@ -101,8 +101,9 @@
     const r = await verify(tok);
     if (r.expired) throw new Error('cette licence a expiré');
     try { localStorage.setItem(KEY, tok.trim()); } catch (e) { throw new Error('stockage local indisponible'); }
-    if (!opts.fromAccount && window.Account) Account.reportLicence(tok.trim()); // retrouvée ensuite sur les autres appareils
-    await load(); return state;
+    await load();
+    if (!opts.fromAccount && window.Account) await Account.reportLicence(tok.trim());
+    return state;
   }
   function remove() { try { localStorage.removeItem(KEY); } catch (e) { } state = { active: false, lic: null, reason: 'aucune licence' }; }
   const isPremium = () => state.active;

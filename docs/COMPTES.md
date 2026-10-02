@@ -14,7 +14,7 @@
   - Le profil, l'inventaire, les sacs, le plan, les contacts et les points sont chiffrés sur l'appareil (AES-256-GCM), puis sauvegardés et synchronisés entre appareils.
   - Le serveur ne peut pas les lire.
   - Les cartes et les points OSM téléchargés restent propres à chaque appareil.
-- **Premium partout.** Les licences (clé saisie, achat sur le site, achat App Store vérifié par le serveur) sont rattachées au compte, puis retrouvées à la connexion. Elles restent valables hors ligne.
+- **Premium partout.** Les licences signées (y compris les clés administrateur, achats sur le site et achats App Store vérifiés par le serveur) sont rattachées au compte, puis retrouvées à la connexion. Elles restent valables hors ligne. Une clé saisie hors ligne est gardée en attente et rattachée au retour du réseau ; un refus apparaît dans « Mon compte ». Les anciennes clés locales sont reprises à la synchronisation. Une clé déjà rattachée à un autre compte est refusée. Dans la version native destinée à l'App Store, l'accès administrateur reste réservé aux builds internes (`devAdmin`).
 
 ## Sécurité
 | Élément | Fonctionnement |

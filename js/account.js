@@ -147,7 +147,7 @@
         token = null; pending = 'register'; // serveur injoignable : compte créé sur l'appareil, enregistré plus tard
       }
     }
-    if (rec && rec.id && rec.id !== id) saveBase(null);
+    if (rec && rec.id && rec.id !== id) { saveBase(null); if (window.Premium) Premium.remove(); }
     rec = { id, email, provider: 'password', keys, token, pending, authKey: pending ? authKey : null, emailVerified: false, unlocked: false };
     saveRec(); await finishNew(key, code, 'password');
   }
@@ -185,8 +185,9 @@
       return enter();
     }
     if (other && hasData() && !await UI.confirm(`Cet appareil contient les données d'un autre compte (${rec.email || 'inconnu'}). Les remplacer par celles de ${r.user.email || 'ce compte'} ?`, 'Remplacer')) return show('start', { tab: 'login' });
-    if (other) { saveBase(null); App.applyState({}); }
-    rec = { id: r.user.id, email: r.user.email, provider, keys: r.keys, token: r.token, pending: null, authKey: null, emailVerified: r.user.emailVerified, providers: r.user.providers, unlocked: false, licences: r.licences };
+    if (other) { saveBase(null); App.applyState({}); if (window.Premium) Premium.remove(); }
+    rec = { id: r.user.id, email: r.user.email, provider, keys: r.keys, token: r.token, pending: null, authKey: null, emailVerified: r.user.emailVerified, providers: r.user.providers, unlocked: false, licences: r.licences,
+      pendingLicences: !other && prev ? prev.pendingLicences : [] };
     saveRec();
     if (!r.keys) { // compte sans clés (créé via Google/Apple, ou sauvegarde réinitialisée)
       if (provider === 'password') return newKeys(kek, 'password');
@@ -388,7 +389,7 @@
         // Clés changées sur un autre appareil (nouveau mot de passe, nouveau code) : la clé des données est-elle la même ?
         rec.keys = me.keys;
       }
-      adoptLicences(me.licences || []);
+      await syncLicences(me.licences || []);
       for (let i = 0; i < 4; i++) {
         const base = loadBase(), mine = base && base.userId === rec.id ? base : null;
         const remoteVersion = me.vault ? me.vault.version : 0, local = JSON.parse(JSON.stringify(App.state));
@@ -424,13 +425,54 @@
   const hasData = () => { const s = App.state || {}; return !!(s.onboarded || (s.inventory || []).length || (s.contacts || []).length || (s.points || []).length); };
 
   /* ---------- Premium ---------- */
+  const licenceRank = p => [p.plan === 'admin' ? 2 : 1, p.exp == null ? Infinity : p.exp];
+  const betterLicence = (a, b) => { const x = licenceRank(a), y = licenceRank(b); return x[0] > y[0] || (x[0] === y[0] && x[1] > y[1]); };
   async function adoptLicences(list) {
-    if (!window.Premium || !list.length || Premium.isPremium()) return;
-    const parse = t => { try { return JSON.parse(atob(t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))); } catch (e) { return {}; } };
-    const best = list.map(t => ({ t, p: parse(t) })).sort((a, b) => (b.p.exp == null ? Infinity : b.p.exp) - (a.p.exp == null ? Infinity : a.p.exp));
-    for (const { t } of best) { try { await Premium.activate(t, { fromAccount: true }); App.refresh(); return; } catch (e) { } }
+    if (!window.Premium || !list.length) return;
+    let best = Premium.isPremium() && Premium.state.token ? { t: Premium.state.token, p: Premium.state.lic } : null;
+    // Un achat Apple actif garde la priorité dans la version native.
+    if (Premium.isPremium() && !Premium.state.token) return;
+    for (const t of list) {
+      try {
+        const r = await Premium.verify(t);
+        if (r.expired || (Premium.NATIVE && !(window.KS_CONFIG || {}).devAdmin && r.payload.plan === 'admin')) continue;
+        if (!best || betterLicence(r.payload, best.p)) best = { t, p: r.payload };
+      } catch (e) { }
+    }
+    if (best && best.t !== Premium.state.token) { await Premium.activate(best.t, { fromAccount: true }); App.refresh(); }
   }
-  function reportLicence(tok) { if (rec && rec.token && online()) api('POST', '/me/licences', { licence: tok }).catch(() => { }); }
+  async function syncLicences(list) {
+    if (!window.Premium) return;
+    await Premium.load();
+    rec.licences = list;
+    // Reprend aussi les clés enregistrées avant l'ajout du rattachement au compte.
+    const local = Premium.state.token;
+    const pending = new Set(rec.pendingLicences || []);
+    if (Premium.isPremium() && local && !list.includes(local)) pending.add(local);
+    rec.pendingLicences = [...pending]; saveRec();
+    rec.licenceError = null;
+    for (const tok of pending) {
+      if (!list.includes(tok)) {
+        try { const r = await api('POST', '/me/licences', { licence: tok }); list = r.licences || list; }
+        catch (e) {
+          if (e.status === 401) throw e;
+          rec.licenceError = e.offline ? 'Serveur injoignable ; nouvel essai à la prochaine synchronisation.' : e.message;
+          continue;
+        }
+      }
+      rec.pendingLicences = rec.pendingLicences.filter(t => t !== tok);
+    }
+    rec.licences = list;
+    await adoptLicences(list);
+  }
+  async function reportLicence(tok) {
+    if (!rec) return;
+    tok = String(tok || '').trim();
+    if (!tok) return;
+    rec.pendingLicences = [...new Set([...(rec.pendingLicences || []), tok])];
+    rec.licenceError = null; saveRec();
+    await sync();
+  }
   async function reportAppStore(transactionId) {
     if (!rec || !rec.token || !online() || !transactionId) return null;
     try { const r = await api('POST', '/me/appstore', { transactionId: String(transactionId) }); return r.licence; } catch (e) { return null; }
@@ -446,6 +488,8 @@
     if (rec.pending === 'oauth') return `Reconnectez-vous avec ${PROVIDER[rec.provider]} pour synchroniser.`;
     if (rec.pending === 'unlock') return 'Déverrouillez à nouveau vos données pour reprendre la synchronisation.';
     if (rec.syncError) return 'Synchronisation impossible : ' + rec.syncError;
+    if (rec.licenceError) return 'Premium actif sur cet appareil. Rattachement au compte en attente : ' + rec.licenceError;
+    if ((rec.pendingLicences || []).length) return 'Premium actif sur cet appareil. Rattachement au compte en attente de synchronisation.';
     if (rec.lastSync) return 'Sauvegarde chiffrée à jour (' + new Date(rec.lastSync).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }) + ').';
     return 'Sauvegarde en attente.';
   }

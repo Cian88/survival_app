@@ -142,11 +142,22 @@ r = await call('POST', '/me/licences', { licence: good }, aliceToken);
 assert.equal(r.status, 200); assert.deepEqual(r.body.licences, [good]);
 await call('POST', '/me/licences', { licence: good }, aliceToken);
 assert.equal((await call('GET', '/me', null, aliceToken)).body.licences.length, 1, 'Pas de doublon');
-assert.equal((await call('POST', '/me/licences', { licence: await licence({ v: 1, id: 'adm', plan: 'admin' }) }, aliceToken)).body.code, 'admin_licence');
+const admin = await licence({ v: 1, id: 'adm', plan: 'admin' });
+r = await call('POST', '/me/licences', { licence: admin }, aliceToken);
+assert.equal(r.status, 200); assert.ok(r.body.licences.includes(admin), 'Clé admin rattachée au compte');
+await call('POST', '/me/licences', { licence: admin }, aliceToken);
+assert.equal((await call('GET', '/me', null, aliceToken)).body.licences.length, 2, 'Clé admin sans doublon');
+const reconnected = await call('POST', '/auth/login', { email: 'alice@example.org', authKey: alice.authKey });
+assert.ok(reconnected.body.licences.includes(admin), 'Clé admin retrouvée après reconnexion');
+assert.ok((await call('GET', '/me', null, reconnected.body.token)).body.licences.includes(admin), 'Clé admin retrouvée sur une autre session');
+const other = await call('POST', '/auth/register', { id: crypto.randomUUID(), email: 'licence-other@example.org', authKey: bob.authKey });
+assert.deepEqual(other.body.licences, [], 'Clé admin absente des autres comptes');
+assert.equal((await call('POST', '/me/licences', { licence: admin }, other.body.token)).body.code, 'licence_taken');
+assert.deepEqual((await call('GET', '/me', null, other.body.token)).body.licences, [], 'Pas de transfert silencieux de licence');
 assert.equal((await call('POST', '/me/licences', { licence: await licence({ v: 1, id: 'old', plan: 'annual', exp: 1000 }) }, aliceToken)).body.code, 'expired_licence');
 assert.equal((await call('POST', '/me/licences', { licence: good.slice(0, -20) + (good.at(-20) === 'A' ? 'B' : 'A') + good.slice(-19) }, aliceToken)).body.code, 'bad_licence');
 assert.equal((await call('POST', '/me/appstore', { transactionId: '1' }, aliceToken)).status, 501, 'App Store non configuré : refus explicite');
-console.log('PASS: licences rattachées au compte (signature vérifiée, admin et expirées refusées)');
+console.log('PASS: licences et clés admin rattachées au compte, reconnexion et isolation des comptes ; signatures et expiration vérifiées');
 
 /* ---------- Suppression du compte, CORS ---------- */
 assert.equal((await call('DELETE', '/me', {}, aliceToken)).status, 400);

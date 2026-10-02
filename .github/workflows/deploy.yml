@@ -28,6 +28,7 @@ jobs:
       - run: node tools/test-osm-points.mjs
       - run: node tools/test-shop.mjs
       - run: node tools/account/test-vault-crypto.mjs
+      - run: node tools/account/test-premium-sync.mjs
 
   changes:
     name: Fichiers modifiés
