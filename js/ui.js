@@ -14,6 +14,41 @@
     return wrap;
   }
   const UI = {
+    icon(name, cls = '') {
+      const paths = {
+        compass: '<circle cx="12" cy="12" r="9"/><path d="m16 8-3 5-5 3 3-5Z"/>',
+        now: '<path d="m13 2-8 12h6l-1 8 9-12h-6Z"/>',
+        audit: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2h6v2M9 10h6M9 14h6M9 18h4"/>',
+        map: '<path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2ZM9 3v16M15 5v16"/>',
+        profile: '<circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/>',
+        bag: '<rect x="5" y="6" width="14" height="16" rx="4"/><path d="M9 6V4a3 3 0 0 1 6 0v2M5 12h14M9 16h6"/>',
+        home: '<path d="m3 10 9-7 9 7M5 9v12h14V9M9 21v-8h6v8"/>',
+        field: '<path d="M12 5C8 2 4 3 2 4v15c4-2 7-1 10 1 3-2 6-3 10-1V4c-2-1-6-2-10 1ZM12 5v15"/>',
+        calc: '<rect x="5" y="2" width="14" height="20" rx="2"/><path d="M8 6h8M8 11h2M14 11h2M8 15h2M14 15h2M8 19h2M14 19h2"/>',
+        gear: '<path d="m12 2 9 5v10l-9 5-9-5V7ZM3 7l9 5 9-5M12 12v10M7 4.8l9 5"/>',
+        plan: '<path d="M4 22V3m0 1c6-5 10 5 16 0v11c-6 5-10-5-16 0"/>',
+        notice: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/>',
+        premium: '<path d="m12 3 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1Z"/>',
+        more: '<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
+        arrow: '<path d="M4 12h16m-6-6 6 6-6 6"/>',
+        back: '<path d="M20 12H4m6-6-6 6 6 6"/>',
+        close: '<path d="m6 6 12 12M6 18 18 6"/>',
+        locate: '<circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>',
+        layers: '<path d="m12 3 10 5-10 5L2 8Zm-10 9 10 5 10-5M2 16l10 5 10-5"/>',
+        water: '<path d="M12 2C9 7 5 10 5 15a7 7 0 0 0 14 0c0-5-4-8-7-13Z"/>',
+        food: '<path d="M5 2v7m4-7v7M3 2v4a4 4 0 0 0 8 0V2M7 10v12M20 2c-4 2-5 7-5 11h5M20 2v20"/>',
+        cash: '<rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 12h.01M18 12h.01"/>',
+        shield: '<path d="m12 2 9 4v6c0 5-5 8-9 10-4-2-9-5-9-10V6ZM8 12l3 3 5-6"/>',
+        flame: '<path d="M12 2c0 7-7 6-7 13a7 7 0 0 0 14 0c0-4-2-7-4-9 0 4-2 4-3 5 1-4 1-6 0-9Z"/>',
+        waves: '<path d="M2 6c4-5 6 5 10 0s6 5 10 0M2 12c4-5 6 5 10 0s6 5 10 0M2 18c4-5 6 5 10 0s6 5 10 0"/>',
+        snow: '<path d="M12 2v20M3 7l18 10M3 17 21 7M9 4l3 3 3-3M9 20l3-3 3 3M3 11l4-1-1-4M18 18l-1-4 4-1M3 13l4 1-1 4M18 6l-1 4 4 1"/>',
+        sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M5 19l1.5-1.5M17.5 6.5 19 5"/>',
+        hazard: '<path d="m12 3 10 18H2ZM12 9v5M12 17h.01"/>',
+        medical: '<path d="M8 3h8v5h5v8h-5v5H8v-5H3V8h5Z"/>',
+        phone: '<path d="m7 3 3 5-3 3c2 3 3 4 6 6l3-3 5 3c0 4-3 5-6 4C8 19 5 16 3 9 2 6 3 3 7 3Z"/>',
+      };
+      return `<svg class="ui-icon ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.compass}</svg>`;
+    },
     /* fields : [{ name, label, value, type }] → Promise<objet | null> */
     ask(title, fields, okLabel = 'Valider') {
       return new Promise(resolve => open(`

@@ -353,28 +353,84 @@
   /* ---------- Rendu & événements ---------- */
   const RENDER = { premium: () => Premium.render($('#tab-premium')), now: () => Now.render($('#tab-now'), S), audit: renderAudit, profile: renderProfile, home: renderHome, bag: renderBag, gear: renderGear, calc: () => Calc.render($('#tab-calc')), field: () => Field.render($('#tab-field')), plan: renderPlan, notice: renderNotice };
   let current = 'now';
+  let beforeMap = 'now';
+  const PAGES = {
+    now: ['VOTRE SITUATION', 'Garder une longueur d’avance.', 'Votre situation, vos ressources et les bons réflexes, au même endroit.'],
+    audit: ['FAIRE LE POINT', 'Votre préparation, en clair.', 'Identifiez vos ressources et les besoins à couvrir en priorité.'],
+    profile: ['VOTRE POINT DE DÉPART', 'Une préparation à votre mesure.', 'Votre foyer, votre environnement, vos objectifs. Tout commence ici.'],
+    bag: ['PRÊT À PARTIR', 'L’essentiel, à portée de main.', 'Préparez vos sacs et suivez leur contenu, leur poids et leur budget.'],
+    home: ['VOTRE BASE', 'Construire votre autonomie.', 'Organisez vos réserves et préparez votre foyer à l’imprévu.'],
+    field: ['APPRENDRE DU TERRAIN', 'Le savoir fait la différence.', 'Retours d’expérience et ressources pour mieux vous préparer.'],
+    calc: ['LES BONS REPÈRES', 'Moins d’incertitude. Plus de précision.', 'Des outils pratiques pour dimensionner votre préparation.'],
+    gear: ['S’ÉQUIPER AVEC MÉTHODE', 'Chaque équipement a sa place.', 'Planifiez vos achats et gardez une vue claire sur votre budget.'],
+    plan: ['ANTICIPER ENSEMBLE', 'Un plan pour garder le cap.', 'Contacts, points de rendez-vous et scénarios pour votre foyer.'],
+    notice: ['BIEN UTILISER HOLDOUT', 'Vos repères, pas à pas.', 'Fonctionnement, sources et limites de votre outil de préparation.'],
+    premium: ['ALLER PLUS LOIN', 'Votre préparation, sans limites.', 'Découvrez les outils de personnalisation et les offres Holdout.'],
+  };
+  document.querySelectorAll('[data-icon]').forEach(b => {
+    const slot = b.querySelector('.nav-icon');
+    if (slot) slot.innerHTML = UI.icon(b.dataset.icon);
+  });
+  document.querySelector('[data-brand-icon]').innerHTML = UI.icon('compass');
   function renderProfile() {
     Profile.render($('#tab-profile'), S);
     if (!S.onboarded) $('#tab-profile').insertAdjacentHTML('afterbegin', `<div class="card welcome"><h2>Bienvenue</h2><p>Cette application se construit autour de <b>vous</b> : votre foyer, votre logement, votre environnement. Remplissez ce profil (2 minutes), puis consultez votre <b>état des lieux matériel</b>, préparez votre <b>carte hors ligne</b> et gardez l'onglet <b>Instant T</b> pour le moment où ça arrive.</p><button class="btn" data-act="onboarded">C'est fait : voir mon état des lieux</button></div>`);
   }
   function show(tab) {
+    if (!RENDER[tab] && tab !== 'map') return;
+    if (tab === 'map' && current !== 'map') beforeMap = current;
     current = tab;
-    document.querySelectorAll('#tabs button, #bottombar button[data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+    document.body.classList.toggle('map-mode', tab === 'map');
+    document.querySelectorAll('#tabs button, #bottombar button[data-tab]').forEach(b => {
+      b.classList.toggle('on', b.dataset.tab === tab);
+      if (b.dataset.tab === tab) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+    });
+    const page = PAGES[tab];
+    if (page) {
+      $('#currentPage').textContent = $('#tabs [data-tab="' + tab + '"] > span:nth-child(2)').textContent;
+      $('#pageEyebrow').textContent = page[0]; $('#pageTitle').textContent = page[1]; $('#pageDescription').textContent = page[2];
+    }
+    document.title = (tab === 'map' ? 'Carte terrain' : $('#currentPage').textContent) + ' · Holdout';
     const more = document.querySelector('#bottombar [data-more]'); if (more) more.classList.toggle('on', !['now', 'audit', 'map', 'profile'].includes(tab));
     window.scrollTo(0, 0);
     document.querySelectorAll('.tab').forEach(s => s.classList.toggle('on', s.id === 'tab-' + tab));
-    if (tab === 'map') SurvivalMap.show(); else RENDER[tab]();
+    if (tab === 'map') { SurvivalMap.show(); $('#mapBack').focus(); } else RENDER[tab]();
+    if (tab !== 'map') $('#main').focus({ preventScroll: true });
     try { localStorage.setItem('survie.tab', tab); } catch (e) { }
   }
   function commit() { App.save(); if (RENDER[current]) RENDER[current](); }
   App.go = show;
+  function mapOptions(open, restoreFocus = true) {
+    $('#mapDrawer').hidden = !open;
+    $('#mapPanelToggle').setAttribute('aria-expanded', String(open));
+    $('#tab-map').classList.toggle('options-open', open);
+    if (open) $('#mapPanelClose').focus(); else if (restoreFocus) $('#mapPanelToggle').focus();
+  }
+  $('#mapPanelToggle').onclick = () => mapOptions($('#mapDrawer').hidden);
+  $('#mapPanelClose').onclick = () => mapOptions(false);
+  $('#mapBack').onclick = () => { mapOptions(false, false); show(beforeMap); };
+  $('#mapLocate').onclick = () => $('#btnLocate').click();
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape' || document.querySelector('.modal-wrap')) return;
+    const sheet = document.querySelector('.sheet-wrap');
+    if (sheet) { sheet.remove(); $('#bottombar [data-more]').focus(); return; }
+    if (current === 'map') { if (!$('#mapDrawer').hidden) mapOptions(false); else $('#mapBack').click(); }
+  });
   App.rescaleHome = rescaleHome;
   function moreSheet() {
     const items = [['bag', '🎒', 'Sacs'], ['home', '🏠', 'Stock maison'], ['field', '📚', 'Terrain'], ['calc', '🧮', 'Calculateurs'], ['gear', '🛒', 'Matériel & budget'], ['plan', '👪', 'Plan & scénarios'], ['notice', 'ℹ️', 'Notice'], ['premium', '★', 'Premium']];
     const w = document.createElement('div'); w.className = 'sheet-wrap';
-    w.innerHTML = `<div class="sheet" role="dialog" aria-label="Plus">${items.map(([t, i, n]) => `<button data-tab="${t}"><span>${i}</span>${n}</button>`).join('')}</div>`;
+    w.innerHTML = `<div class="sheet" role="dialog" aria-modal="true" aria-label="Tous les outils"><div class="sheet-heading"><h2>Tous vos outils</h2><button class="map-control icon-only" data-sheet-close aria-label="Fermer le menu">${UI.icon('close')}</button></div>${items.map(([t, i, n]) => `<button data-tab="${t}">${UI.icon(t)}<span>${n}</span></button>`).join('')}</div>`;
     w.addEventListener('click', e => { if (e.target === w) w.remove(); });
+    w.querySelector('[data-sheet-close]').onclick = () => { w.remove(); $('#bottombar [data-more]').focus(); };
+    w.addEventListener('keydown', e => {
+      if (e.key !== 'Tab') return;
+      const buttons = [...w.querySelectorAll('button')], first = buttons[0], last = buttons[buttons.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
     document.body.appendChild(w);
+    w.querySelector('button').focus();
   }
   App.refresh = () => { badge(); if (RENDER[current]) RENDER[current](); };
   function badge() { const b = $('#planBadge'); if (b) { b.textContent = Premium.isPremium() ? (Premium.state.lic && Premium.state.lic.plan === 'admin' ? '★ Admin' : '★ Premium') : 'Gratuit'; b.className = 'planbadge ' + (Premium.isPremium() ? 'pro' : ''); } }
@@ -452,7 +508,7 @@
     commit();
   });
 
-  function net() { $('#netState').textContent = navigator.onLine ? 'En ligne — données locales' : 'Hors ligne — tout reste utilisable'; }
+  function net() { $('#netState').textContent = navigator.onLine ? 'En ligne · données locales' : 'Hors ligne · données locales'; document.body.classList.toggle('is-offline', !navigator.onLine); }
   window.addEventListener('online', net); window.addEventListener('offline', net); net();
   applyTheme();
   Profile.bind($('#tab-profile'), S, commit);

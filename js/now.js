@@ -63,6 +63,7 @@
       ['Pas de réseau : gagner un point haut, économiser la batterie, essayer le SMS.', s('Club Alpin Suisse', 'https://www.sac-cas.ch/fr/les-alpes/a-laide-je-nai-pas-de-reseau-33257/')]] },
   };
 
+  const SIT_ICONS = { courant: 'now', eau: 'water', crue: 'waves', froid: 'snow', chaleur: 'sun', feu: 'flame', nuc: 'hazard', evac: 'bag', blesse: 'medical', seisme: 'home', perdu: 'compass' };
   let cur = null, pos = null;
   function where(S) {
     if (pos) return { lat: pos.lat, lon: pos.lon, src: `GPS ± ${Math.round(pos.acc)} m, ${new Date(pos.t).toLocaleTimeString('fr-FR')}` };
@@ -77,22 +78,16 @@
     const W = where(S), sit = cur && SIT[cur];
     const cash = byId.ar_cash;
     el.innerHTML = `
-    <div class="card now-head">
-      <div class="row between"><h2>Instant T</h2><span class="small muted">${new Date().toLocaleString('fr-FR', { weekday: 'long', hour: '2-digit', minute: '2-digit' })} · ${navigator.onLine ? 'en ligne' : '<b>hors ligne</b> — tout reste utilisable'}</span></div>
-      <div class="row">
-        <button class="btn" data-now="gps">📍 Me localiser (GPS, sans Internet)</button>
-        ${W ? `<div class="pos"><b>${W.lat.toFixed(5)}, ${W.lon.toFixed(5)}</b> <span class="small muted">(${h(W.src)})</span> <span id="nowAlt" class="small"></span> <button class="link small" data-now="map">voir sur la carte</button></div>` : '<span class="small muted">Position inconnue : localisez-vous ou renseignez votre domicile dans Mon profil.</span>'}
-      </div>
-      <div id="nowHome" class="small"></div>
-      <div class="grid kpis">
-        <div><div class="muted small">Eau</div><div class="kpi ${dW < 3 ? 'bad-t' : ''}">${fr(dW)} j</div><div class="small muted">${fr(st.w, 0)} L pour ${n} pers.</div></div>
-        <div><div class="muted small">Nourriture</div><div class="kpi ${dK < 3 ? 'bad-t' : ''}">${fr(dK)} j</div><div class="small muted">${fr(st.k, 0)} kcal</div></div>
-        <div><div class="muted small">Sacs prêts</div><div class="kpi">${byId.ev_sacs ? `${byId.ev_sacs.have}/${byId.ev_sacs.need}` : '—'}</div></div>
-        <div><div class="muted small">Espèces</div><div class="kpi">${cash ? fr(cash.have, 0) + ' €' : '—'}</div><div class="small muted">objectif ${cash ? fr(cash.need, 0) : '—'} €</div></div>
-      </div>
+    <div class="card now-hero"><div><div class="hero-date">${new Date().toLocaleString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}</div><h2>Prêt à faire face.</h2><p>Faites le point aujourd’hui. Gagnez en autonomie pour demain.</p></div><div class="hero-symbol">${UI.icon('compass')}</div></div>
+    <div class="now-metrics">
+      <div class="card metric"><div class="metric-top">Autonomie en eau ${UI.icon('water')}</div><div class="kpi ${dW < 3 ? 'bad-t' : ''}">${fr(dW)} <small>jours</small></div><div class="small muted">${fr(st.w, 0)} L · ${n} personne(s)</div><div class="bar ${dW < 3 ? 'bad' : ''}"><i style="width:${Math.max(0, Math.min(100, dW / Math.max(1, +S.profile.days || 14) * 100))}%"></i></div></div>
+      <div class="card metric"><div class="metric-top">Autonomie alimentaire ${UI.icon('food')}</div><div class="kpi ${dK < 3 ? 'bad-t' : ''}">${fr(dK)} <small>jours</small></div><div class="small muted">${fr(st.k, 0)} kcal en réserve</div><div class="bar ${dK < 3 ? 'bad' : ''}"><i style="width:${Math.max(0, Math.min(100, dK / Math.max(1, +S.profile.days || 14) * 100))}%"></i></div></div>
+      <div class="card metric"><div class="metric-top">Sacs prêts ${UI.icon('bag')}</div><div class="kpi">${byId.ev_sacs ? byId.ev_sacs.have : '—'} <small>/ ${byId.ev_sacs ? byId.ev_sacs.need : '—'}</small></div><div class="small muted">Votre essentiel pour partir</div></div>
+      <div class="card metric"><div class="metric-top">Réserve d’espèces ${UI.icon('cash')}</div><div class="kpi">${cash ? fr(cash.have, 0) : '—'} <small>€</small></div><div class="small muted">Objectif : ${cash ? fr(cash.need, 0) : '—'} €</div></div>
     </div>
-    <div class="card"><h3>Que se passe-t-il ?</h3>
-      <div class="sitgrid">${Object.entries(SIT).map(([k, v]) => `<button class="sit ${cur === k ? 'on' : ''}" data-sit="${k}"><span>${v.ic}</span>${h(v.n)}</button>`).join('')}</div>
+    <div class="now-columns"><div class="now-main">
+    <div class="card"><div class="section-heading">${UI.icon("now")}<h3>Que se passe-t-il ?</h3></div><p class="section-caption">Sélectionnez votre situation pour retrouver les actions à suivre.</p>
+      <div class="sitgrid">${Object.entries(SIT).map(([k, v]) => `<button class="sit ${cur === k ? 'on' : ''}" data-sit="${k}"><span>${UI.icon(SIT_ICONS[k])}</span>${h(v.n)}</button>`).join('')}</div>
     </div>
     ${sit ? sitPanel(S, sit, byId, W) : `<div class="card"><h3>Premiers réflexes, quelle que soit la situation</h3><ol>
       <li>Se mettre en sécurité, puis s'informer par la radio. <a class="src" href="https://www.nuevaradio.org/2026/04/27/lecciones-del-apagon-la-relevancia-del-efectivo-el-regreso-de-la-radio-y-el-valor-de-la-desconexion-forzada/" target="_blank" rel="noopener">[black-out ibérique]</a></li>
@@ -100,10 +95,15 @@
       <li>Sécuriser l'eau (remplir des récipients tant qu'il y a de la pression). <a class="src" href="https://www.aljazeera.com/amp/news/2022/11/26/hold-amid-attacks-kyivans-offer-tips-on-survival-optimism" target="_blank" rel="noopener">[Ukraine]</a></li>
       <li>Aucune improvisation avec le feu ou le CO. <a class="src" href="https://www.uh.edu/hobby/winter2021/index.php" target="_blank" rel="noopener">[Texas 2021]</a></li>
       <li>Penser aux voisins isolés ; les secours organisés arrivent souvent après 3 jours. <a class="src" href="https://es.ara.cat/valencia/autogestion-gobierna-catastrofe-paiporta-no-no-quedarme-casa_1_5189061.html" target="_blank" rel="noopener">[Valence]</a></li></ol></div>`}
-    <div class="card"><h3>Appeler</h3>
+    <div class="card"><div class="section-heading">${UI.icon("phone")}<h3>Les secours, à portée de main</h3></div><p class="section-caption">Les numéros utiles lorsque chaque minute compte.</p>
       <div class="row">${[['112', 'Urgence UE'], ['15', 'SAMU'], ['18', 'Pompiers'], ['17', 'Police'], ['114', 'SMS urgence']].map(([n, t]) => `<a class="callbtn" href="${n === '114' ? 'sms:114' : 'tel:' + n}"><b>${n}</b><span>${t}</span></a>`).join('')}</div>
       ${S.contacts.length ? `<ul>${S.contacts.map(c => `<li><b>${h(c.name)}</b> ${h(c.role || '')} — <span class="sel">${h(c.phone)}</span></li>`).join('')}</ul>` : '<p class="small muted">Aucun contact enregistré (onglet Plan).</p>'}
-    </div>`;
+    </div>
+    </div><aside class="now-side">
+      <div class="card map-preview-card"><div class="section-heading">${UI.icon('map')}<h3>Votre terrain</h3></div><p class="section-caption">Repérez vos ressources et préparez vos zones hors ligne.</p><div class="map-preview" aria-label="Illustration topographique"><span class="preview-pin">${UI.icon('locate')}</span><span class="preview-label">Aperçu illustré · Europe</span></div><button class="btn" data-tab="map">Explorer la carte ${UI.icon('arrow')}</button></div>
+      <div class="card position-card"><div class="section-heading">${UI.icon('locate')}<h3>Votre position</h3></div><p class="section-caption">Le GPS peut fonctionner sans Internet.</p><button class="btn ghost" data-now="gps">${UI.icon('locate')} Me localiser</button>${W ? '<div class="pos"><b>'+W.lat.toFixed(5)+', '+W.lon.toFixed(5)+'</b><div class="small muted">'+h(W.src)+'</div><span id="nowAlt" class="small"></span><button class="link small" data-now="map">Voir sur la carte</button></div>' : '<p class="small muted" style="margin:12px 0 0">Position inconnue. Utilisez le GPS ou renseignez votre domicile dans votre profil.</p>'}<div id="nowHome" class="small"></div></div>
+      <div class="card quick-card"><div class="section-heading">${UI.icon('shield')}<h3>Un pas de plus</h3></div><button class="quick-link" data-tab="audit">Faire le point sur mon matériel ${UI.icon('arrow')}</button><button class="quick-link" data-tab="bag">Préparer mon sac ${UI.icon('arrow')}</button><button class="quick-link" data-tab="plan">Organiser mon plan familial ${UI.icon('arrow')}</button></div>
+    </aside></div>`;
     if (W) fillNearby(W, sit);
   }
   function sitPanel(S, sit, byId, W) {

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Holdout</title>
 <meta name="description" content="Outil local et hors ligne : écosystème de survie domestique, sac d'évacuation, matériel et budget, carte topographique Europe.">
-<meta name="theme-color" content="#1d3b2a">
+<meta name="theme-color" content="#182c26">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -14,25 +14,32 @@
 <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
+<a class="skip-link" href="#main">Aller au contenu</a>
 <header class="top">
-  <div class="brand"><span class="logo">⛺</span><div><b>Holdout</b><small id="netState">…</small></div><button id="planBadge" class="planbadge" data-tab="premium">Gratuit</button></div>
-  <nav id="tabs" role="tablist">
-    <button data-tab="now" class="on now-tab">⚡ Instant T</button>
-    <button data-tab="audit">État des lieux</button>
-    <button data-tab="map">Carte hors ligne</button>
-    <button data-tab="profile">Mon profil</button>
-    <button data-tab="bag">Sacs</button>
-    <button data-tab="home">Stock maison</button>
-    <button data-tab="field">Terrain</button>
-    <button data-tab="calc">Calculateurs</button>
-    <button data-tab="gear">Matériel & budget</button>
-    <button data-tab="plan">Plan & scénarios</button>
-    <button data-tab="notice">Notice</button>
-    <button data-tab="premium" class="pro-tab">★ Premium</button>
+  <a class="brand" href="#" data-go="now" aria-label="Holdout, accueil"><span class="logo" data-brand-icon></span><span><b>holdout<span class="brand-dot">.</span></b><small>PRÊT POUR L’IMPRÉVU</small></span></a>
+  <nav id="tabs" aria-label="Navigation principale">
+    <span class="nav-label">VOTRE SITUATION</span>
+    <button data-tab="now" data-icon="now" class="on"><span class="nav-icon"></span><span>Instant T</span></button>
+    <button data-tab="audit" data-icon="audit"><span class="nav-icon"></span><span>État des lieux</span></button>
+    <button data-tab="map" data-icon="map"><span class="nav-icon"></span><span>Carte hors ligne</span><span class="nav-tag">OFFLINE</span></button>
+    <button data-tab="profile" data-icon="profile"><span class="nav-icon"></span><span>Mon profil</span></button>
+    <span class="nav-label">VOTRE PRÉPARATION</span>
+    <button data-tab="bag" data-icon="bag"><span class="nav-icon"></span><span>Sacs</span></button>
+    <button data-tab="home" data-icon="home"><span class="nav-icon"></span><span>Stock maison</span></button>
+    <button data-tab="field" data-icon="field"><span class="nav-icon"></span><span>Terrain</span></button>
+    <button data-tab="calc" data-icon="calc"><span class="nav-icon"></span><span>Calculateurs</span></button>
+    <button data-tab="gear" data-icon="gear"><span class="nav-icon"></span><span>Matériel & budget</span></button>
+    <button data-tab="plan" data-icon="plan"><span class="nav-icon"></span><span>Plan & scénarios</span></button>
+    <span class="nav-label">RESSOURCES</span>
+    <button data-tab="notice" data-icon="notice"><span class="nav-icon"></span><span>Notice</span></button>
+    <button data-tab="premium" data-icon="premium"><span class="nav-icon"></span><span>Premium</span></button>
   </nav>
+  <div class="sidebar-bottom"><span class="local-status"><span class="status-dot"></span>Données sur cet appareil</span><span class="small">Votre autonomie commence ici.</span></div>
 </header>
+<div class="workspace-bar"><div class="breadcrumb">Mon espace <span>/</span> <b id="currentPage">Instant T</b></div><div class="workspace-status"><span class="status-dot"></span><span id="netState" role="status">Chargement…</span><button id="planBadge" class="planbadge" data-tab="premium">Gratuit</button></div></div>
 
-<main>
+<main id="main" tabindex="-1">
+  <div class="page-intro" id="pageIntro"><p class="eyebrow" id="pageEyebrow"></p><h1 id="pageTitle"></h1><p id="pageDescription" class="muted"></p></div>
   <section id="tab-now" class="tab on"></section>
   <section id="tab-audit" class="tab"></section>
   <section id="tab-profile" class="tab"></section>
@@ -43,8 +50,10 @@
   <section id="tab-calc" class="tab"></section>
   <section id="tab-map" class="tab">
     <div class="maplayout">
-      <aside id="mapPanel" class="mappanel"></aside>
-      <div id="map"></div>
+      <div id="map" aria-label="Carte interactive de l’Europe"></div>
+      <div class="map-topbar"><button id="mapBack" class="map-control" data-icon="back" aria-label="Quitter la carte plein écran"><span class="nav-icon"></span><span>Mon espace</span></button><div class="map-title"><span class="status-dot"></span><b>Carte terrain</b><span class="map-offline-label">Fonds intégrés hors ligne</span></div><div class="map-actions"><button id="mapLocate" class="map-control icon-only" data-icon="locate" aria-label="Me localiser sur la carte" title="Me localiser"><span class="nav-icon"></span></button><button id="mapPanelToggle" class="map-control" data-icon="layers" aria-controls="mapDrawer" aria-expanded="false"><span class="nav-icon"></span><span>Options</span></button></div></div>
+      <aside id="mapDrawer" class="map-drawer" aria-label="Options de la carte" hidden><div class="drawer-heading"><div><p class="eyebrow">VOTRE TERRAIN</p><h2>Préparer ma carte</h2></div><button id="mapPanelClose" class="map-control icon-only" data-icon="close" aria-label="Fermer les options"><span class="nav-icon"></span></button></div><div id="mapPanel" class="mappanel"></div></aside>
+      <div class="map-hint">Explorez votre terrain <span>·</span> Cliquez pour les coordonnées et l’altitude</div>
     </div>
   </section>
   <section id="tab-plan" class="tab"></section>
@@ -52,13 +61,7 @@
   <section id="tab-premium" class="tab"></section>
 </main>
 
-<nav id="bottombar" aria-label="Navigation principale">
-  <button data-tab="now" class="on"><span>⚡</span>Instant T</button>
-  <button data-tab="audit"><span>📋</span>État des lieux</button>
-  <button data-tab="map"><span>🗺</span>Carte</button>
-  <button data-tab="profile"><span>👤</span>Profil</button>
-  <button data-more><span>☰</span>Plus</button>
-</nav>
+<nav id="bottombar" aria-label="Navigation mobile"><button data-tab="now" data-icon="now" class="on"><span class="nav-icon"></span><span>Instant T</span></button><button data-tab="audit" data-icon="audit"><span class="nav-icon"></span><span>Bilan</span></button><button data-tab="map" data-icon="map"><span class="nav-icon"></span><span>Carte</span><span class="nav-tag">OFFLINE</span></button><button data-tab="profile" data-icon="profile"><span class="nav-icon"></span><span>Profil</span></button><button data-more data-icon="more" aria-label="Tous les outils"><span class="nav-icon"></span><span>Plus</span></button></nav>
 <footer class="foot small muted">Données stockées uniquement sur cet appareil. Outil d'aide à la préparation : il ne remplace ni les consignes des autorités ni une formation aux premiers secours.</footer>
 
 <script src="lib/capacitor.js"></script>
