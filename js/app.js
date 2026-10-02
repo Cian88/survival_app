@@ -237,7 +237,7 @@
     <div class="card">
       <h2>Mes sacs</h2>
       <p class="small">Deux types de sac, deux usages : le <b>sac d'évacuation</b> sert à rejoindre vite un lieu sûr ; le <b>sac de survie</b> sert à tenir en autonomie en pleine nature. Choisissez le type et la <b>durée d'autonomie</b> : seuls les <b>consommables</b> (eau portée, pastilles, nourriture, gaz, piles, hygiène, médicaments) s'ajustent. Les <b>équipements durables</b> (filtre, réchaud, panneau solaire, vêtements, outils) gardent la même quantité : un filtre sert aussi bien 1 jour que 3 mois. Testez toujours le sac chargé sur une vraie marche. À la création, choisissez votre <b>budget</b> : pour chaque objet, l'app propose un modèle petit budget, moyen ou gros budget, avec son lien Amazon.</p>
-      <div class="row"><button class="btn" data-act="bagnew" data-type="evac">+ Sac d'évacuation</button><button class="btn" data-act="bagnew" data-type="survie">+ Sac de survie</button></div>
+      <div class="row"><button class="btn primary" data-act="bagnew" data-type="evac">+ Sac d'évacuation</button><button class="btn" data-act="bagnew" data-type="survie">+ Sac de survie</button></div>
     </div>
     ${S.bags.map(b => { b.type = b.type || 'evac'; const T = Bags.TYPES[b.type]; b.days = b.days || T.def; const t = bagTotals(b); return `<div class="card bagcard bag-${b.type}" data-bag="${b.id}">
       <div class="row"><span class="bagicon">${T.icon}</span><input value="${h(b.name)}" aria-label="Nom du sac" data-bagname="${b.id}" style="font-weight:600;flex:1 1 200px"> <button class="link danger" data-bagdel="${b.id}">supprimer le sac</button></div>
@@ -400,7 +400,7 @@
         </div><p id="themeStatus" class="small muted theme-status" role="status"></p>
       </div>
       <div class="card"><h2>Sauvegardes</h2><p class="muted">Gardez une copie de vos données ou retrouvez une sauvegarde existante.</p>
-        <div class="settings-actions"><button class="btn" data-act="export">Exporter mes données</button><label class="btn ghost file settings-import">Importer une sauvegarde<input type="file" accept=".json" data-act="import" aria-label="Importer une sauvegarde JSON"></label></div>
+        <div class="settings-actions"><button class="btn primary" data-act="export">Exporter mes données</button><label class="btn ghost file settings-import">Importer une sauvegarde<input type="file" accept=".json" data-act="import" aria-label="Importer une sauvegarde JSON"></label></div>
         <div class="settings-reset"><h3>Données locales</h3><p class="small muted">Efface les données de cet appareil. Les cartes téléchargées restent en cache.</p><button class="btn ghost danger" data-act="reset">Tout effacer</button></div>
       </div></div>`;
     applyTheme();
@@ -432,7 +432,7 @@
   function renderProfile() {
     Profile.render($('#tab-profile'), S);
     if (window.Account && Account.user) { $('#tab-profile').insertAdjacentHTML('afterbegin', '<div class="card" id="accountCard"></div>'); Account.renderCard(); }
-    if (!S.onboarded) $('#tab-profile').insertAdjacentHTML('afterbegin', `<div class="card welcome"><h2>Bienvenue</h2><p>Cette application se construit autour de <b>vous</b> : votre foyer, votre logement, votre environnement. Remplissez ce profil (2 minutes), puis consultez votre <b>état des lieux matériel</b>, préparez votre <b>carte hors ligne</b> et gardez l'onglet <b>Instant T</b> pour le moment où ça arrive.</p><button class="btn" data-act="onboarded">C'est fait : voir mon état des lieux</button></div>`);
+    if (!S.onboarded) $('#tab-profile').insertAdjacentHTML('afterbegin', `<div class="card welcome"><h2>Bienvenue</h2><p>Cette application se construit autour de <b>vous</b> : votre foyer, votre logement, votre environnement. Remplissez ce profil (2 minutes), puis consultez votre <b>état des lieux matériel</b>, préparez votre <b>carte hors ligne</b> et gardez l'onglet <b>Instant T</b> pour le moment où ça arrive.</p><button class="btn primary" data-act="onboarded">C'est fait : voir mon état des lieux</button></div>`);
   }
   function show(tab) {
     if (!RENDER[tab] && tab !== 'map') return;
