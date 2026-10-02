@@ -52,14 +52,19 @@
 
   /* ---------- Tuiles avec cache IndexedDB ---------- */
   function tileUrl(tpl, c) { return tpl.replace('{z}', c.z).replace('{x}', c.x).replace('{y}', c.y); }
-  async function getTileBlob(prefix, tpl, c, allowNet = true) {
+  async function getTileBlob(prefix, tpl, c, allowNet = true, requireStorage = false) {
     const key = `${prefix}/${c.z}/${c.x}/${c.y}`;
-    try { const b = await idb.get('tiles', key); if (b) return b; } catch (e) { /* IDB indisponible */ }
+    const storageFailure = cause => {
+      const err = new Error('Stockage local indisponible ou plein : libérez de l’espace sur cet appareil.', { cause });
+      err.name = 'TileStorageError';
+      return err;
+    };
+    try { const b = await idb.get('tiles', key); if (b) return b; } catch (e) { if (requireStorage) throw storageFailure(e); }
     if (!allowNet || !navigator.onLine) throw new Error('hors ligne');
     const r = await fetch(tileUrl(tpl, c), { mode: 'cors' });
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const b = await r.blob();
-    try { await idb.put('tiles', key, b); } catch (e) { }
+    try { await idb.put('tiles', key, b); } catch (e) { if (requireStorage) throw storageFailure(e); }
     return b;
   }
 
@@ -299,13 +304,14 @@
   /* ---------- Géométrie ---------- */
   function lon2x(lon, z) { return Math.floor((lon + 180) / 360 * Math.pow(2, z)); }
   function lat2y(lat, z) { const r = lat * Math.PI / 180; return Math.floor((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * Math.pow(2, z)); }
-  function tilesForBox(bb, zmin, zmax) { // bb = [sud, ouest, nord, est]
-    const list = [];
+  function tileBounds(bb, z) { // bb = [sud, ouest, nord, est]
+    return { x0: lon2x(bb[1], z), x1: lon2x(bb[3], z), y0: lat2y(Math.min(bb[2], 85), z), y1: lat2y(Math.max(bb[0], -85), z) };
+  }
+  function* tilesForBox(bb, zmin, zmax) {
     for (let z = zmin; z <= zmax; z++) {
-      const x0 = lon2x(bb[1], z), x1 = lon2x(bb[3], z), y0 = lat2y(Math.min(bb[2], 85), z), y1 = lat2y(Math.max(bb[0], -85), z);
-      for (let x = x0; x <= x1; x++) for (let y = y0; y <= y1; y++) list.push({ z, x, y });
+      const { x0, x1, y0, y1 } = tileBounds(bb, z);
+      for (let x = x0; x <= x1; x++) for (let y = y0; y <= y1; y++) yield { z, x, y };
     }
-    return list;
   }
   function boxAround(lat, lon, km) {
     const dl = km / 111.32, dg = km / (111.32 * Math.cos(lat * Math.PI / 180));
@@ -322,43 +328,54 @@
   const inBox = (bb, lat, lon) => lat >= bb[0] && lat <= bb[2] && lon >= bb[1] && lon <= bb[3];
 
   /* ---------- Packs de cartes hors ligne ---------- */
-  const MAX_PACK = 25000;
-  function packTasks(bb, zmin, zmax, srcs) {
-    const tasks = [];
-    for (const k of srcs) for (const c of tilesForBox(bb, zmin, Math.min(zmax, TSRC[k].max))) tasks.push([k, c]);
-    return tasks;
+  function* packTasks(bb, zmin, zmax, srcs) {
+    for (const k of srcs) for (const c of tilesForBox(bb, zmin, Math.min(zmax, TSRC[k].max))) yield [k, c];
   }
   function packEstimate(bb, zmin, zmax, srcs) {
-    const t = packTasks(bb, zmin, zmax, srcs);
-    return { n: t.length, mb: Math.round(t.reduce((a, [k]) => a + TSRC[k].kb, 0) / 1024) };
+    let n = 0, kb = 0;
+    for (const k of srcs) for (let z = zmin; z <= Math.min(zmax, TSRC[k].max); z++) {
+      const { x0, x1, y0, y1 } = tileBounds(bb, z);
+      const count = Math.max(0, x1 - x0 + 1) * Math.max(0, y1 - y0 + 1);
+      n += count; kb += count * TSRC[k].kb;
+    }
+    return { n, mb: Math.round(kb / 1024) };
   }
-  let packAbort = false;
+  let packAbort = false, packDownloading = false;
   async function downloadPack(meta, onProg) {
     const tasks = packTasks(meta.bbox, meta.zmin, meta.zmax, meta.srcs);
-    if (tasks.length > MAX_PACK) throw new Error(`trop de tuiles (${tasks.length} > ${MAX_PACK}) : réduisez la zone ou le zoom`);
+    const total = packEstimate(meta.bbox, meta.zmin, meta.zmax, meta.srcs).n;
     if (!navigator.onLine) throw new Error('connexion requise pour télécharger');
     if (navigator.storage && navigator.storage.persist) { try { await navigator.storage.persist(); } catch (e) { } }
-    packAbort = false; let done = 0, fail = 0, i = 0;
+    packAbort = false; let done = 0, fail = 0, storageError = null;
     const worker = async () => {
-      while (i < tasks.length && !packAbort) {
-        const [k, c] = tasks[i++];
-        try { await getTileBlob(k, TSRC[k].tpl, c, true); } catch (e) { fail++; }
-        done++; if (onProg && (done % 20 === 0 || done === tasks.length)) onProg(done, tasks.length, fail);
+      while (!packAbort) {
+        const task = tasks.next(); if (task.done) break;
+        const [k, c] = task.value;
+        try { await getTileBlob(k, TSRC[k].tpl, c, true, true); }
+        catch (e) { fail++; if (e.name === 'TileStorageError') { storageError = e; packAbort = true; } }
+        done++; if (onProg && (done % 20 === 0 || done === total)) onProg(done, total, fail);
       }
     };
     await Promise.all(Array.from({ length: 6 }, worker));
     const rec = Object.assign({}, meta, { key: meta.key || 'p' + Date.now(), date: Date.now(), count: done - fail, fail, complete: !packAbort && fail === 0 });
     await idb.put('packs', rec.key, rec);
+    if (storageError) throw storageError;
     return rec;
   }
   async function listPacks() { try { return await idb.all('packs'); } catch (e) { return []; } }
   async function deletePack(key) {
     const p = await idb.get('packs', key); if (!p) return;
     const others = (await listPacks()).filter(x => x.key !== key);
-    const keep = new Set();
-    for (const o of others) for (const [k, c] of packTasks(o.bbox, o.zmin, o.zmax, o.srcs)) keep.add(`${k}/${c.z}/${c.x}/${c.y}`);
-    const del = packTasks(p.bbox, p.zmin, p.zmax, p.srcs).map(([k, c]) => `${k}/${c.z}/${c.x}/${c.y}`).filter(k => !keep.has(k));
-    for (const k of del) { try { await idb.del('tiles', k); } catch (e) { } }
+    const shared = new Map();
+    for (const o of others) for (const k of o.srcs) for (let z = o.zmin; z <= Math.min(o.zmax, TSRC[k].max); z++) {
+      const key = `${k}/${z}`;
+      if (!shared.has(key)) shared.set(key, []);
+      shared.get(key).push(tileBounds(o.bbox, z));
+    }
+    for (const [k, c] of packTasks(p.bbox, p.zmin, p.zmax, p.srcs)) {
+      if ((shared.get(`${k}/${c.z}`) || []).some(b => c.x >= b.x0 && c.x <= b.x1 && c.y >= b.y0 && c.y <= b.y1)) continue;
+      try { await idb.del('tiles', `${k}/${c.z}/${c.x}/${c.y}`); } catch (e) { }
+    }
     await idb.del('packs', key);
   }
   /* Export d'un pack dans un fichier unique (copie sur clé USB, autre appareil) :
@@ -523,17 +540,19 @@
       try {
         if ($('#pkZone').value === 'gps' && !gpsFix) { el.textContent = 'Position GPS demandée au téléchargement.'; return; }
         const e = packEstimate(await packUI.bbox(), 6, +$('#pkZ').value, packUI.srcs());
-        el.innerHTML = `${e.n.toLocaleString('fr-FR')} tuiles ≈ <b>${e.mb.toLocaleString('fr-FR')} Mo</b> (estimation)${e.n > MAX_PACK ? ` — au-delà de ${MAX_PACK.toLocaleString('fr-FR')} tuiles : réduisez le rayon ou le détail.` : ''}`;
+        el.innerHTML = `${e.n.toLocaleString('fr-FR')} tuiles ≈ <b>${e.mb.toLocaleString('fr-FR')} Mo</b> (estimation) — sans plafond de tuiles.`;
       } catch (err) { el.textContent = err.message; }
     },
     async download() {
       const st = $('#pkStatus');
-      if (!Premium.isPremium()) {
-        const L = Premium.LIMITS;
-        if ((await listPacks()).length >= L.packs) return Premium.upsell(`La version gratuite comprend ${L.packs} pack de carte hors ligne. Premium : packs illimités (domicile, travail, famille, itinéraires).`);
-        if (+$('#pkKm').value > L.packKm || +$('#pkZ').value > L.packZoom) return Premium.upsell(`En gratuit, un pack couvre jusqu'à ${L.packKm} km et le détail ${L.packZoom}. Premium : jusqu'à 50 km et le détail 16.`);
-      }
+      if (packDownloading) return;
+      packDownloading = true; $('#btnPack').disabled = true;
       try {
+        if (!Premium.isPremium()) {
+          const L = Premium.LIMITS;
+          if ((await listPacks()).length >= L.packs) return Premium.upsell(`La version gratuite comprend ${L.packs} pack de carte hors ligne. Premium : packs illimités (domicile, travail, famille, itinéraires).`);
+          if (+$('#pkKm').value > L.packKm || +$('#pkZ').value > L.packZoom) return Premium.upsell(`En gratuit, un pack couvre jusqu'à ${L.packKm} km et le détail ${L.packZoom}. Premium : jusqu'à 50 km et le détail 16.`);
+        }
         const bbox = await packUI.bbox(), srcs = packUI.srcs();
         if (!srcs.length) return st.textContent = 'Choisissez au moins une source.';
         const z = $('#pkZone').value, km = +$('#pkKm').value;
@@ -545,7 +564,8 @@
         st.textContent = `Pack « ${rec.name} » : ${rec.count.toLocaleString('fr-FR')} tuiles disponibles hors ligne${rec.fail ? ` (${rec.fail} échecs : relancez pour compléter)` : ''}.`;
         if (!map.hasLayer(layers.bases['IGN topographique – France (packs hors ligne)']) && srcs.some(k => k.startsWith('ign'))) { Object.values(layers.bases).forEach(l => map.hasLayer(l) && map.removeLayer(l)); layers.bases['IGN topographique – France (packs hors ligne)'].addTo(map); }
         packUI.list(); storageInfo();
-      } catch (err) { st.textContent = 'Impossible : ' + err.message; }
+      } catch (err) { st.textContent = 'Impossible : ' + err.message; packUI.list(); storageInfo(); }
+      finally { packDownloading = false; $('#btnPack').disabled = false; }
     },
     async list() {
       const el = $('#packList'); if (!el) return;

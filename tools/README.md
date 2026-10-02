@@ -17,3 +17,5 @@ Prérequis : Python 3, `pip install shapely pyshp numpy pillow`.
 ## Vérification de l’interface
 
 Depuis un serveur local à la racine du dépôt, ouvrir `tools/ui-smoke.html?width=1280`, puis `tools/ui-smoke.html?width=390`. Utiliser un profil de navigateur de test : le contrôle ouvre les écrans et utilise les données locales de ce profil. Il vérifie la navigation, les indicateurs, les situations, la carte plein écran, son panneau, le retour, le menu mobile, les thèmes et l’absence de débordement horizontal. Les données d’inventaire ne sont pas modifiées ; les valeurs par défaut des sacs sont initialisées par le rendu existant. Ce fichier de développement est exclu du dossier `www/`.
+
+`node tools/test-map-packs.mjs` vérifie les packs dépassant 25 000 tuiles, les estimations, l'arrêt et la reprise, les erreurs de stockage, la suppression de packs avec des tuiles partagées et l'export/import `.kspack`. Le stockage et les réponses réseau sont simulés : aucune carte n'est téléchargée et aucune donnée utilisateur n'est utilisée.

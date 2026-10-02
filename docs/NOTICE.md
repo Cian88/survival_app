@@ -67,7 +67,7 @@ L'application tourne autour de **votre** situation : votre foyer, votre logement
 2. **Cartes** : créez un pack par zone (voir ci-dessus). Le relief détaillé de toute l'Europe est l'une des sources proposées dans le pack.
 3. **Points OSM** (zoom ≥ 9) : cochez les catégories (eau, santé, secours/abris, énergie, dangers, ravitaillement), puis téléchargez et nommez la zone. Les points sont stockés sur l'appareil.
    - ⚠ Une fontaine ou une source cartographiée n'est pas forcément potable : traitez l'eau.
-4. Recommencez pour chaque zone utile. « Stockage & sources » indique l'espace utilisé ; un pack couvre au maximum 25 000 tuiles. L'application demande au navigateur un stockage persistant.
+4. Recommencez pour chaque zone utile. « Stockage & sources » indique l'espace utilisé. Il n'y a aucun plafond de tuiles par pack : l'estimation indique le volume à télécharger, et l'espace disponible sur l'appareil détermine ce qui peut être conservé. Si le stockage ne permet plus d'enregistrer les tuiles, le téléchargement s'arrête avec un message ; les tuiles non enregistrées ne sont pas comptées comme disponibles hors ligne. L'application demande au navigateur un stockage persistant.
 
 ### Mes points
 Ajoutez vos points de rendez-vous, caches, refuges, points d'eau vérifiés et dangers. Vous pouvez les exporter en **GPX** (pour un GPS ou une application de randonnée) ou en **GeoJSON**, et les importer depuis ces deux formats.
