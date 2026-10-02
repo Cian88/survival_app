@@ -47,9 +47,7 @@ Sans le code, l'utilisateur peut repartir d'une sauvegarde neuve, à partir des 
 | `tools/account/e2e.mjs` | Tests de bout en bout dans Edge : 5 appareils simulés, passages hors ligne |
 
 ## Ce qui reste à configurer
-1. **Envoi des e-mails** (confirmation, mot de passe oublié). Aujourd'hui `MAIL_MODE = "log"` : les e-mails sont seulement journalisés, et les comptes fonctionnent sans confirmation. Deux possibilités :
-   - **Cloudflare Email Service** : il demande l'offre Workers Paid (5 $/mois) et l'activation de l'envoi pour `hold-out.app` (enregistrements DNS ajoutés par Cloudflare). La connexion `wrangler` actuelle n'a pas ce droit : refaire `npx wrangler login`. Ensuite, dans `server/wrangler.json` : `"send_email": [{ "name": "EMAIL" }]` et `MAIL_MODE: "cloudflare"`.
-   - **Resend** (gratuit jusqu'à 3 000 e-mails/mois) : vérifier `hold-out.app` chez Resend, puis `npx wrangler secret put RESEND_API_KEY` et `MAIL_MODE: "resend"`.
+1. **Envoi des e-mails : Resend** (gratuit jusqu'à 3 000 e-mails/mois ; `MAIL_MODE: "resend"`, expéditeur `compte@hold-out.app`). Domaine `hold-out.app` vérifié chez Resend (enregistrements DNS sur le sous-domaine `send`, sans conflit avec la réception de `contact@`). La clé est le secret GitHub `RESEND_API_KEY`, transmis au Worker par la publication automatique. Tant qu'elle manque, les e-mails sont seulement journalisés (destinataire et sujet) et les comptes fonctionnent sans confirmation.
 2. **Google.**
    - Dans Google Cloud Console, créer un écran de consentement OAuth et deux identifiants client : « Application Web » (origines : l'adresse de la webapp) et « iOS » (bundle `com.holdout.app`).
    - Les renseigner dans `js/config.js` (`account.google.webClientId` et `iosClientId`) et dans `server/wrangler.json` (`GOOGLE_CLIENT_IDS`, séparés par une virgule).
