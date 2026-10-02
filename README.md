@@ -18,6 +18,8 @@ Elle permet aussi de préparer :
 
 Tout fonctionne dans le navigateur (HTML/JS, sans serveur ni compte). Les données restent sur l'appareil.
 
+L’interface utilise une navigation latérale sur ordinateur et une barre inférieure sur mobile, avec des thèmes clair et sombre. La carte occupe tout l’écran : le bouton de retour retrouve l’écran précédent, et « Options » ouvre les téléchargements, points et outils dans un panneau escamotable. La touche Échap ferme ce panneau, puis permet de quitter la carte.
+
 ## Application iOS
 Le dépôt contient un projet **iOS natif** (Capacitor 8, dossier `ios/`) : GPS natif, achats intégrés StoreKit (exigés par l'App Store), export via la feuille de partage, barre d'onglets en bas de l'écran, données embarquées pour fonctionner hors ligne. Compilation sur Mac avec Xcode : `npm install && npm run ios:sync && npm run ios:open`. Guide complet : [`docs/IOS.md`](docs/IOS.md).
 

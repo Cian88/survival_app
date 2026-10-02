@@ -574,7 +574,7 @@
   function panelHTML() {
     return `
     <details open><summary>Fonds & couches</summary>
-      <p class="small">Utilisez le sélecteur en haut à droite de la carte. Le <b>relief Europe intégré</b> et le <b>fond vectoriel</b> fonctionnent sans aucune connexion.</p>
+      <p class="small">Utilisez le sélecteur de couches sur la carte. Le <b>relief Europe intégré</b> et le <b>fond vectoriel</b> fonctionnent sans aucune connexion.</p>
       <label>Rayon autour des sites nucléaires : <input id="nucKm" type="number" min="1" max="300" value="${nucRadiusKm()}" style="width:5em"> km</label>
       <p class="small muted">En France, le rayon des Plans particuliers d'intervention (PPI) des centrales est de 20 km (voir la Notice).</p>
     </details>
@@ -626,7 +626,10 @@
 
   function init() {
     if (map) return;
-    map = L.map('map', { preferCanvas: true, zoomControl: true, worldCopyJump: false, minZoom: 3, maxZoom: 17 }).setView([46.6, 2.5], 5);
+    map = L.map('map', { preferCanvas: true, zoomControl: false, worldCopyJump: false, minZoom: 3, maxZoom: 17 }).setView([46.6, 2.5], 5);
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
+    // The map follows the viewport, including mobile rotation and split-screen resizing.
+    if (window.ResizeObserver) new ResizeObserver(() => map.invalidateSize({ pan: false })).observe($('#map'));
     map.createPane('basevec').style.zIndex = 250;
     map.createPane('vec').style.zIndex = 390;
     L.control.scale({ imperial: false }).addTo(map);
@@ -641,7 +644,7 @@
         return d;
       },
     });
-    new North({ position: 'topleft' }).addTo(map);
+    new North({ position: 'bottomleft' }).addTo(map);
 
     const reliefImg = L.imageOverlay('data/relief_europe.jpg', RELIEF_BOUNDS, { attribution: ATTR_DEM, interactive: false });
     const reliefBase = L.layerGroup([reliefImg]);
@@ -667,7 +670,7 @@
     for (const [k, c] of Object.entries(OSM_CATS)) overlays[`<i class="dot" style="background:${c.color}"></i>OSM : ${c.label.split(' (')[0]}`] = osmGroups[k].addTo(map);
     const start = (App.state.map && App.state.map.base) || 'Relief Europe intégré (hors ligne)';
     (layers.bases[start] || reliefBase).addTo(map);
-    ctrl = L.control.layers(layers.bases, overlays, { collapsed: true }).addTo(map);
+    ctrl = L.control.layers(layers.bases, overlays, { collapsed: true, position: 'topleft' }).addTo(map);
     map.on('baselayerchange', e => { App.state.map = Object.assign(App.state.map || {}, { base: e.name }); App.save(); });
 
     $('#mapPanel').innerHTML = panelHTML();
