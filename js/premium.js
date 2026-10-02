@@ -6,13 +6,13 @@
   const C = window.KS_CONFIG || {};
   const h = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const KEY = 'survie.licence';
-  const LIMITS = { packs: 1, packKm: 10, packZoom: 14, osmZones: 1, bags: 1, inventory: 15 };
+  const LIMITS = { packs: 1, packKm: 1000, packZoom: 14, osmZones: 1, bags: 1, inventory: 15 };
   const FREE_CALCS = ['eau', 'poids', 'marche'];
   const PLAN_NAME = { monthly: 'Mensuel (ancienne offre)', annual: 'Annuel', lifetime: 'À vie', admin: 'Administrateur (toutes les fonctions)' };
   const FEATURES = [
     ['Instant T : actions par situation, numéros d\'urgence, position GPS', true, true],
     ['Carte Europe intégrée (relief, fond, nucléaire, barrages, centrales)', true, true],
-    ['Cartes hors ligne IGN / relief', `1 pack, ${LIMITS.packKm} km, détail ${LIMITS.packZoom}`, 'Illimitées, 50 km, détail 16, export/import'],
+    ['Cartes hors ligne IGN / relief', `1 pack, ${LIMITS.packKm.toLocaleString('fr-FR')} km, détail ${LIMITS.packZoom}`, 'Illimitées, 1 000 km, détail 16, export/import'],
     ['Points utiles hors ligne (eau, santé, abris, dangers)', '1 zone', 'Illimités'],
     ['Profil : foyer et domicile', true, true],
     ['Profil complet : santé, logement, environnement, compétences', false, true],
