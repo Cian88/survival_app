@@ -1,0 +1,32 @@
+{
+  "name": "holdout-api",
+  "main": "src/index.js",
+  "compatibility_date": "2026-09-01",
+  "routes": [
+    {
+      "pattern": "api.hold-out.app",
+      "custom_domain": true
+    }
+  ],
+  "workers_dev": false,
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "holdout",
+      "database_id": "431f344d-3b4f-4dc6-8d33-c7b16d41cf49",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "vars": {
+    "MAIL_MODE": "log",
+    "MAIL_FROM": "Holdout <compte@hold-out.app>",
+    "GOOGLE_CLIENT_IDS": "17816717554-2p6ma9dqj9g7er9colmp24hrr8ed02kb.apps.googleusercontent.com",
+    "APPLE_AUDIENCES": "com.holdout.app",
+    "APPSTORE_BUNDLE_ID": "com.holdout.app",
+    "APPSTORE_PRODUCTS": "{\"annual\":\"com.holdout.premium.annual\",\"lifetime\":\"com.holdout.premium.lifetime\"}",
+    "LICENCE_PUBLIC_JWK": "{\"kty\":\"EC\",\"x\":\"IdqYx6angxphy55nHURxu1X2VucUMhNFpTBs2lQLpKY\",\"y\":\"Vxo3q2XOSAB-CwGICc_ehfsQW31Qb-UvZYx0_kWK0Uk\",\"crv\":\"P-256\"}"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

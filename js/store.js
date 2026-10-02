@@ -1,5 +1,5 @@
-/* Stockage local : localStorage (état de l'app) + IndexedDB (tuiles et points OSM).
-   Tout reste sur l'appareil, rien n'est envoyé à un serveur. */
+/* Stockage local : localStorage (état de l'app) + IndexedDB (tuiles, points OSM, clé du compte).
+   Les données restent sur l'appareil ; le compte n'en envoie qu'une copie chiffrée de bout en bout (js/account.js). */
 (function () {
   const KEY = 'survie.v1';
 
@@ -15,12 +15,13 @@
     if (dbp) return dbp;
     dbp = new Promise((resolve, reject) => {
       if (!('indexedDB' in window)) return reject(new Error('IndexedDB indisponible'));
-      const req = indexedDB.open('survie', 2);
+      const req = indexedDB.open('survie', 3);
       req.onupgradeneeded = () => {
         const d = req.result;
         if (!d.objectStoreNames.contains('tiles')) d.createObjectStore('tiles');
         if (!d.objectStoreNames.contains('osm')) d.createObjectStore('osm');
         if (!d.objectStoreNames.contains('packs')) d.createObjectStore('packs');
+        if (!d.objectStoreNames.contains('keys')) d.createObjectStore('keys'); // clé des données du compte (non exportable)
       };
       req.onsuccess = () => resolve(req.result);
       req.onerror = () => reject(req.error);

@@ -49,16 +49,13 @@ Voir [`MATERIEL.md`](MATERIEL.md). Les 83 références ont été relevées le 30
 
 | Donnée | Source | Licence | Remarque |
 |---|---|---|---|
-| Pays, frontières, fleuves, lacs, routes, villes | [Natural Earth](https://www.naturalearthdata.com) 1:50m / 1:10m | Domaine public | Découpé sur l'Europe (-25° à 45° E, 34° à 72° N) |
-| Relief (image intégrée zoom 7 et tuiles à la demande) | [Terrain Tiles](https://registry.opendata.aws/terrain-tiles/) (Mapzen / AWS Open Data), format Terrarium | Attribution requise ([détails](https://github.com/tilezen/joerd/blob/master/docs/attribution.md)) : EU-DEM (Copernicus), SRTM/GMTED (USGS), ETOPO1 (NOAA), © Kartverket, © Environment Agency… | Ombrage et teintes calculés par l'application |
+| Relief de secours (image intégrée zoom 7) | [Terrain Tiles](https://registry.opendata.aws/terrain-tiles/) (Mapzen / AWS Open Data), format Terrarium | Attribution requise ([détails](https://github.com/tilezen/joerd/blob/master/docs/attribution.md)) : EU-DEM (Copernicus), SRTM/GMTED (USGS), ETOPO1 (NOAA), © Kartverket, © Environment Agency… | Ombrage et teintes de l'image calculés hors de l'application (`tools/build_relief.py`) |
 | Sites nucléaires, grands barrages | [Wikidata](https://www.wikidata.org) (requêtes SPARQL dans `tools/`) | CC0 | Statuts parfois absents ; barrages : seulement ceux dont la hauteur ≥ 50 m est renseignée |
 | Centrales électriques ≥ 50 MW | [WRI Global Power Plant Database v1.3.0](https://github.com/wri/global-power-plant-database) | CC BY 4.0 | Données de 2021, sans les centrales nucléaires |
 | Points eau / santé / secours / énergie / dangers / ravitaillement | OpenStreetMap via l'API Overpass (téléchargés par l'utilisateur) | ODbL, © contributeurs OpenStreetMap | Qualité variable ; vérifier sur place |
-| Carte topographique officielle (France) : Plan IGN v2 et estompage | [IGN – Géoplateforme](https://cartes.gouv.fr), service WMTS `data.geopf.fr` (vérifié le 30/09/2026 : CORS ouvert, sans clé) | Licence Ouverte Etalab 2.0 | Packs hors ligne téléchargeables par zone. Le SCAN 25 exige une clé personnelle (cartes.gouv.fr) et n'est pas intégré |
-| Carte topographique en ligne | [OpenTopoMap](https://opentopomap.org) | CC-BY-SA | Pas de téléchargement en masse : seules les tuiles consultées sont mises en cache |
-| Carte détaillée hors ligne (optionnelle) | [Protomaps](https://maps.protomaps.com/builds/) au format PMTiles | ODbL (données OSM) | Fichier fourni par l'utilisateur |
+| Fond de la carte topographique | OpenStreetMap au schéma [Protomaps](https://docs.protomaps.com/basemaps/downloads) (fichier PMTiles hébergé par nos soins) | ODbL, © contributeurs OpenStreetMap ; œuvre produite, usage commercial permis avec attribution | Dessiné sur l'appareil (MapLibre), style inspiré d'OpenTopoMap. Voir [`TUILES.md`](TUILES.md) |
+| Ombrage, courbes de niveau, altitude au clic | [Mapterhorn](https://mapterhorn.com) (Terrarium, détail 0 à 12) : IGN LiDAR HD et RGE ALTI, CNIG Espagne, Copernicus GLO-30… | Licence Ouverte 2.0, CC BY 4.0, licence Copernicus… ([liste](https://download.mapterhorn.com/attribution.json)) : usage commercial permis avec attribution | Courbes calculées sur l'appareil (maplibre-contour) |
 
 ## Bibliothèques incluses
 - [Leaflet](https://leafletjs.com) 1.9.4 (BSD-2-Clause)
-- [pmtiles](https://github.com/protomaps/PMTiles) 4.5.0 (BSD-3-Clause)
-- [protomaps-leaflet](https://github.com/protomaps/protomaps-leaflet) 5.1.0 (BSD-3-Clause)
+- Carte vectorielle : MapLibre GL JS 5.24, pmtiles 4.5, @protomaps/basemaps 5.7, maplibre-contour 0.1.1 (BSD-3-Clause), @maplibre/maplibre-gl-leaflet 0.1.4 (ISC) : voir `lib/maplibre/LICENSES.md`. Polices Noto Sans (SIL Open Font License).

@@ -1,0 +1,80 @@
+# Publie hold-out.app (site et application) sur Cloudflare à chaque push sur main.
+# Le serveur de comptes (server/, api.hold-out.app) n'est testé et redéployé que si ses fichiers changent.
+# Prérequis (Settings › Secrets and variables › Actions) : secret CLOUDFLARE_API_TOKEN, variable CLOUDFLARE_ACCOUNT_ID.
+name: Publication Cloudflare
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: publication-cloudflare
+  cancel-in-progress: false
+env:
+  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+jobs:
+  tests:
+    name: Tests rapides
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: node tools/test-map-packs.mjs
+      - run: node tools/test-osm-points.mjs
+      - run: node tools/account/test-vault-crypto.mjs
+
+  changes:
+    name: Fichiers modifiés
+    runs-on: ubuntu-latest
+    outputs:
+      server: ${{ steps.filter.outputs.server }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            server:
+              - 'server/**'
+
+  api:
+    name: Serveur de comptes (api.hold-out.app)
+    needs: [tests, changes]
+    if: needs.changes.outputs.server == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm ci
+      - name: Tests (Worker et D1 locaux)
+        run: npm test
+      - name: Migrations de la base D1
+        run: npx wrangler d1 migrations apply holdout --remote
+      - name: Déploiement
+        run: npx wrangler deploy
+
+  site:
+    name: Site et application (hold-out.app)
+    needs: [tests, api]
+    if: always() && needs.tests.result == 'success' && (needs.api.result == 'success' || needs.api.result == 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Wrangler
+        run: npm ci --prefix server
+      - name: Assemblage (dist-site/, application sous /app/)
+        run: node tools/build-site.mjs
+      - name: Déploiement
+        run: npx --prefix server wrangler deploy --config site/wrangler.json

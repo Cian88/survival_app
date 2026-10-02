@@ -2,13 +2,14 @@
    - GPS : plugin Geolocation (fonctionne sans Internet)
    - Fichiers : écriture dans le cache puis feuille de partage iOS (Enregistrer dans Fichiers, AirDrop…)
    - Sauvegarde : copie de l'état dans les préférences natives (résiste à un nettoyage du stockage web)
-   - Achats intégrés : StoreKit via @capgo/native-purchases (obligatoire sur l'App Store, règle 3.1.1) */
+   - Achats intégrés : StoreKit via @capgo/native-purchases (obligatoire sur l'App Store, règle 3.1.1)
+   - Connexion Google et Apple : @capgo/capacitor-social-login (les pages de connexion web ne marchent pas dans l'app) */
 (function () {
   const Cap = window.Capacitor;
   const isNative = !!(Cap && typeof Cap.isNativePlatform === 'function' && Cap.isNativePlatform());
   const plug = name => (isNative && Cap.registerPlugin ? Cap.registerPlugin(name) : null);
-  const Geolocation = plug('Geolocation'), Filesystem = plug('Filesystem'), Share = plug('Share'), Preferences = plug('Preferences'), Purchases = plug('NativePurchases');
-  const STATE_KEY = 'survie.v1';
+  const Geolocation = plug('Geolocation'), Filesystem = plug('Filesystem'), Share = plug('Share'), Preferences = plug('Preferences'), Purchases = plug('NativePurchases'), SocialLogin = plug('SocialLogin');
+  const STATE_KEY = 'survie.v1', MIRRORED = [STATE_KEY, 'holdout.account'];
 
   async function getPosition() {
     if (!isNative) return new Promise((res, rej) => {
@@ -42,18 +43,22 @@
   }
 
   /* Copie de sécurité de l'état dans les préférences natives, et restauration au démarrage si le stockage web a été vidé. */
-  function mirrorState(json) { if (isNative) Preferences.set({ key: STATE_KEY, value: json }).catch(() => { }); }
+  function mirror(key, value) { if (isNative) (value == null ? Preferences.remove({ key }) : Preferences.set({ key, value })).catch(() => { }); }
+  const mirrorState = json => mirror(STATE_KEY, json);
   async function restoreIfNeeded() {
     if (!isNative) return false;
-    let local = null; try { local = localStorage.getItem(STATE_KEY); } catch (e) { }
-    if (local) return false;
-    const { value } = await Preferences.get({ key: STATE_KEY });
-    if (!value) return false;
-    try { localStorage.setItem(STATE_KEY, value); } catch (e) { return false; }
-    return true;
+    let restored = false;
+    for (const key of MIRRORED) {
+      let local = null; try { local = localStorage.getItem(key); } catch (e) { }
+      if (local) continue;
+      const { value } = await Preferences.get({ key });
+      if (!value) continue;
+      try { localStorage.setItem(key, value); restored = true; } catch (e) { }
+    }
+    return restored;
   }
 
-  window.Native = { isNative, platform: isNative ? Cap.getPlatform() : 'web', getPosition, saveFile, mirrorState, restoreIfNeeded, Purchases };
+  window.Native = { isNative, platform: isNative ? Cap.getPlatform() : 'web', getPosition, saveFile, mirror, mirrorState, restoreIfNeeded, Purchases, SocialLogin };
   if (isNative) {
     document.documentElement.classList.add('native', 'native-' + Cap.getPlatform());
     restoreIfNeeded().then(r => { if (r) location.reload(); }).catch(() => { });

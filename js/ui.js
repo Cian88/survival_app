@@ -92,5 +92,38 @@
       });
     },
   };
+  /* Tableaux sur téléphone : chaque ligne devient une fiche (css/app.css, « table.stack »).
+     Les libellés viennent de la ligne d'en-têtes ; la case à cocher et la colonne principale forment le titre de la fiche.
+     Sans ligne d'en-têtes (petits tableaux à deux colonnes), le tableau reste tel quel. */
+  function stackTables(root) {
+    for (const t of root.querySelectorAll('table:not(.tags):not([data-stacked])')) {
+      const head = [...t.rows].find(r => r.cells.length && [...r.cells].every(c => c.tagName === 'TH'));
+      if (!head) continue;
+      const labels = []; for (const c of head.cells) for (let i = 0; i < (c.colSpan || 1); i++) labels.push(c.textContent.trim());
+      head.classList.add('stack-head');
+      for (const r of t.rows) {
+        if (r === head) continue;
+        if (r.cells.length === 1 && r.cells[0].colSpan > 1) { r.cells[0].classList.add('td-full'); continue; }
+        let col = 0, main = false;
+        for (const c of r.cells) {
+          const label = labels[col] || '', box = c.querySelector('input[type=checkbox]') && !c.textContent.trim();
+          if (label && label !== '✓') c.dataset.label = label;
+          if (box) c.classList.add('td-check');
+          else if (!main && label && label !== '✓' && !c.classList.contains('num')) { c.classList.add('td-main'); main = true; }
+          else if (!label && c.querySelector('button, a')) c.classList.add('td-act');
+          col += c.colSpan || 1;
+        }
+      }
+      t.classList.add('stack'); t.dataset.stacked = '1';
+    }
+  }
+  UI.stackTables = stackTables;
+  // Les écrans sont reconstruits à chaque modification : on repasse sur les nouveaux tableaux.
+  const main = document.getElementById('main');
+  let pending = false;
+  if (main) new MutationObserver(() => {
+    if (pending) return; pending = true;
+    requestAnimationFrame(() => { pending = false; stackTables(main); });
+  }).observe(main, { childList: true, subtree: true });
   window.UI = UI;
 })();

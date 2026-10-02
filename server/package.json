@@ -1,0 +1,14 @@
+{
+  "name": "holdout-api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "test": "node test/api.test.mjs",
+    "deploy": "wrangler deploy",
+    "db:migrate": "wrangler d1 migrations apply holdout --remote"
+  },
+  "devDependencies": {
+    "wrangler": "4.147.0"
+  }
+}

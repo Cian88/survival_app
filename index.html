@@ -7,10 +7,11 @@
 <meta name="description" content="Outil local et hors ligne : écosystème de survie domestique, sac d'évacuation, matériel et budget, carte topographique Europe.">
 <meta name="theme-color" content="#182c26">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon-64.png" type="image/png" sizes="64x64">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="stylesheet" href="lib/leaflet/leaflet.css">
+<link rel="stylesheet" href="lib/maplibre/maplibre-gl.css">
 <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
@@ -51,7 +52,7 @@
   <section id="tab-map" class="tab">
     <div class="maplayout">
       <div id="map" aria-label="Carte interactive de l’Europe"></div>
-      <div class="map-topbar"><button id="mapBack" class="map-control" data-icon="back" aria-label="Quitter la carte plein écran"><span class="nav-icon"></span><span>Mon espace</span></button><div class="map-title"><span class="status-dot"></span><b>Carte terrain</b><span class="map-offline-label">Fonds intégrés hors ligne</span></div><div class="map-actions"><button id="mapLocate" class="map-control icon-only" data-icon="locate" aria-label="Me localiser sur la carte" title="Me localiser"><span class="nav-icon"></span></button><button id="mapPanelToggle" class="map-control" data-icon="layers" aria-controls="mapDrawer" aria-expanded="false"><span class="nav-icon"></span><span>Options</span></button></div></div>
+      <div class="map-topbar"><button id="mapBack" class="map-control" data-icon="back" aria-label="Quitter la carte plein écran"><span class="nav-icon"></span><span>Mon espace</span></button><div class="map-title"><span class="status-dot"></span><b>Carte terrain</b><span class="map-offline-label">Topo · packs hors ligne</span></div><div class="map-actions"><button id="mapLocate" class="map-control icon-only" data-icon="locate" aria-label="Me localiser sur la carte" title="Me localiser"><span class="nav-icon"></span></button><button id="mapPanelToggle" class="map-control" data-icon="layers" aria-controls="mapDrawer" aria-expanded="false"><span class="nav-icon"></span><span>Options</span></button></div></div>
       <aside id="mapDrawer" class="map-drawer" aria-label="Options de la carte" hidden><div class="drawer-heading"><div><p class="eyebrow">VOTRE TERRAIN</p><h2>Préparer ma carte</h2></div><button id="mapPanelClose" class="map-control icon-only" data-icon="close" aria-label="Fermer les options"><span class="nav-icon"></span></button></div><div id="mapPanel" class="mappanel"></div></aside>
       <div class="map-hint">Explorez votre terrain <span>·</span> Cliquez pour les coordonnées et l’altitude</div>
     </div>
@@ -62,16 +63,19 @@
 </main>
 
 <nav id="bottombar" aria-label="Navigation mobile"><button data-tab="now" data-icon="now" class="on"><span class="nav-icon"></span><span>Instant T</span></button><button data-tab="audit" data-icon="audit"><span class="nav-icon"></span><span>Bilan</span></button><button data-tab="map" data-icon="map"><span class="nav-icon"></span><span>Carte</span><span class="nav-tag">OFFLINE</span></button><button data-tab="profile" data-icon="profile"><span class="nav-icon"></span><span>Profil</span></button><button data-more data-icon="more" aria-label="Tous les outils"><span class="nav-icon"></span><span>Plus</span></button></nav>
-<footer class="foot small muted">Données stockées uniquement sur cet appareil. Outil d'aide à la préparation : il ne remplace ni les consignes des autorités ni une formation aux premiers secours.</footer>
+<footer class="foot small muted">Données sur cet appareil ; sauvegarde du compte chiffrée de bout en bout. Outil d'aide à la préparation : il ne remplace ni les consignes des autorités ni une formation aux premiers secours.</footer>
 
 <script src="lib/capacitor.js"></script>
 <script src="js/native.js"></script>
 <script src="lib/leaflet/leaflet.js"></script>
-<script src="lib/pmtiles.js"></script>
-<script src="lib/protomaps-leaflet.js"></script>
-<script src="data/base_europe.js"></script>
+<script src="lib/maplibre/maplibre-gl.js"></script>
+<script src="lib/maplibre/leaflet-maplibre-gl.js"></script>
+<script src="lib/maplibre/pmtiles.js"></script>
+<script src="lib/maplibre/basemaps.js"></script>
+<script src="lib/maplibre/maplibre-contour.js"></script>
 <script src="data/poi_europe.js"></script>
 <script src="js/config.js"></script>
+<script src="js/osm-points.js"></script>
 <script src="js/store.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/knowledge.js"></script>
@@ -85,6 +89,9 @@
 <script src="js/profile.js"></script>
 <script src="js/now.js"></script>
 <script src="js/premium.js"></script>
+<script src="js/vault-crypto.js"></script>
+<script src="js/account.js"></script>
+<script src="js/topo.js"></script>
 <script src="js/map.js"></script>
 <script src="js/app.js"></script>
 </body>
