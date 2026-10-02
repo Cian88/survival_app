@@ -14,12 +14,12 @@ rmSync(out, { recursive: true, force: true }); mkdirSync(out, { recursive: true 
 cpSync(join(root, 'www'), join(out, 'app'), { recursive: true });
 copyFileSync(join(site, 'style.css'), join(out, 'style.css'));
 copyFileSync(join(site, '_headers'), join(out, '_headers'));
-copyFileSync(join(root, 'icons/icon.svg'), join(out, 'icon.svg'));
-for (const f of ['icon-192.png', 'icon-512.png', 'apple-touch-icon.png']) try { copyFileSync(join(root, 'icons', f), join(out, f)); } catch (e) { }
+for (const f of ['favicon-64.png', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', 'logo-mark.png', 'logo-mark-light.png', 'logo-full.png', 'logo-full-light.png']) copyFileSync(join(root, 'icons', f), join(out, f));
+copyFileSync(join(site, 'og-image.png'), join(out, 'og-image.png'));
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 const nav = `<header class="site-head"><div class="wrap">
-  <a class="brand" href="/"><img src="/icon.svg" alt="" width="32" height="32"><span>holdout<span class="dot">.</span></span></a>
+  <a class="brand" href="/"><picture><source srcset="/logo-mark-light.png" media="(prefers-color-scheme: dark)"><img src="/logo-mark.png" alt="" width="40" height="40"></picture><span>holdout<span class="dot">.</span></span></a>
   <nav class="site-nav" aria-label="Navigation"><a href="/#fonctionnement">Fonctionnement</a><a href="/support/">Aide</a><a class="btn" href="/app/">Ouvrir l'application</a></nav>
 </div></header>`;
 const foot = `<footer class="site-foot"><div class="wrap">
@@ -41,9 +41,10 @@ for (const f of readdirSync(join(site, 'pages')).filter(f => f.endsWith('.html')
 <title>${esc(meta.title)}</title>
 <meta name="description" content="${esc(meta.description)}">
 ${meta.out === '404.html' ? '<meta name="robots" content="noindex">' : `<link rel="canonical" href="${url}">`}
-<meta property="og:title" content="${esc(meta.title)}"><meta property="og:description" content="${esc(meta.description)}"><meta property="og:type" content="website"><meta property="og:url" content="${url}">
+<meta property="og:title" content="${esc(meta.title)}"><meta property="og:description" content="${esc(meta.description)}"><meta property="og:type" content="website"><meta property="og:url" content="${url}"><meta property="og:image" content="${SITE}/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#182c26">
-<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css">
 </head>
 <body>

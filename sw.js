@@ -1,10 +1,10 @@
 /* Service worker : met l'application en cache pour un usage 100 % hors ligne (dont le moteur de carte, ses polices et icônes).
    Les tuiles de carte et points OSM sont gérés séparément dans IndexedDB (js/map.js). */
-const VERSION = 'holdout-v23';
+const VERSION = 'holdout-v24';
 // Polices de la carte : latin, grec, cyrillique, arabe, tifinagh (noms de lieux affichés aussi dans leur écriture).
 const FONTS = ['Noto Sans Regular', 'Noto Sans Medium', 'Noto Sans Italic'].flatMap(f => ['0-255', '256-511', '512-767', '768-1023', '1024-1279', '1280-1535', '1536-1791', '1792-2047', '7680-7935', '8192-8447', '11520-11775'].map(r => `assets/map/fonts/${f}/${r}.pbf`));
 const SHELL = [
-  './', 'index.html', 'css/app.css', 'manifest.webmanifest', 'icons/icon.svg', 'icons/terrain.svg',
+  './', 'index.html', 'css/app.css', 'manifest.webmanifest', 'icons/favicon-64.png', 'icons/logo-mark.png', 'icons/logo-mark-light.png', 'icons/icon-192.png', 'icons/terrain.svg',
   'lib/leaflet/leaflet.js', 'lib/leaflet/leaflet.css', 'lib/leaflet/images/layers.png', 'lib/leaflet/images/layers-2x.png',
   'lib/leaflet/images/marker-icon.png', 'lib/leaflet/images/marker-icon-2x.png', 'lib/leaflet/images/marker-shadow.png',
   'lib/capacitor.js', 'js/native.js',

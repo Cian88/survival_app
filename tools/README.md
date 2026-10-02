@@ -19,3 +19,7 @@ Depuis un serveur local à la racine du dépôt, ouvrir `tools/ui-smoke.html?wid
 ## Affichage sur téléphone et tablette
 
 `node tools/ui-responsive-audit.mjs .tmp/responsive` ouvre chaque écran dans Edge à 9 tailles (téléphones 360 à 430 px, téléphone en paysage, tablettes 768 à 1180 px, ordinateur) avec des données réalistes. Il signale les débordements horizontaux, les éléments qui sortent de l'écran, les textes de moins de 12 px, les zones tactiles de moins de 40 px et les champs qui déclenchent le zoom d'iOS (police < 16 px), et enregistre une capture par écran et par taille.
+
+## Logo
+
+Sources dans `design/` (logo complet sur fond crème et sur fond transparent). `node tools/build-logo.mjs` (avec le module sharp : `npm i --no-save sharp`) en tire l'emblème seul (couleurs d'origine et version claire pour fonds sombres), les icônes d'application (web, installation, iOS), le favicon, le logo complet clair et foncé, l'aperçu de partage du site et les écrans de démarrage iOS.

@@ -115,7 +115,7 @@
         <p class="small"><button type="button" class="link" data-ag="back">Revenir</button></p>`,
       busy: () => `<h2 id="authTitle">${h(data.title || 'Un instant…')}</h2><p class="muted" role="status">${h(data.text || '')}</p><div class="auth-spinner" aria-hidden="true"></div>`,
     }[v]();
-    g.innerHTML = `<div class="auth-card"><div class="auth-brand"><span class="logo">${window.UI ? UI.icon('compass') : ''}</span><b>holdout<span class="brand-dot">.</span></b></div>${html}</div>`;
+    g.innerHTML = `<div class="auth-card"><div class="auth-brand"><span class="logo"><img class="mark-on-light" src="icons/logo-mark.png" alt=""><img class="mark-on-dark" src="icons/logo-mark-light.png" alt=""></span><b>holdout<span class="brand-dot">.</span></b></div>${html}</div>`;
     g.dataset.view = v; Object.assign(g.dataset, { tab: data.tab || '' });
     g._data = data;
     if (v === 'start' && !NATIVE && googleAvailable() && online()) renderGoogleWeb();

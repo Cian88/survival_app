@@ -380,7 +380,7 @@
     const slot = b.querySelector('.nav-icon');
     if (slot) slot.innerHTML = UI.icon(b.dataset.icon);
   });
-  document.querySelector('[data-brand-icon]').innerHTML = UI.icon('compass');
+  document.querySelector('[data-brand-icon]').innerHTML = '<img src="icons/logo-mark-light.png" alt="">'; // menu toujours sur fond sombre
   function renderProfile() {
     Profile.render($('#tab-profile'), S);
     if (window.Account && Account.user) { $('#tab-profile').insertAdjacentHTML('afterbegin', '<div class="card" id="accountCard"></div>'); Account.renderCard(); }
